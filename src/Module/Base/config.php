@@ -11,12 +11,34 @@
 
 use Tiny\Skeleton\Module\Base;
 use Tiny\ServiceManager\Factory\InvokableFactory;
+use Tiny\Skeleton\Module\Base\Http;
+use Tiny\Skeleton\Module\Base\Router;
+use Tiny\Skeleton\Module\Base\Controller;
 
 return [
     'service_manager' => [
         'shared' => [
+            // router
+            Tiny\Router\Router::class         => Router\Factory\RouterFactory::class,
+
+            // http
+            Tiny\Http\Request::class          => Http\Factory\RequestFactory::class,
+            Tiny\Http\AbstractResponse::class => Http\Factory\ResponseFactory::class,
+
             // service
-            Base\Service\ConfigService::class => InvokableFactory::class
-        ]
-    ]
+            Base\Service\ConfigService::class => InvokableFactory::class,
+
+            // controller
+            Controller\HomeController::class  => InvokableFactory::class,
+        ],
+    ],
+    'routes'          => [
+        'http' => [
+            [
+                'request'     => '/',
+                'controller'  => Controller\HomeController::class,
+                'action_list' => 'index',
+            ],
+        ],
+    ],
 ];

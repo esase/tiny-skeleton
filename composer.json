@@ -23,7 +23,9 @@
     "php": "^7.4 || ^8.0",
     "esase/tiny-router": "^1.0",
     "esase/tiny-service-manager": "^1.0",
-    "esase/tiny-event-manager": "^1.0"
+    "esase/tiny-event-manager": "^1.0",
+    "esase/tiny-http": "^1.1",
+    "ext-json": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0 || ^10.0",

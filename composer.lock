@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd80cd8f815ce483470deb7ac6099f30",
+    "content-hash": "bd4b4c348710ec046e0041f67191d2cc",
     "packages": [
         {
             "name": "esase/tiny-event-manager",

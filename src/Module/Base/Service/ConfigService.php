@@ -42,7 +42,7 @@ class ConfigService
             return $this->configs[$name];
         }
 
-        if ($defaultValue) {
+        if (null !== $defaultValue) {
             return $defaultValue;
         }
 

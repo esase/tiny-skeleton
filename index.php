@@ -10,22 +10,29 @@
  */
 
 use Tiny\Skeleton\Bootstrap;
-use Tiny\Skeleton\Module\Base;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
 $bootstrap = new Bootstrap();
 
-// load configs
+// load modules configs
 $configsArray = $bootstrap->loadModulesConfigs([
     'Base',
     'User'
 ]);
 
-// init service manager
-$serviceManager = $bootstrap->initServiceManager($configsArray);
+// init the service manager
+$bootstrap->initServiceManager($configsArray);
 
-// init the config service
-/** @var  Base\Service\ConfigService $configsService */
-$configsService = $serviceManager->get(Base\Service\ConfigService::class);
-$configsService->setConfigs($configsArray);
+// init the configs service (we need to be able to fetch modules configs later)
+$bootstrap->initConfigsService($configsArray);
+
+// init routing and find a matched route
+$route = $bootstrap->initRouting();
+
+// init a controller from the matched route
+$response = $bootstrap->initController($route);
+
+// display the response
+echo $response->getResponseForDisplaying();
+
