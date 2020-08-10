@@ -1,0 +1,38 @@
+version: '2.0'
+
+services:
+
+  mysql:
+    container_name: tiny-skeleton-mysql
+    image: mysql:5
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=tiny-skeleton-root
+      - MYSQL_DATABASE=tiny-skeleton-db
+    volumes:
+      - ./docker-config/mysql/my.cnf:/etc/my.cnf
+
+  phpmyadmin:
+    container_name: tiny-skeleton-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mysql:db
+    ports:
+      - "8000:80"
+    environment:
+      - PMA_USER=root
+      - PMA_PASSWORD=tiny-skeleton-root
+      - PHP_UPLOAD_MAX_FILESIZE=100MB
+
+  web:
+    container_name: tiny-skeleton-web
+    build: .
+    links:
+      - mysql
+    volumes:
+      - ./:/var/www/html:cached
+    ports:
+      - "8080:80"
+    stdin_open: true
+    tty: true
