@@ -9,8 +9,8 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton\Core\Bootstrap\Bootstrap;
-use Tiny\Skeleton\Core\Bootstrap\BootstrapUtils;
+use Tiny\Skeleton\Bootstrap;
+use Tiny\Skeleton\BootstrapUtils;
 
 require_once __DIR__.'/../vendor/autoload.php';
 

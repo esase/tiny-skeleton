@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Core\Bootstrap;
+namespace Tiny\Skeleton;
 
 /*
  * This file is part of the Tiny package.
@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Core\Bootstrap;
 use Tiny\Http;
 use Tiny\Router;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Core;
 
 class Bootstrap
 {
@@ -92,9 +92,9 @@ class Bootstrap
         ServiceManager $serviceManager,
         array $configsArray
     ) {
-        /** @var  Base\Service\ConfigService $configsService */
+        /** @var  Core\Service\ConfigService $configsService */
         $configsService = $serviceManager->get(
-            Base\Service\ConfigService::class
+            Core\Service\ConfigService::class
         );
 
         $configsService->setConfigs($configsArray);

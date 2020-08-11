@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Core\Bootstrap;
+namespace Tiny\Skeleton;
 
 /*
  * This file is part of the Tiny package.

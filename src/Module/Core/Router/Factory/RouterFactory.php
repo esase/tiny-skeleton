@@ -1,12 +1,12 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Base\Router\Factory;
+namespace Tiny\Skeleton\Module\Core\Router\Factory;
 
 use Tiny\Http\Request;
 use Tiny\Router\Route;
 use Tiny\Router\Router;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Core;
 
 class RouterFactory
 {
@@ -26,9 +26,9 @@ class RouterFactory
         );
 
         // register routes
-        /** @var  Base\Service\ConfigService $configsService */
+        /** @var  Core\Service\ConfigService $configsService */
         $configsService = $serviceManager->get(
-            Base\Service\ConfigService::class
+            Core\Service\ConfigService::class
         );
 
         $allRoutes = $configsService->getConfig('routes', []);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Base\Service;
+namespace Tiny\Skeleton\Module\Core\Service;
 
 /*
  * This file is part of the Tiny package.
@@ -11,7 +11,7 @@ namespace Tiny\Skeleton\Module\Base\Service;
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton\Module\Base\Exception;
+use Tiny\Skeleton\Module\Core\Exception;
 
 class ConfigService
 {

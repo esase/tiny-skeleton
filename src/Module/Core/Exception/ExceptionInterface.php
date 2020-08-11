@@ -1,7 +1,5 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Base\Controller;
-
 /*
  * This file is part of the Tiny package.
  *
@@ -11,12 +9,9 @@ namespace Tiny\Skeleton\Module\Base\Controller;
  * file that was distributed with this source code.
  */
 
-class HomeController
+namespace Tiny\Skeleton\Module\Core\Exception;
+
+interface ExceptionInterface
 {
-
-    public function index()
-    {
-
-    }
 
 }

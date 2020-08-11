@@ -9,14 +9,6 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton\Module\Base\Controller;
-
 return [
-    'http' => [
-        [
-            'request'     => '/',
-            'controller'  => Controller\HomeController::class,
-            'action_list' => 'index',
-        ],
-    ],
+    'service_manager' => require_once 'config/service-manager.php',
 ];

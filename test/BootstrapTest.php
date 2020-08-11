@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Tiny\Skeleton\Core\Bootstrap;
+namespace Tiny\Skeleton;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Core;
 use Tiny\Router;
 use Tiny\Http;
 
@@ -122,7 +122,7 @@ class BootstrapTest extends TestCase
         ];
 
         $configServiceMock = $this->createMock(
-            Base\Service\ConfigService::class
+            Core\Service\ConfigService::class
         );
 
         $configServiceMock->expects($this->once())
@@ -135,7 +135,7 @@ class BootstrapTest extends TestCase
 
         $serviceManagerMock->expects($this->once())
             ->method('get')
-            ->with(Base\Service\ConfigService::class)
+            ->with(Core\Service\ConfigService::class)
             ->willReturn($configServiceMock);
 
         $bootstrap = new Bootstrap(

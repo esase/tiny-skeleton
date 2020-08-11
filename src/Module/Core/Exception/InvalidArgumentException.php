@@ -9,7 +9,10 @@
  * file that was distributed with this source code.
  */
 
-return [
-    'service_manager' => require_once 'config/service-manager.php',
-    'routes'          => require_once 'config/routes.php',
-];
+namespace Tiny\Skeleton\Module\Core\Exception;
+
+class InvalidArgumentException extends \InvalidArgumentException
+    implements ExceptionInterface
+{
+
+}

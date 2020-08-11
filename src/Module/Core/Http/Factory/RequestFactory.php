@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Base\Http\Factory;
+namespace Tiny\Skeleton\Module\Core\Http\Factory;
 
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Http\Request;
