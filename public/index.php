@@ -21,18 +21,19 @@ $configsArray = $bootstrap->loadModulesConfigs([
     'User'
 ]);
 
-// init the service manager
-$bootstrap->initServiceManager($configsArray);
-
-// init the configs service (we need to be able to fetch modules configs later)
-$bootstrap->initConfigsService($configsArray);
-
-// init routing and find a matched route
-$route = $bootstrap->initRouting();
-
-// init a controller from the matched route
-$response = $bootstrap->initController($route);
-
-// display the response
-echo $response->getResponseForDisplaying();
-
+//
+//// init the service manager
+//$bootstrap->initServiceManager($configsArray);
+//
+//// init the configs service (we need to be able to fetch modules configs later)
+//$bootstrap->initConfigsService($configsArray);
+//
+//// init routing and find a matched route
+//$route = $bootstrap->initRouting();
+//
+//// init a controller from the matched route
+//$response = $bootstrap->initController($route);
+//
+//// display the response
+//echo $response->getResponseForDisplaying();
+//

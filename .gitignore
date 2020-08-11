@@ -1,4 +1,8 @@
-/vendor/
-/.idea/
-/clover.xml
+.idea/
+vendor/*
+data/*
+!data/config/
+data/config/*
+!data/config/.htaccess
+clover.xml
 .DS_Store
