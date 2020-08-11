@@ -11,7 +11,9 @@ namespace Tiny\Skeleton\Core;
  * file that was distributed with this source code.
  */
 
+use Tiny\Router;
 use Tiny\ServiceManager\ServiceManager;
+use Tiny\Skeleton\Module\Base;
 
 class Bootstrap
 {
@@ -25,11 +27,6 @@ class Bootstrap
      * @var bool
      */
     private bool $isProdEnvironment;
-
-    /**
-     * @var ServiceManager
-     */
-    private ServiceManager $serviceManager;
 
     /**
      * Bootstrap constructor.
@@ -80,12 +77,40 @@ class Bootstrap
      */
     public function initServiceManager(array $configs): ServiceManager
     {
-        $this->serviceManager = new ServiceManager(
+        return new ServiceManager(
             ($configs['service_manager']['shared'] ?? []),
             ($configs['service_manager']['discrete'] ?? [])
         );
+    }
 
-        return $this->serviceManager;
+    /**
+     * @param  ServiceManager  $serviceManager
+     * @param  array           $configsArray
+     */
+    public function initConfigsService(
+        ServiceManager $serviceManager,
+        array $configsArray
+    ) {
+        /** @var  Base\Service\ConfigService $configsService */
+        $configsService = $serviceManager->get(
+            Base\Service\ConfigService::class
+        );
+
+        $configsService->setConfigs($configsArray);
+    }
+
+    /**
+     * @param  ServiceManager  $serviceManager
+     *
+     * @return Router\Route
+     */
+    public function initRouting(ServiceManager $serviceManager): Router\Route
+    {
+        // find a matched route
+        /** @var  Router\Router $router */
+        $router = $serviceManager->get(Router\Router::class);
+
+        return $router->getMatchedRoute();
     }
 
     /**
@@ -109,29 +134,9 @@ class Bootstrap
     //
 
     //
-    //    /**
-    //     * @param  array  $configsArray
-    //     */
-    //    public function initConfigsService(array $configsArray)
-    //    {
-    //        /** @var  Base\Service\ConfigService $configsService */
-    //        $configsService = $this->serviceManager->get(
-    //            Base\Service\ConfigService::class
-    //        );
-    //        $configsService->setConfigs($configsArray);
-    //    }
+
     //
-    //    /**
-    //     * @return Route
-    //     */
-    //    public function initRouting(): Route
-    //    {
-    //        // find a matched route
-    //        /** @var  Router $router */
-    //        $router = $this->serviceManager->get(Router::class);
-    //
-    //        return $router->getMatchedRoute();
-    //    }
+
     //
     //    /**
     //     * @param  Route  $route

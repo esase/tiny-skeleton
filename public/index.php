@@ -20,22 +20,21 @@ $bootstrap = new Core\Bootstrap(
 
 // load modules configs
 $configsArray = $bootstrap->loadModulesConfigs(
-    [
-        'Base',
-        'User',
-    ]
+    require_once __DIR__.'/../modules.php'
 );
 
 // init the service manager
-$bootstrap->initServiceManager($configsArray);
+$serviceManager = $bootstrap->initServiceManager($configsArray);
 
-echo 'aa';
-//
-//// init the configs service (we need to be able to fetch modules configs later)
-//$bootstrap->initConfigsService($configsArray);
-//
-//// init routing and find a matched route
-//$route = $bootstrap->initRouting();
+// init the configs service (the raw configs array should be wrapped in an object)
+$bootstrap->initConfigsService(
+    $serviceManager,
+    $configsArray
+);
+
+// init routing and find a matched route
+$route = $bootstrap->initRouting($serviceManager);
+
 //
 //// init a controller from the matched route
 //$response = $bootstrap->initController($route);
