@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Core;
 class BootstrapUtils
 {
 
-    const CONFIG_FILE = 'main_config.php';
+    const CONFIG_FILE = 'config.php';
 
     /**
      * @var string

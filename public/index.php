@@ -23,6 +23,10 @@ $configsArray = $bootstrap->loadModulesConfigs(
     require_once __DIR__.'/../modules.php'
 );
 
+
+echo '<pre>';
+print_r($configsArray);
+exit;
 // init the service manager
 $serviceManager = $bootstrap->initServiceManager($configsArray);
 
@@ -36,7 +40,7 @@ $bootstrap->initConfigsService(
 $route = $bootstrap->initRouting($serviceManager);
 
 //
-//// init a controller from the matched route
+//// init a matched controller
 //$response = $bootstrap->initController($route);
 //
 //// display the response
