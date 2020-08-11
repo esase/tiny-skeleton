@@ -45,6 +45,7 @@ $bootstrap->initEventManager(
 
 // init routing and find a matched route
 $route = $bootstrap->initRouting(
+    $serviceManager->get(EventManager::class),
     $serviceManager->get(Router\Router::class)
 );
 

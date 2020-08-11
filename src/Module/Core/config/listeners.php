@@ -9,7 +9,12 @@
  * file that was distributed with this source code.
  */
 
+use Tiny\Skeleton\Module\Core;
+
 return [
-    'service_manager' => require_once 'config/service-manager.php',
-    'listeners'       => require_once 'config/listeners.php',
+    [
+        'event'    => Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING,
+        'listener' => Core\EventListener\RouteBeforeCors::class,
+        'priority' => -1000,
+    ],
 ];

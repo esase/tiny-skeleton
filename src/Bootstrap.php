@@ -116,14 +116,42 @@ class Bootstrap
     }
 
     /**
+     * @param  EventManager   $eventManger
      * @param  Router\Router  $router
      *
      * @return Router\Route
      */
-    public function initRouting(Router\Router $router): Router\Route
-    {
+    public function initRouting(
+        EventManager $eventManger,
+        Router\Router $router
+    ): Router\Route {
+        // trigger the routing events chain
+        $beforeEvent = new Core\EventManager\RouteEvent();
+        $eventManger->trigger(
+            Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING,
+            $beforeEvent
+        );
+
+        if ($beforeEvent->getData()) {
+            return $beforeEvent->getData();
+        }
+
         // find a matched route
-        return $router->getMatchedRoute();
+        $route = $router->getMatchedRoute();
+
+        $afterEvent = new Core\EventManager\RouteEvent(null, [
+            'route' => $route
+        ]);
+        $eventManger->trigger(
+            Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING,
+            $afterEvent
+        );
+
+        if ($afterEvent->getData()) {
+            return $afterEvent->getData();
+        }
+
+        return $route;
     }
 
     /**
