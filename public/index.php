@@ -9,18 +9,27 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton\Bootstrap;
+use Tiny\Skeleton\Core;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
-$bootstrap = new Bootstrap();
+$bootstrap = new Core\Bootstrap(
+    new Core\BootstrapUtils(dirname(__DIR__)),
+    (!getenv('APPLICATION_ENV') || getenv('APPLICATION_ENV') === 'prod')
+);
 
 // load modules configs
-$configsArray = $bootstrap->loadModulesConfigs([
-    'Base',
-    'User'
-]);
+$configsArray = $bootstrap->loadModulesConfigs(
+    [
+        'Base',
+        'User',
+    ]
+);
 
+
+echo '<pre>';
+print_r($configsArray);
+exit;
 //
 //// init the service manager
 //$bootstrap->initServiceManager($configsArray);
