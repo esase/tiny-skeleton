@@ -9,8 +9,12 @@
  * file that was distributed with this source code.
  */
 
+use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Bootstrap;
 use Tiny\Skeleton\BootstrapUtils;
+use Tiny\Skeleton\Module\Core;
+use Tiny\Router;
+use Tiny\Http;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
@@ -29,15 +33,28 @@ $serviceManager = $bootstrap->initServiceManager($configsArray);
 
 // init the configs service (the raw configs array should be wrapped in an object)
 $bootstrap->initConfigsService(
-    $serviceManager,
+    $serviceManager->get(Core\Service\ConfigService::class),
     $configsArray
 );
 
+// init event manager
+$bootstrap->initEventManager(
+    $serviceManager->get(EventManager::class),
+    $serviceManager->get(Core\Service\ConfigService::class)
+);
+
 // init routing and find a matched route
-$route = $bootstrap->initRouting($serviceManager);
+$route = $bootstrap->initRouting(
+    $serviceManager->get(Router\Router::class)
+);
 
 // init a matched controller
-$response = $bootstrap->initController($serviceManager, $route);
+$response = $bootstrap->initController(
+    $serviceManager->get($route->getController()),
+    $serviceManager->get(Http\Request::class),
+    $serviceManager->get(Http\AbstractResponse::class),
+    $route->getMatchedAction()
+);
 
 // display the response
 echo $response->getResponseForDisplaying();

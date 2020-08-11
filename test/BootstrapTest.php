@@ -13,7 +13,7 @@ namespace Tiny\Skeleton;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
-use Tiny\ServiceManager\ServiceManager;
+use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Router;
 use Tiny\Http;
@@ -21,22 +21,49 @@ use Tiny\Http;
 class BootstrapTest extends TestCase
 {
 
-    public function testInitControllerMethod()
+    public function testInitEventManagerMethod()
     {
-        $controller = 'TestController';
-        $action = 'test';
+        $configs = [
+            [
+                'event' => 'test_event',
+                'listener' => 'TestListener',
+                'priority' => -10
+            ]
+        ];
 
-        $routeMock = $this->createMock(
-            Router\Route::class
+        $eventManagerMock = $this->createMock(
+            EventManager::class
         );
 
-        $routeMock->expects($this->once())
-            ->method('getController')
-            ->willReturn($controller);
+        $eventManagerMock->expects($this->once())
+            ->method('subscribe')
+            ->with('test_event', 'TestListener', -10);
 
-        $routeMock->expects($this->once())
-            ->method('getMatchedAction')
-            ->willReturn($action);
+        $configServiceMock = $this->createMock(
+            Core\Service\ConfigService::class
+        );
+
+        $configServiceMock->expects($this->once())
+            ->method('getConfig')
+            ->with('listeners', [])
+            ->willReturn($configs);
+
+        $bootstrap = new Bootstrap(
+            $this->createMock(
+                BootstrapUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initEventManager(
+            $eventManagerMock,
+            $configServiceMock
+        );
+    }
+
+    public function testInitControllerMethod()
+    {
+        $action = 'test';
 
         $requestStub = $this->createMock(
             Http\Request::class
@@ -44,10 +71,6 @@ class BootstrapTest extends TestCase
 
         $responseStub = $this->createMock(
             Http\AbstractResponse::class
-        );
-
-        $serviceManagerMock = $this->createMock(
-            ServiceManager::class
         );
 
         $controllerMock = $this->getMockBuilder(stdClass::class)
@@ -59,14 +82,6 @@ class BootstrapTest extends TestCase
             ->with($responseStub, $requestStub)
             ->willReturn($responseStub);
 
-        $serviceManagerMock->expects($this->exactly(3))
-            ->method('get')
-            ->will($this->onConsecutiveCalls(
-                $controllerMock,
-                $requestStub,
-                $responseStub
-            ));
-
         $bootstrap = new Bootstrap(
             $this->createMock(
                 BootstrapUtils::class
@@ -75,8 +90,10 @@ class BootstrapTest extends TestCase
         );
 
         $bootstrap->initController(
-            $serviceManagerMock,
-            $routeMock
+            $controllerMock,
+            $requestStub,
+            $responseStub,
+            $action
         );
     }
 
@@ -94,15 +111,6 @@ class BootstrapTest extends TestCase
             ->method('getMatchedRoute')
             ->willReturn($routeStub);
 
-        $serviceManagerMock = $this->createMock(
-            ServiceManager::class
-        );
-
-        $serviceManagerMock->expects($this->once())
-            ->method('get')
-            ->with(Router\Router::class)
-            ->willReturn($routerMock);
-
         $bootstrap = new Bootstrap(
             $this->createMock(
                 BootstrapUtils::class
@@ -110,7 +118,7 @@ class BootstrapTest extends TestCase
             true
         );
 
-        $route = $bootstrap->initRouting($serviceManagerMock);
+        $route = $bootstrap->initRouting($routerMock);
 
         $this->assertSame($routeStub, $route);
     }
@@ -129,15 +137,6 @@ class BootstrapTest extends TestCase
             ->method('setConfigs')
             ->with($configs);
 
-        $serviceManagerMock = $this->createMock(
-            ServiceManager::class
-        );
-
-        $serviceManagerMock->expects($this->once())
-            ->method('get')
-            ->with(Core\Service\ConfigService::class)
-            ->willReturn($configServiceMock);
-
         $bootstrap = new Bootstrap(
             $this->createMock(
                 BootstrapUtils::class
@@ -146,7 +145,7 @@ class BootstrapTest extends TestCase
         );
 
         $bootstrap->initConfigsService(
-            $serviceManagerMock,
+            $configServiceMock,
             $configs
         );
     }

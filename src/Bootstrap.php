@@ -11,10 +11,11 @@ namespace Tiny\Skeleton;
  * file that was distributed with this source code.
  */
 
-use Tiny\Http;
-use Tiny\Router;
+use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Core;
+use Tiny\Http;
+use Tiny\Router;
 
 class Bootstrap
 {
@@ -85,59 +86,62 @@ class Bootstrap
     }
 
     /**
-     * @param  ServiceManager  $serviceManager
-     * @param  array           $configsArray
+     * @param  Core\Service\ConfigService  $configsService
+     * @param  array                       $configsArray
      */
     public function initConfigsService(
-        ServiceManager $serviceManager,
+        Core\Service\ConfigService $configsService,
         array $configsArray
     ) {
-        /** @var  Core\Service\ConfigService $configsService */
-        $configsService = $serviceManager->get(
-            Core\Service\ConfigService::class
-        );
-
         $configsService->setConfigs($configsArray);
     }
 
     /**
-     * @param  ServiceManager  $serviceManager
+     * @param  EventManager                $eventManager
+     * @param  Core\Service\ConfigService  $configsService
+     */
+    public function initEventManager(
+        EventManager $eventManager,
+        Core\Service\ConfigService $configsService
+    ) {
+        $listeners = $configsService->getConfig('listeners', []);
+
+        foreach ($listeners as $listener) {
+            $eventManager->subscribe(
+                ($listener['event'] ?? ''),
+                ($listener['listener'] ?? ''),
+                ($listener['priority'] ?? 100)
+            );
+        }
+    }
+
+    /**
+     * @param  Router\Router  $router
      *
      * @return Router\Route
      */
-    public function initRouting(ServiceManager $serviceManager): Router\Route
+    public function initRouting(Router\Router $router): Router\Route
     {
         // find a matched route
-        /** @var  Router\Router $router */
-        $router = $serviceManager->get(Router\Router::class);
-
         return $router->getMatchedRoute();
     }
 
     /**
-     * @param  ServiceManager  $serviceManager
-     * @param  Router\Route    $route
+     * @param  object                 $controller
+     * @param  Http\Request           $request
+     * @param  Http\AbstractResponse  $response
+     * @param  string                 $action
      *
      * @return Http\AbstractResponse
      */
     public function initController(
-        ServiceManager $serviceManager,
-        Router\Route $route
+        object $controller,
+        Http\Request $request,
+        Http\AbstractResponse $response,
+        string $action
     ): Http\AbstractResponse {
-        // create a controller instance
-        $controller = $serviceManager->get($route->getController());
-
-        /** @var  Http\Request $request */
-        $request = $serviceManager->get(Http\Request::class);
-
-        /** @var  Http\AbstractResponse $response */
-        $response = $serviceManager->get(Http\AbstractResponse::class);
-
         // invoke the controller's action
-        $controller->{$route->getMatchedAction()}(
-            $response,
-            $request
-        );
+        $controller->$action($response, $request);
 
         return $response;
     }
