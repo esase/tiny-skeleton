@@ -9,12 +9,13 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton\Core;
+use Tiny\Skeleton\Core\Bootstrap\Bootstrap;
+use Tiny\Skeleton\Core\Bootstrap\BootstrapUtils;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-$bootstrap = new Core\Bootstrap(
-    new Core\BootstrapUtils(dirname(__DIR__)),
+$bootstrap = new Bootstrap(
+    new BootstrapUtils(dirname(__DIR__)),
     (!getenv('APPLICATION_ENV') || getenv('APPLICATION_ENV') === 'prod')
 );
 
@@ -23,10 +24,6 @@ $configsArray = $bootstrap->loadModulesConfigs(
     require_once __DIR__.'/../modules.php'
 );
 
-
-echo '<pre>';
-print_r($configsArray);
-exit;
 // init the service manager
 $serviceManager = $bootstrap->initServiceManager($configsArray);
 
@@ -39,10 +36,8 @@ $bootstrap->initConfigsService(
 // init routing and find a matched route
 $route = $bootstrap->initRouting($serviceManager);
 
-//
-//// init a matched controller
-//$response = $bootstrap->initController($route);
-//
-//// display the response
-//echo $response->getResponseForDisplaying();
-//
+// init a matched controller
+$response = $bootstrap->initController($serviceManager, $route);
+
+// display the response
+echo $response->getResponseForDisplaying();

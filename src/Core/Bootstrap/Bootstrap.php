@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Core;
+namespace Tiny\Skeleton\Core\Bootstrap;
 
 /*
  * This file is part of the Tiny package.
@@ -11,6 +11,7 @@ namespace Tiny\Skeleton\Core;
  * file that was distributed with this source code.
  */
 
+use Tiny\Http;
 use Tiny\Router;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base;
@@ -114,6 +115,34 @@ class Bootstrap
     }
 
     /**
+     * @param  ServiceManager  $serviceManager
+     * @param  Router\Route    $route
+     *
+     * @return Http\AbstractResponse
+     */
+    public function initController(
+        ServiceManager $serviceManager,
+        Router\Route $route
+    ): Http\AbstractResponse {
+        // create a controller instance
+        $controller = $serviceManager->get($route->getController());
+
+        /** @var  Http\Request $request */
+        $request = $serviceManager->get(Http\Request::class);
+
+        /** @var  Http\AbstractResponse $response */
+        $response = $serviceManager->get(Http\AbstractResponse::class);
+
+        // invoke the controller's action
+        $controller->{$route->getMatchedAction()}(
+            $response,
+            $request
+        );
+
+        return $response;
+    }
+
+    /**
      * @param  array  $modules
      *
      * @return array
@@ -130,37 +159,5 @@ class Bootstrap
 
         return $configs;
     }
-
-    //
-
-    //
-
-    //
-
-    //
-    //    /**
-    //     * @param  Route  $route
-    //     *
-    //     * @return Http\AbstractResponse
-    //     */
-    //    public function initController(Route $route): Http\AbstractResponse
-    //    {
-    //        // create a controller instance
-    //        $controller = $this->serviceManager->get($route->getController());
-    //
-    //        /** @var  Http\Request $request */
-    //        $request = $this->serviceManager->get(Http\Request::class);
-    //
-    //        /** @var  Http\AbstractResponse $response */
-    //        $response = $this->serviceManager->get(Http\AbstractResponse::class);
-    //
-    //        // invoke the controller's action
-    //        $controller->{$route->getMatchedAction()}(
-    //            $response,
-    //            $request
-    //        );
-    //
-    //        return $response;
-    //    }
 
 }

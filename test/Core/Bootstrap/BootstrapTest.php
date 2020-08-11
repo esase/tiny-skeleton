@@ -9,15 +9,76 @@
  * file that was distributed with this source code.
  */
 
-namespace Tiny\Skeleton\Core;
+namespace Tiny\Skeleton\Core\Bootstrap;
 
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base;
 use Tiny\Router;
+use Tiny\Http;
 
 class BootstrapTest extends TestCase
 {
+
+    public function testInitControllerMethod()
+    {
+        $controller = 'TestController';
+        $action = 'test';
+
+        $routeMock = $this->createMock(
+            Router\Route::class
+        );
+
+        $routeMock->expects($this->once())
+            ->method('getController')
+            ->willReturn($controller);
+
+        $routeMock->expects($this->once())
+            ->method('getMatchedAction')
+            ->willReturn($action);
+
+        $requestStub = $this->createMock(
+            Http\Request::class
+        );
+
+        $responseStub = $this->createMock(
+            Http\AbstractResponse::class
+        );
+
+        $serviceManagerMock = $this->createMock(
+            ServiceManager::class
+        );
+
+        $controllerMock = $this->getMockBuilder(stdClass::class)
+            ->addMethods(['test'])
+            ->getMock();
+
+        $controllerMock->expects($this->once())
+            ->method('test')
+            ->with($responseStub, $requestStub)
+            ->willReturn($responseStub);
+
+        $serviceManagerMock->expects($this->exactly(3))
+            ->method('get')
+            ->will($this->onConsecutiveCalls(
+                $controllerMock,
+                $requestStub,
+                $responseStub
+            ));
+
+        $bootstrap = new Bootstrap(
+            $this->createMock(
+                BootstrapUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initController(
+            $serviceManagerMock,
+            $routeMock
+        );
+    }
 
     public function testInitRoutingMethod()
     {
