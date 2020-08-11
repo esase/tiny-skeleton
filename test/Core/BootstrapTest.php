@@ -16,6 +16,30 @@ use PHPUnit\Framework\TestCase;
 class BootstrapTest extends TestCase
 {
 
+    public function testInitServiceManagerMethod()
+    {
+        $bootstrap = new Bootstrap(
+            $this->createMock(
+                BootstrapUtils::class
+            ),
+            true
+        );
+
+        $serviceManager = $bootstrap->initServiceManager([
+            'service_manager' => [
+                'shared' => [
+                    'TestSharedClass' => 'TestSharedClassFactory'
+                ],
+                'discrete' => [
+                    'TestDiscreteClass' => 'TestDiscreteClassFactory'
+                ]
+            ]
+        ]);
+
+        $this->assertTrue($serviceManager->has('TestSharedClass'));
+        $this->assertTrue($serviceManager->has('TestDiscreteClass'));
+    }
+
     public function testLoadModulesConfigsMethodUsingProdEnvAndNotCachedConfigs()
     {
         $module1Config = [

@@ -26,13 +26,10 @@ $configsArray = $bootstrap->loadModulesConfigs(
     ]
 );
 
+// init the service manager
+$bootstrap->initServiceManager($configsArray);
 
-echo '<pre>';
-print_r($configsArray);
-exit;
-//
-//// init the service manager
-//$bootstrap->initServiceManager($configsArray);
+echo 'aa';
 //
 //// init the configs service (we need to be able to fetch modules configs later)
 //$bootstrap->initConfigsService($configsArray);

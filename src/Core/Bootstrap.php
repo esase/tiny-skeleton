@@ -11,11 +11,7 @@ namespace Tiny\Skeleton\Core;
  * file that was distributed with this source code.
  */
 
-//use Tiny\Http;
-//use Tiny\Router\Route;
-//use Tiny\Router\Router;
-//use Tiny\ServiceManager\ServiceManager;
-//use Tiny\Skeleton\Module\Base;
+use Tiny\ServiceManager\ServiceManager;
 
 class Bootstrap
 {
@@ -29,6 +25,11 @@ class Bootstrap
      * @var bool
      */
     private bool $isProdEnvironment;
+
+    /**
+     * @var ServiceManager
+     */
+    private ServiceManager $serviceManager;
 
     /**
      * Bootstrap constructor.
@@ -73,6 +74,21 @@ class Bootstrap
     }
 
     /**
+     * @param  array  $configs
+     *
+     * @return ServiceManager
+     */
+    public function initServiceManager(array $configs): ServiceManager
+    {
+        $this->serviceManager = new ServiceManager(
+            ($configs['service_manager']['shared'] ?? []),
+            ($configs['service_manager']['discrete'] ?? [])
+        );
+
+        return $this->serviceManager;
+    }
+
+    /**
      * @param  array  $modules
      *
      * @return array
@@ -91,16 +107,7 @@ class Bootstrap
     }
 
     //
-    //    /**
-    //     * @param  array  $configs
-    //     */
-    //    public function initServiceManager(array $configs)
-    //    {
-    //        $this->serviceManager = new ServiceManager(
-    //            ($configs['service_manager']['shared'] ?? []),
-    //            ($configs['service_manager']['discrete'] ?? [])
-    //        );
-    //    }
+
     //
     //    /**
     //     * @param  array  $configsArray
