@@ -12,9 +12,9 @@
 use Tiny\Skeleton\Module\Core;
 
 return [
-    [
-        'event'    => Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING,
-        'listener' => Core\EventListener\RouteBeforeCors::class,
-        'priority' => -1000,
-    ],
+//    [
+//        'event'    => Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING,
+//        'listener' => Core\EventListener\RouteBeforeCors::class,
+//        'priority' => -1000,
+//    ],
 ];

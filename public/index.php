@@ -18,9 +18,12 @@ use Tiny\Http;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
+$isProdEnvironment = !getenv('APPLICATION_ENV')
+    || getenv('APPLICATION_ENV') === 'prod';
+
 $bootstrap = new Bootstrap(
     new BootstrapUtils(dirname(__DIR__)),
-    (!getenv('APPLICATION_ENV') || getenv('APPLICATION_ENV') === 'prod')
+    $isProdEnvironment
 );
 
 // load modules configs
@@ -37,20 +40,29 @@ $bootstrap->initConfigsService(
     $configsArray
 );
 
-// init event manager
+// init the event manager
 $bootstrap->initEventManager(
     $serviceManager->get(EventManager::class),
     $serviceManager->get(Core\Service\ConfigService::class)
 );
 
-// init routing and find a matched route
-$route = $bootstrap->initRouting(
+// init routes
+$bootstrap->initRoutes(
+    $serviceManager->get(EventManager::class),
+    $serviceManager->get(Router\Router::class),
+    $serviceManager->get(Core\Service\ConfigService::class),
+    php_sapi_name() === 'cli'
+);
+
+// init the router and find a matched route
+$route = $bootstrap->initRouter(
     $serviceManager->get(EventManager::class),
     $serviceManager->get(Router\Router::class)
 );
 
 // init a matched controller
 $response = $bootstrap->initController(
+    $serviceManager->get(EventManager::class),
     $serviceManager->get($route->getController()),
     $serviceManager->get(Http\Request::class),
     $serviceManager->get(Http\AbstractResponse::class),

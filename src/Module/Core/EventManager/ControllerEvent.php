@@ -5,16 +5,14 @@ namespace Tiny\Skeleton\Module\Core\EventManager;
 use Tiny\EventManager\AbstractEvent;
 use Tiny\EventManager\Event;
 use Tiny\Skeleton\Module\Core\Exception;
-use Tiny\Router;
+use Tiny\Http;
 
-class RouteEvent extends Event
+class ControllerEvent extends Event
 {
 
-    const EVENT_REGISTER_ROUTE = 'core.register.route';
+    const EVENT_BEFORE_CALLING_CONTROLLER = 'core.before.calling.controller';
 
-    const EVENT_BEFORE_MATCHING_ROUTE = 'core.before.matching.route';
-
-    const EVENT_AFTER_MATCHING_ROUTE = 'core.after.matching.route';
+    const EVENT_AFTER_CALLING_CONTROLLER = 'core.after.calling.controller';
 
     /**
      * RouteEvent constructor.
@@ -49,11 +47,11 @@ class RouteEvent extends Event
      */
     private function checkData($data)
     {
-        if (null !== $data && !($data instanceof Router\Route)) {
+        if (null !== $data && !($data instanceof Http\AbstractResponse)) {
             throw new Exception\InvalidArgumentException(
                 sprintf(
                     'Data must be instance of the "%s"',
-                    Router\Route::class
+                    Http\AbstractResponse::class
                 )
             );
         }

@@ -99,10 +99,12 @@ class Bootstrap
     /**
      * @param  EventManager                $eventManager
      * @param  Core\Service\ConfigService  $configsService
+     * @param  int                         $defaultPriority
      */
     public function initEventManager(
         EventManager $eventManager,
-        Core\Service\ConfigService $configsService
+        Core\Service\ConfigService $configsService,
+        int $defaultPriority = 100
     ) {
         $listeners = $configsService->getConfig('listeners', []);
 
@@ -110,8 +112,46 @@ class Bootstrap
             $eventManager->subscribe(
                 ($listener['event'] ?? ''),
                 ($listener['listener'] ?? ''),
-                ($listener['priority'] ?? 100)
+                ($listener['priority'] ?? $defaultPriority)
             );
+        }
+    }
+
+    /**
+     * @param  EventManager                $eventManger
+     * @param  Router\Router               $router
+     * @param  Core\Service\ConfigService  $configsService
+     * @param  bool                        $isConsole
+     */
+    public function initRoutes(
+        EventManager $eventManger,
+        Router\Router $router,
+        Core\Service\ConfigService $configsService,
+        bool $isConsole = false
+    ) {
+        $allRoutes = $configsService->getConfig('routes', []);
+
+        // we only need to fetch specific routes (either http or console ones)
+        $routes = $isConsole ? ($allRoutes['console'] ?? [])
+            : ($allRoutes['http'] ?? []);
+
+        foreach ($routes as $route) {
+            $route = new Router\Route(
+                ($route['request'] ?? ''),
+                ($route['controller'] ?? ''),
+                ($route['action_list'] ?? ''),
+                ($route['type'] ?? Router\Route::TYPE_LITERAL),
+                ($route['request_params'] ?? []),
+                ($route['spec'] ?? '')
+            );
+
+            $registerEvent = new Core\EventManager\RouteEvent($route);
+            $eventManger->trigger(
+                Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+                $registerEvent
+            );
+
+            $router->registerRoute($registerEvent->getData());
         }
     }
 
@@ -121,17 +161,18 @@ class Bootstrap
      *
      * @return Router\Route
      */
-    public function initRouting(
+    public function initRouter(
         EventManager $eventManger,
         Router\Router $router
     ): Router\Route {
-        // trigger the routing events chain
+        // trigger the router's events chain
         $beforeEvent = new Core\EventManager\RouteEvent();
         $eventManger->trigger(
-            Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING,
+            Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
             $beforeEvent
         );
 
+        // return a modified route
         if ($beforeEvent->getData()) {
             return $beforeEvent->getData();
         }
@@ -139,22 +180,27 @@ class Bootstrap
         // find a matched route
         $route = $router->getMatchedRoute();
 
-        $afterEvent = new Core\EventManager\RouteEvent(null, [
-            'route' => $route
-        ]);
+        $afterEvent = new Core\EventManager\RouteEvent(
+            null, [
+                'route' => $route,
+            ]
+        );
         $eventManger->trigger(
-            Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING,
+            Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
             $afterEvent
         );
 
+        // return a modified route
         if ($afterEvent->getData()) {
             return $afterEvent->getData();
         }
 
+        // return the initial matched route
         return $route;
     }
 
     /**
+     * @param  EventManager           $eventManger
      * @param  object                 $controller
      * @param  Http\Request           $request
      * @param  Http\AbstractResponse  $response
@@ -163,14 +209,43 @@ class Bootstrap
      * @return Http\AbstractResponse
      */
     public function initController(
+        EventManager $eventManger,
         object $controller,
         Http\Request $request,
         Http\AbstractResponse $response,
         string $action
     ): Http\AbstractResponse {
-        // invoke the controller's action
+        // trigger the controller's events chain
+        $beforeEvent = new Core\EventManager\ControllerEvent();
+        $eventManger->trigger(
+            Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+            $beforeEvent
+        );
+
+        // return a modified response
+        if ($beforeEvent->getData()) {
+            return $beforeEvent->getData();
+        }
+
+        // call the controller's action
         $controller->$action($response, $request);
 
+        $afterEvent = new Core\EventManager\ControllerEvent(
+            null, [
+                'response' => $response,
+            ]
+        );
+        $eventManger->trigger(
+            Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
+            $afterEvent
+        );
+
+        // return a modified response
+        if ($afterEvent->getData()) {
+            return $afterEvent->getData();
+        }
+
+        // return the initial response
         return $response;
     }
 
