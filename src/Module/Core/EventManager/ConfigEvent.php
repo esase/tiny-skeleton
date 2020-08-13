@@ -5,21 +5,16 @@ namespace Tiny\Skeleton\Module\Core\EventManager;
 use Tiny\EventManager\AbstractEvent;
 use Tiny\EventManager\Event;
 use Tiny\Skeleton\Module\Core\Exception;
-use Tiny\Http;
 
-class ControllerEvent extends Event
+class ConfigEvent extends Event
 {
 
-    const EVENT_BEFORE_DISPLAYING_RESPONSE = 'core.before.displaying.response';
-
-    const EVENT_BEFORE_CALLING_CONTROLLER = 'core.before.calling.controller';
-
-    const EVENT_AFTER_CALLING_CONTROLLER = 'core.after.calling.controller';
+    const EVENT_SET_CONFIGS = 'core.set.configs';
 
     /**
-     * RouteEvent constructor.
+     * ConfigEvent constructor.
      *
-     * @param  mixed  $data
+     * @param  null   $data
      * @param  array  $params
      */
     public function __construct(
@@ -49,13 +44,8 @@ class ControllerEvent extends Event
      */
     private function checkData($data)
     {
-        if (null !== $data && !($data instanceof Http\AbstractResponse)) {
-            throw new Exception\InvalidArgumentException(
-                sprintf(
-                    'Data must be instance of the "%s"',
-                    Http\AbstractResponse::class
-                )
-            );
+        if (null !== $data && !is_array($data)) {
+            throw new Exception\InvalidArgumentException('Data must be array');
         }
     }
 

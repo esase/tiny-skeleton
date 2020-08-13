@@ -86,28 +86,37 @@ class Bootstrap
     }
 
     /**
+     * @param  EventManager                $eventManager
      * @param  Core\Service\ConfigService  $configsService
      * @param  array                       $configsArray
      */
     public function initConfigsService(
+        EventManager $eventManager,
         Core\Service\ConfigService $configsService,
         array $configsArray
     ) {
-        $configsService->setConfigs($configsArray);
+        $setEvent = new Core\EventManager\ConfigEvent($configsArray);
+        $eventManager->trigger(
+            Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
+            $setEvent
+        );
+
+        $configsService->setConfigs($setEvent->getData());
     }
 
     /**
-     * @param  EventManager                $eventManager
-     * @param  Core\Service\ConfigService  $configsService
-     * @param  int                         $defaultPriority
+     * @param  EventManager  $eventManager
+     * @param  array         $configsArray
+     * @param  int           $defaultPriority
      */
     public function initEventManager(
         EventManager $eventManager,
-        Core\Service\ConfigService $configsService,
+        array $configsArray,
         int $defaultPriority = 100
     ) {
-        $listeners = $configsService->getConfig('listeners', []);
+        $listeners = $configsArray['listeners'] ?? [];
 
+        // register listeners
         foreach ($listeners as $listener) {
             $eventManager->subscribe(
                 ($listener['event'] ?? ''),
@@ -118,13 +127,13 @@ class Bootstrap
     }
 
     /**
-     * @param  EventManager                $eventManger
+     * @param  EventManager                $eventManager
      * @param  Router\Router               $router
      * @param  Core\Service\ConfigService  $configsService
      * @param  bool                        $isConsole
      */
     public function initRoutes(
-        EventManager $eventManger,
+        EventManager $eventManager,
         Router\Router $router,
         Core\Service\ConfigService $configsService,
         bool $isConsole = false
@@ -146,7 +155,7 @@ class Bootstrap
             );
 
             $registerEvent = new Core\EventManager\RouteEvent($route);
-            $eventManger->trigger(
+            $eventManager->trigger(
                 Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
                 $registerEvent
             );
@@ -156,18 +165,18 @@ class Bootstrap
     }
 
     /**
-     * @param  EventManager   $eventManger
+     * @param  EventManager   $eventManager
      * @param  Router\Router  $router
      *
      * @return Router\Route
      */
     public function initRouter(
-        EventManager $eventManger,
+        EventManager $eventManager,
         Router\Router $router
     ): Router\Route {
         // trigger the router's events chain
         $beforeEvent = new Core\EventManager\RouteEvent();
-        $eventManger->trigger(
+        $eventManager->trigger(
             Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
             $beforeEvent
         );
@@ -185,7 +194,7 @@ class Bootstrap
                 'route' => $route,
             ]
         );
-        $eventManger->trigger(
+        $eventManager->trigger(
             Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
             $afterEvent
         );
@@ -200,7 +209,7 @@ class Bootstrap
     }
 
     /**
-     * @param  EventManager           $eventManger
+     * @param  EventManager           $eventManager
      * @param  object                 $controller
      * @param  Http\Request           $request
      * @param  Http\AbstractResponse  $response
@@ -209,7 +218,7 @@ class Bootstrap
      * @return Http\AbstractResponse
      */
     public function initController(
-        EventManager $eventManger,
+        EventManager $eventManager,
         object $controller,
         Http\Request $request,
         Http\AbstractResponse $response,
@@ -217,7 +226,7 @@ class Bootstrap
     ): Http\AbstractResponse {
         // trigger the controller's events chain
         $beforeEvent = new Core\EventManager\ControllerEvent();
-        $eventManger->trigger(
+        $eventManager->trigger(
             Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
             $beforeEvent
         );
@@ -235,7 +244,7 @@ class Bootstrap
                 'response' => $response,
             ]
         );
-        $eventManger->trigger(
+        $eventManager->trigger(
             Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
             $afterEvent
         );
@@ -247,6 +256,46 @@ class Bootstrap
 
         // return the initial response
         return $response;
+    }
+
+    /**
+     * @param  EventManager           $eventManager
+     * @param  Http\AbstractResponse  $response
+     * @param  string                 $controller
+     * @param  string                 $action
+     *
+     * @return string
+     */
+    public function initResponse(
+        EventManager $eventManager,
+        Http\AbstractResponse $response,
+        string $controller,
+        string $action
+    ): string {
+        // trigger the response's events chain
+        $beforeEvent = new Core\EventManager\ControllerEvent(
+            null,
+            [
+                'response'   => $response,
+                'controller' => $controller,
+                'action'     => $action,
+            ]
+        );
+        $eventManager->trigger(
+            Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+            $beforeEvent
+        );
+
+        // return a modified response
+        if ($beforeEvent->getData()) {
+            /** @var Http\AbstractResponse $response */
+            $response = $beforeEvent->getData();
+
+            return $response->getResponseForDisplaying();
+        }
+
+        // return the initial response
+        return $response->getResponseForDisplaying();
     }
 
     /**

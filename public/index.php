@@ -34,16 +34,17 @@ $configsArray = $bootstrap->loadModulesConfigs(
 // init the service manager
 $serviceManager = $bootstrap->initServiceManager($configsArray);
 
-// init the configs service (the raw configs array should be wrapped in an object)
-$bootstrap->initConfigsService(
-    $serviceManager->get(Core\Service\ConfigService::class),
-    $configsArray
-);
-
 // init the event manager
 $bootstrap->initEventManager(
     $serviceManager->get(EventManager::class),
-    $serviceManager->get(Core\Service\ConfigService::class)
+    $configsArray
+);
+
+// init the configs service (the raw configs array must be wrapped in an object)
+$bootstrap->initConfigsService(
+    $serviceManager->get(EventManager::class),
+    $serviceManager->get(Core\Service\ConfigService::class),
+    $configsArray
 );
 
 // init routes
@@ -69,5 +70,13 @@ $response = $bootstrap->initController(
     $route->getMatchedAction()
 );
 
+// init the response
+$responseText = $bootstrap->initResponse(
+    $serviceManager->get(EventManager::class),
+    $response,
+    $route->getController(),
+    $route->getMatchedAction()
+);
+
 // display the response
-echo $response->getResponseForDisplaying();
+echo $responseText;

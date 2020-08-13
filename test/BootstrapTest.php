@@ -23,7 +23,7 @@ class BootstrapTest extends TestCase
 
     public function testInitEventManagerMethod()
     {
-        $configs = [
+        $configs['listeners'] = [
             [
                 'event'    => 'test_event',
                 'listener' => 'TestListener',
@@ -39,15 +39,6 @@ class BootstrapTest extends TestCase
             ->method('subscribe')
             ->with('test_event', 'TestListener', -10);
 
-        $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
-        );
-
-        $configServiceMock->expects($this->once())
-            ->method('getConfig')
-            ->with('listeners', [])
-            ->willReturn($configs);
-
         $bootstrap = new Bootstrap(
             $this->createMock(
                 BootstrapUtils::class
@@ -57,7 +48,7 @@ class BootstrapTest extends TestCase
 
         $bootstrap->initEventManager(
             $eventManagerMock,
-            $configServiceMock
+            $configs
         );
     }
 
@@ -255,10 +246,13 @@ class BootstrapTest extends TestCase
         $routerMock->expects($this->once())
             ->method('registerRoute')
             ->with(
-                $this->callback(function(Router\Route $route) {
-                    // check the modified property by the event
-                    return 'TestModifiedController' === $route->getController();
-                })
+                $this->callback(
+                    function (Router\Route $route) {
+                        // check the modified property by the event
+                        return 'TestModifiedController'
+                            === $route->getController();
+                    }
+                )
             );
 
         $configServiceMock = $this->createMock(
@@ -320,7 +314,7 @@ class BootstrapTest extends TestCase
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\RouteEvent $eventParams
+                        Core\EventManager\RouteEvent $event
                     ) use (
                         $routeInitialStub,
                         $routeModifiedStub
@@ -328,14 +322,15 @@ class BootstrapTest extends TestCase
                         if ($eventName
                             == Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE
                         ) {
-                            // we must be sure that received the initial route from the 'getMatchedRoute' method
-                            $params = $eventParams->getParams();
-                            $this->assertSame(
-                                $params['route'], $routeInitialStub
+                            // check the event's params
+                            $this->assertEquals(
+                                [
+                                    'route'   => $routeInitialStub,
+                                ], $event->getParams()
                             );
 
                             // now replace the route with another one
-                            $eventParams->setData($routeModifiedStub);
+                            $event->setData($routeModifiedStub);
                         }
                     }
                 )
@@ -370,6 +365,17 @@ class BootstrapTest extends TestCase
             'test' => 'test',
         ];
 
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->once())
+            ->method('trigger')
+            ->with(
+                Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
+                $this->isInstanceOf(Core\EventManager\ConfigEvent::class)
+            );
+
         $configServiceMock = $this->createMock(
             Core\Service\ConfigService::class
         );
@@ -386,8 +392,69 @@ class BootstrapTest extends TestCase
         );
 
         $bootstrap->initConfigsService(
+            $eventManagerMock,
             $configServiceMock,
             $configs
+        );
+    }
+
+    public function testInitConfigsServiceMethodUsingSetConfigsEvent()
+    {
+        $initialConfigs = [
+            'test' => 'test',
+        ];
+
+        $modifiedConfigs = [
+            'test2' => 'test2',
+        ];
+
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->once())
+            ->method('trigger')
+            ->with(
+                Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
+                $this->isInstanceOf(Core\EventManager\ConfigEvent::class)
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $eventName,
+                        Core\EventManager\ConfigEvent $event
+                    ) use ($modifiedConfigs, $initialConfigs) {
+                        $this->assertEquals(
+                            Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
+                            $eventName
+                        );
+                        // ensure we received the initial configs
+                        $this->assertEquals($initialConfigs, $event->getData());
+
+                        // modify the configs
+                        $event->setData($modifiedConfigs);
+                    }
+                )
+            );
+
+        $configServiceMock = $this->createMock(
+            Core\Service\ConfigService::class
+        );
+
+        $configServiceMock->expects($this->once())
+            ->method('setConfigs')
+            ->with($modifiedConfigs);
+
+        $bootstrap = new Bootstrap(
+            $this->createMock(
+                BootstrapUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initConfigsService(
+            $eventManagerMock,
+            $configServiceMock,
+            $initialConfigs
         );
     }
 
@@ -685,7 +752,7 @@ class BootstrapTest extends TestCase
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\ControllerEvent $eventParams
+                        Core\EventManager\ControllerEvent $event
                     ) use (
                         $responseInitialStub,
                         $responseModifiedStub
@@ -693,14 +760,15 @@ class BootstrapTest extends TestCase
                         if ($eventName
                             == Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER
                         ) {
-                            // ensure we received the initial response
-                            $params = $eventParams->getParams();
-                            $this->assertSame(
-                                $params['response'], $responseInitialStub
+                            // check the event's params
+                            $this->assertEquals(
+                                [
+                                    'response'   => $responseInitialStub,
+                                ], $event->getParams()
                             );
 
                             // now replace the response with another one
-                            $eventParams->setData($responseModifiedStub);
+                            $event->setData($responseModifiedStub);
                         }
                     }
                 )
@@ -734,6 +802,112 @@ class BootstrapTest extends TestCase
         );
 
         $this->assertSame($responseModifiedStub, $response);
+    }
+
+    public function testInitResponseMethodUsingBeforeDisplayingEvent()
+    {
+        $responseInitialStub = $this->createMock(
+            Http\AbstractResponse::class
+        );
+
+        $responseModifiedMock = $this->createMock(
+            Http\AbstractResponse::class
+        );
+        $responseModifiedMock->expects($this->once())
+            ->method('getResponseForDisplaying')
+            ->willReturn('testResponseString');
+
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->once())
+            ->method('trigger')
+            ->with(
+                Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+                $this->isInstanceOf(Core\EventManager\ControllerEvent::class)
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $eventName,
+                        Core\EventManager\ControllerEvent $event
+                    ) use (
+                        $responseInitialStub,
+                        $responseModifiedMock
+                    ) {
+                        // check the event's name
+                        $this->assertEquals(
+                            Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+                            $eventName
+                        );
+
+                        // check the event's params
+                        $this->assertEquals(
+                            [
+                                'response'   => $responseInitialStub,
+                                'controller' => 'TestController',
+                                'action'     => 'index',
+                            ], $event->getParams()
+                        );
+
+                        // add a modified response
+                        $event->setData($responseModifiedMock);
+                    }
+                )
+            );
+
+        $bootstrap = new Bootstrap(
+            $this->createMock(
+                BootstrapUtils::class
+            ),
+            true
+        );
+
+        $responseText = $bootstrap->initResponse(
+            $eventManagerMock,
+            $responseInitialStub,
+            'TestController',
+            'index'
+        );
+
+        $this->assertSame('testResponseString', $responseText);
+    }
+
+    public function testInitResponseMethodUsingOnlyResponse()
+    {
+        $responseInitialMock = $this->createMock(
+            Http\AbstractResponse::class
+        );
+        $responseInitialMock->expects($this->once())
+            ->method('getResponseForDisplaying')
+            ->willReturn('testResponseString');
+
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->once())
+            ->method('trigger')
+            ->with(
+                Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+                $this->isInstanceOf(Core\EventManager\ControllerEvent::class)
+            );
+
+        $bootstrap = new Bootstrap(
+            $this->createMock(
+                BootstrapUtils::class
+            ),
+            true
+        );
+
+        $responseText = $bootstrap->initResponse(
+            $eventManagerMock,
+            $responseInitialMock,
+            'TestController',
+            'index'
+        );
+
+        $this->assertSame('testResponseString', $responseText);
     }
 
 }
