@@ -11,7 +11,7 @@ namespace Tiny\Skeleton;
  * file that was distributed with this source code.
  */
 
-class BootstrapUtils
+class BootstrapperUtils
 {
 
     const CONFIG_FILE = 'config.php';

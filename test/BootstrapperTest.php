@@ -18,7 +18,7 @@ use Tiny\Skeleton\Module\Core;
 use Tiny\Router;
 use Tiny\Http;
 
-class BootstrapTest extends TestCase
+class BootstrapperTest extends TestCase
 {
 
     public function testInitEventManagerMethod()
@@ -39,15 +39,44 @@ class BootstrapTest extends TestCase
             ->method('subscribe')
             ->with('test_event', 'TestListener', -10);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
 
         $bootstrap->initEventManager(
             $eventManagerMock,
+            $configs
+        );
+    }
+
+    public function testInitEventManagerMethodUsingEmptyParams()
+    {
+        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Event name or listener class is missing, check you config'
+        );
+
+        $configs['listeners'] = [
+            [
+            ],
+        ];
+
+        $eventManagerStub = $this->createMock(
+            EventManager::class
+        );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initEventManager(
+            $eventManagerStub,
             $configs
         );
     }
@@ -90,9 +119,9 @@ class BootstrapTest extends TestCase
             Router\Router::class
         );
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -131,9 +160,9 @@ class BootstrapTest extends TestCase
             ->method('getMatchedRoute')
             ->willReturn($routeInitialStub);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -187,9 +216,9 @@ class BootstrapTest extends TestCase
                 ]
             );
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -197,6 +226,90 @@ class BootstrapTest extends TestCase
         $bootstrap->initRoutes(
             $eventManagerMock,
             $routerMock,
+            $configServiceMock,
+            true
+        );
+    }
+
+    public function testInitRoutesUsingEmptyConfig()
+    {
+        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Both http and console routes are missing, check you config'
+        );
+
+        $eventManagerStub = $this->createMock(
+            EventManager::class
+        );
+
+        $routerStub = $this->createMock(
+            Router\Router::class
+        );
+
+        $configServiceMock = $this->createMock(
+            Core\Service\ConfigService::class
+        );
+
+        $configServiceMock->expects($this->once())
+            ->method('getConfig')
+            ->with('routes', []);
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initRoutes(
+            $eventManagerStub,
+            $routerStub,
+            $configServiceMock,
+            true
+        );
+    }
+
+    public function testInitRoutesUsingEmptyRouterConfig()
+    {
+        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'One of: request, controller or action list is empty, check you config'
+        );
+
+        $eventManagerStub = $this->createMock(
+            EventManager::class
+        );
+
+        $routerStub = $this->createMock(
+            Router\Router::class
+        );
+
+        $configServiceMock = $this->createMock(
+            Core\Service\ConfigService::class
+        );
+
+        $configServiceMock->expects($this->once())
+            ->method('getConfig')
+            ->with('routes', [])
+            ->willReturn(
+                [
+                    'console' => [
+                        [
+                        ],
+                    ],
+                ]
+            );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initRoutes(
+            $eventManagerStub,
+            $routerStub,
             $configServiceMock,
             true
         );
@@ -274,9 +387,9 @@ class BootstrapTest extends TestCase
                 ]
             );
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -325,7 +438,7 @@ class BootstrapTest extends TestCase
                             // check the event's params
                             $this->assertEquals(
                                 [
-                                    'route'   => $routeInitialStub,
+                                    'route' => $routeInitialStub,
                                 ], $event->getParams()
                             );
 
@@ -343,9 +456,9 @@ class BootstrapTest extends TestCase
             ->method('getMatchedRoute')
             ->willReturn($routeInitialStub);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -384,9 +497,9 @@ class BootstrapTest extends TestCase
             ->method('setConfigs')
             ->with($configs);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -444,9 +557,9 @@ class BootstrapTest extends TestCase
             ->method('setConfigs')
             ->with($modifiedConfigs);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -460,9 +573,9 @@ class BootstrapTest extends TestCase
 
     public function testInitServiceManagerMethod()
     {
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -484,6 +597,23 @@ class BootstrapTest extends TestCase
         $this->assertTrue($serviceManager->has('TestDiscreteClass'));
     }
 
+    public function testInitServiceManagerMethodUsingEmptyConfig()
+    {
+        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Both shared and discrete services are empty, check you config'
+        );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initServiceManager([]);
+    }
+
     public function testLoadModulesConfigsMethodUsingProdEnvAndNotCachedConfigs(
     )
     {
@@ -498,7 +628,7 @@ class BootstrapTest extends TestCase
         ];
 
         $bootstrapUtilsMock = $this->createMock(
-            BootstrapUtils::class
+            BootstrapperUtils::class
         );
 
         $bootstrapUtilsMock->expects($this->once())
@@ -520,7 +650,7 @@ class BootstrapTest extends TestCase
                 ]
             );
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $bootstrapUtilsMock,
             true
         );
@@ -551,13 +681,13 @@ class BootstrapTest extends TestCase
             ],
         ];
         $bootstrapUtilsMock = $this->createMock(
-            BootstrapUtils::class
+            BootstrapperUtils::class
         );
         $bootstrapUtilsMock->expects($this->once())
             ->method('loadCachedModulesConfigArray')
             ->willReturn($cachedModuleConfig);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $bootstrapUtilsMock,
             true
         );
@@ -586,13 +716,13 @@ class BootstrapTest extends TestCase
         ];
 
         $bootstrapUtilsMock = $this->createMock(
-            BootstrapUtils::class
+            BootstrapperUtils::class
         );
         $bootstrapUtilsMock->expects($this->exactly(2))
             ->method('loadModuleConfigArray')
             ->will($this->onConsecutiveCalls($module1Config, $module2Config));
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $bootstrapUtilsMock,
             false
         );
@@ -660,9 +790,9 @@ class BootstrapTest extends TestCase
             Http\AbstractResponse::class
         );
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -709,9 +839,9 @@ class BootstrapTest extends TestCase
             ->method('index')
             ->with($responseStub, $requestStub);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -763,7 +893,7 @@ class BootstrapTest extends TestCase
                             // check the event's params
                             $this->assertEquals(
                                 [
-                                    'response'   => $responseInitialStub,
+                                    'response' => $responseInitialStub,
                                 ], $event->getParams()
                             );
 
@@ -786,9 +916,9 @@ class BootstrapTest extends TestCase
             ->method('list')
             ->with($responseInitialStub, $requestStub);
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -856,9 +986,9 @@ class BootstrapTest extends TestCase
                 )
             );
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );
@@ -893,9 +1023,9 @@ class BootstrapTest extends TestCase
                 $this->isInstanceOf(Core\EventManager\ControllerEvent::class)
             );
 
-        $bootstrap = new Bootstrap(
+        $bootstrap = new Bootstrapper(
             $this->createMock(
-                BootstrapUtils::class
+                BootstrapperUtils::class
             ),
             true
         );

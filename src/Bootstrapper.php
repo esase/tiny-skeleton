@@ -17,13 +17,13 @@ use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 use Tiny\Router;
 
-class Bootstrap
+class Bootstrapper
 {
 
     /**
-     * @var BootstrapUtils
+     * @var BootstrapperUtils
      */
-    private BootstrapUtils $utils;
+    private BootstrapperUtils $utils;
 
     /**
      * @var bool
@@ -33,11 +33,11 @@ class Bootstrap
     /**
      * Bootstrap constructor.
      *
-     * @param  BootstrapUtils  $utils
-     * @param  bool            $isProdEnvironment
+     * @param  BootstrapperUtils  $utils
+     * @param  bool               $isProdEnvironment
      */
     public function __construct(
-        BootstrapUtils $utils,
+        BootstrapperUtils $utils,
         bool $isProdEnvironment
     ) {
         $this->utils = $utils;
@@ -49,7 +49,7 @@ class Bootstrap
      *
      * @return array
      */
-    public function loadModulesConfigs(array $modules)
+    public function loadModulesConfigs(array $modules): array
     {
         // in the "dev" environment  we always return actual configs
         if (!$this->isProdEnvironment) {
@@ -79,9 +79,18 @@ class Bootstrap
      */
     public function initServiceManager(array $configs): ServiceManager
     {
+        $shared = ($configs['service_manager']['shared'] ?? []);
+        $discrete = ($configs['service_manager']['discrete'] ?? []);
+
+        if (!$shared && !$discrete) {
+            throw new Core\Exception\InvalidArgumentException(
+                'Both shared and discrete services are empty, check you config'
+            );
+        }
+
         return new ServiceManager(
-            ($configs['service_manager']['shared'] ?? []),
-            ($configs['service_manager']['discrete'] ?? [])
+            $shared,
+            $discrete
         );
     }
 
@@ -118,9 +127,18 @@ class Bootstrap
 
         // register listeners
         foreach ($listeners as $listener) {
+            $eventName = $listener['event'] ?? '';
+            $listenerClass = $listener['listener'] ?? '';
+
+            if (!$eventName || !$listenerClass) {
+                throw new Core\Exception\InvalidArgumentException(
+                    'Event name or listener class is missing, check you config'
+                );
+            }
+
             $eventManager->subscribe(
-                ($listener['event'] ?? ''),
-                ($listener['listener'] ?? ''),
+                $eventName,
+                $listenerClass,
                 ($listener['priority'] ?? $defaultPriority)
             );
         }
@@ -140,15 +158,33 @@ class Bootstrap
     ) {
         $allRoutes = $configsService->getConfig('routes', []);
 
-        // we only need to fetch specific routes (either http or console ones)
-        $routes = $isConsole ? ($allRoutes['console'] ?? [])
-            : ($allRoutes['http'] ?? []);
+        $consoleRoutes = $allRoutes['console'] ?? [];
+        $httpRoutes = $allRoutes['http'] ?? [];
 
-        foreach ($routes as $route) {
+        // we only need to fetch specific routes (either http or console ones)
+        $activeRoutes = $isConsole ? $consoleRoutes : $httpRoutes;
+
+        if (!$consoleRoutes && !$httpRoutes) {
+            throw new Core\Exception\InvalidArgumentException(
+                'Both http and console routes are missing, check you config'
+            );
+        }
+
+        foreach ($activeRoutes as $route) {
+            $request = $route['request'] ?? '';
+            $controller = $route['controller'] ?? '';
+            $actionList = $route['action_list'] ?? '';
+
+            if (!$request || !$controller || !$actionList) {
+                throw new Core\Exception\InvalidArgumentException(
+                    'One of: request, controller or action list is empty, check you config'
+                );
+            }
+
             $route = new Router\Route(
-                ($route['request'] ?? ''),
-                ($route['controller'] ?? ''),
-                ($route['action_list'] ?? ''),
+                $request,
+                $controller,
+                $actionList,
                 ($route['type'] ?? Router\Route::TYPE_LITERAL),
                 ($route['request_params'] ?? []),
                 ($route['spec'] ?? '')
