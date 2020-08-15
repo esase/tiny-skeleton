@@ -12,9 +12,17 @@
 use Tiny\Skeleton\Module\Core;
 
 return [
-//    [
-//        'event'    => Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING,
-//        'listener' => Core\EventListener\RouteBeforeCors::class,
-//        'priority' => -1000,
-//    ],
+    [
+        'event'    => Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+        'listener' => Core\EventListener\RegisterRouteCorsListener::class
+    ],
+    [
+        'event'    => Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+        'listener' => Core\EventListener\BeforeCallingControllerCorsListener::class,
+        'priority' => -1000
+    ],
+    [
+        'event'    => Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+        'listener' => Core\EventListener\BeforeDisplayingResponseCorsListener::class
+    ],
 ];

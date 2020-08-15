@@ -99,7 +99,7 @@ class Application
             $serviceManager->get($route->getController()),
             $serviceManager->get(Http\Request::class),
             $serviceManager->get(Http\AbstractResponse::class),
-            $route->getMatchedAction()
+            $route
         );
 
         // init the response

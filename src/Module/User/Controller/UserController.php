@@ -45,4 +45,8 @@ class UserController
         );
     }
 
+    public function create()
+    {
+    }
+
 }

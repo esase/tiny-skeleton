@@ -131,7 +131,7 @@ class ApplicationTest extends TestCase
             ->method('getController')
             ->willReturn('TestController');
 
-        $routeMock->expects($this->exactly(2))
+        $routeMock->expects($this->once())
             ->method('getMatchedAction')
             ->willReturn('index');
 
@@ -154,7 +154,7 @@ class ApplicationTest extends TestCase
                 $this->isInstanceOf(stdClass::class),
                 $this->isInstanceOf(Http\Request::class),
                 $this->isInstanceOf(Http\AbstractResponse::class),
-                'index'
+                $routeMock
             )
             ->willReturn($responseStub);
 

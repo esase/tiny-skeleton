@@ -249,7 +249,7 @@ class Bootstrapper
      * @param  object                 $controller
      * @param  Http\Request           $request
      * @param  Http\AbstractResponse  $response
-     * @param  string                 $action
+     * @param  Router\Route           $route
      *
      * @return Http\AbstractResponse
      */
@@ -258,10 +258,14 @@ class Bootstrapper
         object $controller,
         Http\Request $request,
         Http\AbstractResponse $response,
-        string $action
+        Router\Route $route
     ): Http\AbstractResponse {
         // trigger the controller's events chain
-        $beforeEvent = new Core\EventManager\ControllerEvent();
+        $beforeEvent = new Core\EventManager\ControllerEvent(
+            null, [
+            'route' => $route,
+        ]
+        );
         $eventManager->trigger(
             Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
             $beforeEvent
@@ -273,11 +277,12 @@ class Bootstrapper
         }
 
         // call the controller's action
-        $controller->$action($response, $request);
+        $controller->{$route->getMatchedAction()}($response, $request);
 
         $afterEvent = new Core\EventManager\ControllerEvent(
             null, [
                 'response' => $response,
+                'route'    => $route,
             ]
         );
         $eventManager->trigger(
@@ -327,11 +332,11 @@ class Bootstrapper
             /** @var Http\AbstractResponse $response */
             $response = $beforeEvent->getData();
 
-            return $response->getResponseForDisplaying();
+            return $response->getResponseForDisplaying() ?? '';
         }
 
         // return the initial response
-        return $response->getResponseForDisplaying();
+        return $response->getResponseForDisplaying() ?? '';
     }
 
     /**

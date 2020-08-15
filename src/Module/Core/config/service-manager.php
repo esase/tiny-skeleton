@@ -17,19 +17,21 @@ use Tiny\Skeleton\Module\Core\Router;
 return [
     'shared' => [
         // event manager
-        Tiny\EventManager\EventManager::class     => Core\EventManager\Factory\EventManagerFactory::class,
+        Tiny\EventManager\EventManager::class                          => Core\EventManager\Factory\EventManagerFactory::class,
 
         // router
-        Tiny\Router\Router::class                 => Core\Router\Factory\RouterFactory::class,
+        Tiny\Router\Router::class                                      => Core\Router\Factory\RouterFactory::class,
 
         // http
-        Tiny\Http\Request::class                  => Core\Http\Factory\RequestFactory::class,
-        Tiny\Http\AbstractResponse::class         => Core\Http\Factory\ResponseFactory::class,
+        Tiny\Http\Request::class                                       => Core\Http\Factory\RequestFactory::class,
+        Tiny\Http\AbstractResponse::class                              => Core\Http\Factory\ResponseFactory::class,
 
         // service
-        Core\Service\ConfigService::class         => InvokableFactory::class,
+        Core\Service\ConfigService::class                              => InvokableFactory::class,
 
         // listener
-        Core\EventListener\RouteBeforeCors::class => InvokableFactory::class,
+        Core\EventListener\BeforeCallingControllerCorsListener::class  => Core\EventListener\Factory\BeforeCallingControllerCorsListenerFactory::class,
+        Core\EventListener\RegisterRouteCorsListener::class            => Core\EventListener\Factory\RegisterRouteCorsListenerFactory::class,
+        Core\EventListener\BeforeDisplayingResponseCorsListener::class => Core\EventListener\Factory\BeforeDisplayingResponseCorsListenerFactory::class,
     ],
 ];

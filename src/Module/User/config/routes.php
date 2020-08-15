@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
  */
 
+use Tiny\Http\Request;
 use Tiny\Skeleton\Module\User;
 
 return [
@@ -16,7 +17,10 @@ return [
         [
             'request'     => '/users',
             'controller'  => User\Controller\UserController::class,
-            'action_list' => 'list',
+            'action_list' => [
+                Request::METHOD_GET => 'list',
+                Request::METHOD_POST => 'create'
+            ],
         ],
     ],
     'console' => [

@@ -6,3 +6,4 @@ data/config/*
 !data/config/.htaccess
 clover.xml
 .DS_Store
+.phpunit.result.cache
