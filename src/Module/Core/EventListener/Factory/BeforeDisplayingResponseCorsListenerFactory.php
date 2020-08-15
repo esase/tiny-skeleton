@@ -27,7 +27,7 @@ class BeforeDisplayingResponseCorsListenerFactory
     ): BeforeDisplayingResponseCorsListener {
         return new BeforeDisplayingResponseCorsListener(
             $serviceManager->get(Http\Request::class),
-            $serviceManager->get( Http\ResponseHttpUtils::class),
+            $serviceManager->get(Http\ResponseHttpUtils::class),
             ($_SERVER['HTTP_ORIGIN'] ?? null)
         );
     }

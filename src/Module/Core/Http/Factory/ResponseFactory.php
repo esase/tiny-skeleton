@@ -21,7 +21,7 @@ class ResponseFactory
         $response = php_sapi_name() === 'cli'
             ? new ResponseCli()
             : new ResponseHttp(
-                new ResponseHttpUtils()
+                $serviceManager->get(ResponseHttpUtils::class)
             );
 
         return $response;
