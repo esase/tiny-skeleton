@@ -5,7 +5,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Factory;
 /*
  * This file is part of the Tiny package.
  *
- * (c) Alex Ermashev <alexermashevn@gmail.com>
+ * (c) Alex Ermashev <alexermashev@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -28,7 +28,7 @@ class BeforeCallingControllerCorsListenerFactory
         return new BeforeCallingControllerCorsListener(
             $serviceManager->get(Http\Request::class),
             $serviceManager->get(Http\AbstractResponse::class),
-            new Http\ResponseHttpUtils(),
+            $serviceManager->get(Http\ResponseHttpUtils::class),
             ($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? null),
             ($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'] ?? null)
         );

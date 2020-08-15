@@ -3,7 +3,7 @@
 /*
  * This file is part of the Tiny package.
  *
- * (c) Alex Ermashev <alexermashevn@gmail.com>
+ * (c) Alex Ermashev <alexermashev@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -25,6 +25,7 @@ return [
         // http
         Tiny\Http\Request::class                                       => Core\Http\Factory\RequestFactory::class,
         Tiny\Http\AbstractResponse::class                              => Core\Http\Factory\ResponseFactory::class,
+        Tiny\Http\ResponseHttpUtils::class                             => InvokableFactory::class,
 
         // service
         Core\Service\ConfigService::class                              => InvokableFactory::class,
