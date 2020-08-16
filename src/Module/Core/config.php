@@ -10,6 +10,10 @@
  */
 
 return [
+    'view'            => [
+        'base_layout_path'   => __DIR__.'/view/layout/base.phtml',
+        'template_path_mask' => '{module}/view/{controller_name}/{action}.phtml',
+    ],
     'service_manager' => require_once 'config/service-manager.php',
     'listeners'       => require_once 'config/listeners.php',
 ];

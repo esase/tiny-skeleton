@@ -25,4 +25,8 @@ return [
         'event'    => Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
         'listener' => Core\EventListener\BeforeDisplayingResponseCorsListener::class
     ],
+    [
+        'event'    => Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
+        'listener' => Core\EventListener\AfterCallingControllerViewInitListener::class
+    ],
 ];

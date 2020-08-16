@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\User\Controller;
 
 use Tiny\Http;
 use Tiny\Skeleton\Module\User;
+use Tiny\Skeleton\View;
 
 class UserController
 {
@@ -37,11 +38,10 @@ class UserController
      */
     public function list(Http\AbstractResponse $response)
     {
-        $response->setResponse(json_encode(
-            $this->userService->getAllUsers()
-        ))
-        ->setResponseType(
-            Http\AbstractResponse::RESPONSE_TYPE_JSON
+        $response->setResponse(
+            new View([
+                'users' => $this->userService->getAllUsers()
+            ])
         );
     }
 
