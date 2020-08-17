@@ -34,4 +34,8 @@ return [
         'event'    => View::EVENT_CALL_VIEW_HELPER . 'config',
         'listener' => Core\EventListener\ViewHelper\ViewHelperConfigListener::class
     ],
+    [
+        'event'    => View::EVENT_CALL_VIEW_HELPER . 'url',
+        'listener' => Core\EventListener\ViewHelper\ViewHelperUrlListener::class
+    ],
 ];

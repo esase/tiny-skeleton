@@ -13,20 +13,25 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Skeleton\Module\Core;
-use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperConfigListener;
+use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperUrlListener;
+use Tiny\Router;
 
-class ViewHelperConfigListenerTest extends TestCase
+class ViewHelperUrlListenerTest extends TestCase
 {
 
     public function testInvokeMethod()
     {
-        $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+        $routerMock = $this->createMock(
+            Router\Router::class
         );
-        $configServiceMock->expects($this->once())
-            ->method('getConfig')
-            ->with('test')
-            ->willReturn('test_value');
+        $routerMock->expects($this->once())
+            ->method('assembleRequest')
+            ->with(
+                'Tiny\Skeleton\Module\Test\Controller\TestController',
+                'index',
+                ['test']
+            )
+            ->willReturn('/test');
 
         $eventMock = $this->createMock(
             Core\EventManager\RouteEvent::class
@@ -36,16 +41,19 @@ class ViewHelperConfigListenerTest extends TestCase
             ->willReturn(
                 [
                     'arguments' => [
-                        'test',
+                        'TestController',
+                        'index',
+                        'Test',
+                        ['test']
                     ],
                 ]
             );
         $eventMock->expects($this->once())
             ->method('setData')
-            ->with('test_value');
+            ->with('/test');
 
-        $listener = new ViewHelperConfigListener(
-            $configServiceMock
+        $listener = new ViewHelperUrlListener(
+            $routerMock
         );
 
         $listener($eventMock);
