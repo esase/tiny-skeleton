@@ -71,10 +71,12 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
             Core\EventManager\ControllerEvent::class
         );
         $eventMock->expects($this->once())
+            ->method('getData')
+            ->willReturn($responseMock);
+        $eventMock->expects($this->once())
             ->method('getParams')
             ->willReturn(
                 [
-                    'response' => $responseMock,
                     'route'    => $routeMock,
                 ]
             );

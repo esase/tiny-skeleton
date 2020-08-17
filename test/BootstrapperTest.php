@@ -134,47 +134,6 @@ class BootstrapperTest extends TestCase
         $this->assertSame($routeModifiedStub, $route);
     }
 
-    public function testInitRouterMethodUsingOnlyRouter()
-    {
-        $routeInitialStub = $this->createMock(
-            Router\Route::class
-        );
-
-        $eventManagerMock = $this->createMock(
-            EventManager::class
-        );
-
-        $eventManagerMock->expects($this->exactly(2))
-            ->method('trigger')
-            ->withConsecutive(
-                [Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
-                 $this->isInstanceOf(Core\EventManager\RouteEvent::class)],
-                [Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
-                 $this->isInstanceOf(Core\EventManager\RouteEvent::class)]
-            );
-
-        $routerMock = $this->createMock(
-            Router\Router::class
-        );
-        $routerMock->expects($this->once())
-            ->method('getMatchedRoute')
-            ->willReturn($routeInitialStub);
-
-        $bootstrap = new Bootstrapper(
-            $this->createMock(
-                BootstrapperUtils::class
-            ),
-            true
-        );
-
-        $route = $bootstrap->initRouter(
-            $eventManagerMock,
-            $routerMock
-        );
-
-        $this->assertSame($routeInitialStub, $route);
-    }
-
     public function testInitRoutes()
     {
         $eventManagerMock = $this->createMock(
@@ -435,14 +394,10 @@ class BootstrapperTest extends TestCase
                         if ($eventName
                             == Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE
                         ) {
-                            // check the event's params
-                            $this->assertEquals(
-                                [
-                                    'route' => $routeInitialStub,
-                                ], $event->getParams()
-                            );
+                            // check the event's data
+                            $this->assertEquals($routeInitialStub, $event->getData());
 
-                            // now replace the route with another one
+                            // now replace the route with modified one
                             $event->setData($routeModifiedStub);
                         }
                     }
@@ -818,60 +773,6 @@ class BootstrapperTest extends TestCase
         $this->assertSame($responseModifiedStub, $response);
     }
 
-    public function testInitControllerMethodUsingOnlyResponse()
-    {
-        $eventManagerMock = $this->createMock(
-            EventManager::class
-        );
-
-        $eventManagerMock->expects($this->exactly(2))
-            ->method('trigger')
-            ->withConsecutive(
-                [Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
-                 $this->isInstanceOf(Core\EventManager\ControllerEvent::class)],
-                [Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
-                 $this->isInstanceOf(Core\EventManager\ControllerEvent::class)]
-            );
-
-        $requestStub = $this->createMock(
-            Http\Request::class
-        );
-
-        $responseStub = $this->createMock(
-            Http\AbstractResponse::class
-        );
-
-        $controllerMock = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['index'])
-            ->getMock();
-
-        $controllerMock->expects($this->once())
-            ->method('index')
-            ->with($responseStub, $requestStub);
-
-        $bootstrap = new Bootstrapper(
-            $this->createMock(
-                BootstrapperUtils::class
-            ),
-            true
-        );
-
-        $routeMock = $this->createMock(Router\Route::class);
-        $routeMock->expects($this->once())
-            ->method('getMatchedAction')
-            ->willReturn('index');
-
-        $response = $bootstrap->initController(
-            $eventManagerMock,
-            $controllerMock,
-            $requestStub,
-            $responseStub,
-            $routeMock
-        );
-
-        $this->assertSame($responseStub, $response);
-    }
-
     public function testInitControllerMethodUsingAfterCallingEvent()
     {
         $responseInitialStub = $this->createMock(
@@ -911,15 +812,18 @@ class BootstrapperTest extends TestCase
                         if ($eventName
                             == Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER
                         ) {
-                            // check the event's params
+                            // check the event's data and params
+                            $this->assertEquals(
+                                $responseInitialStub,
+                                $event->getData()
+                            );
                             $this->assertEquals(
                                 [
-                                    'response' => $responseInitialStub,
-                                    'route'    => $routeMock,
+                                    'route' => $routeMock,
                                 ], $event->getParams()
                             );
 
-                            // now replace the response with another one
+                            // now we replace the response with the modified one
                             $event->setData($responseModifiedStub);
                         }
                     }
@@ -993,10 +897,10 @@ class BootstrapperTest extends TestCase
                             $eventName
                         );
 
-                        // check the event's params
+                        // check the event's data and params
+                        $this->assertEquals($responseInitialStub, $event->getData());
                         $this->assertEquals(
                             [
-                                'response'   => $responseInitialStub,
                                 'controller' => 'TestController',
                                 'action'     => 'index',
                             ], $event->getParams()
@@ -1018,43 +922,6 @@ class BootstrapperTest extends TestCase
         $responseText = $bootstrap->initResponse(
             $eventManagerMock,
             $responseInitialStub,
-            'TestController',
-            'index'
-        );
-
-        $this->assertSame('testResponseString', $responseText);
-    }
-
-    public function testInitResponseMethodUsingOnlyResponse()
-    {
-        $responseInitialMock = $this->createMock(
-            Http\AbstractResponse::class
-        );
-        $responseInitialMock->expects($this->once())
-            ->method('getResponseForDisplaying')
-            ->willReturn('testResponseString');
-
-        $eventManagerMock = $this->createMock(
-            EventManager::class
-        );
-
-        $eventManagerMock->expects($this->once())
-            ->method('trigger')
-            ->with(
-                Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
-                $this->isInstanceOf(Core\EventManager\ControllerEvent::class)
-            );
-
-        $bootstrap = new Bootstrapper(
-            $this->createMock(
-                BootstrapperUtils::class
-            ),
-            true
-        );
-
-        $responseText = $bootstrap->initResponse(
-            $eventManagerMock,
-            $responseInitialMock,
             'TestController',
             'index'
         );

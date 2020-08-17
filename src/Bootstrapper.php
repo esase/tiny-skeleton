@@ -225,23 +225,13 @@ class Bootstrapper
         // find a matched route
         $route = $router->getMatchedRoute();
 
-        $afterEvent = new Core\EventManager\RouteEvent(
-            null, [
-                'route' => $route,
-            ]
-        );
+        $afterEvent = new Core\EventManager\RouteEvent($route);
         $eventManager->trigger(
             Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
             $afterEvent
         );
 
-        // return a modified route
-        if ($afterEvent->getData()) {
-            return $afterEvent->getData();
-        }
-
-        // return the initial matched route
-        return $route;
+        return $afterEvent->getData();
     }
 
     /**
@@ -263,8 +253,8 @@ class Bootstrapper
         // trigger the controller's events chain
         $beforeEvent = new Core\EventManager\ControllerEvent(
             null, [
-            'route' => $route,
-        ]
+                'route' => $route,
+            ]
         );
         $eventManager->trigger(
             Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
@@ -280,9 +270,8 @@ class Bootstrapper
         $controller->{$route->getMatchedAction()}($response, $request);
 
         $afterEvent = new Core\EventManager\ControllerEvent(
-            null, [
-                'response' => $response,
-                'route'    => $route,
+            $response, [
+                'route' => $route,
             ]
         );
         $eventManager->trigger(
@@ -290,13 +279,7 @@ class Bootstrapper
             $afterEvent
         );
 
-        // return a modified response
-        if ($afterEvent->getData()) {
-            return $afterEvent->getData();
-        }
-
-        // return the initial response
-        return $response;
+        return $afterEvent->getData();
     }
 
     /**
@@ -315,9 +298,8 @@ class Bootstrapper
     ): string {
         // trigger the response's events chain
         $beforeEvent = new Core\EventManager\ControllerEvent(
-            null,
+            $response,
             [
-                'response'   => $response,
                 'controller' => $controller,
                 'action'     => $action,
             ]
@@ -327,16 +309,11 @@ class Bootstrapper
             $beforeEvent
         );
 
-        // return a modified response
-        if ($beforeEvent->getData()) {
-            /** @var Http\AbstractResponse $response */
-            $response = $beforeEvent->getData();
+        /** @var Http\AbstractResponse $response */
+        $response = $beforeEvent->getData();
+        $responseString = $response->getResponseForDisplaying();
 
-            return $response->getResponseForDisplaying() ?? '';
-        }
-
-        // return the initial response
-        return $response->getResponseForDisplaying() ?? '';
+        return null !== $responseString ? $responseString : '';
     }
 
     /**

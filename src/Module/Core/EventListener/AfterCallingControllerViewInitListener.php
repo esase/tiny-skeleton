@@ -44,17 +44,13 @@ class AfterCallingControllerViewInitListener
      */
     public function __invoke(Core\EventManager\ControllerEvent $event)
     {
-        $eventParams = $event->getParams();
-
         /** @var Http\AbstractResponse $response */
-        $response = $eventParams['response'];
-
+        $response = $event->getData();
         $controllerResponse = $response->getResponse();
 
         // initialize the view with additional settings
         if ($controllerResponse instanceof View) {
-            /** @var Router\Route $route */
-            $route = $eventParams['route'];
+            // get the View's configs
             $viewConfig = $this->configService->getConfig('view', []);
 
             // set both layout and template path
@@ -63,7 +59,7 @@ class AfterCallingControllerViewInitListener
             )
                 ->setTemplatePath(
                     $this->getTemplatePath(
-                        $route,
+                        $event->getParams()['route'],
                         $viewConfig
                     )
                 );
