@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Skeleton\Module\Core;
+use Tiny\EventManager;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperConfigListener;
 
 class ViewHelperConfigListenerTest extends TestCase
@@ -29,7 +30,7 @@ class ViewHelperConfigListenerTest extends TestCase
             ->willReturn('test_value');
 
         $eventMock = $this->createMock(
-            Core\EventManager\RouteEvent::class
+            EventManager\Event::class
         );
         $eventMock->expects($this->once())
             ->method('getParams')

@@ -63,6 +63,14 @@ class View
     }
 
     /**
+     * @return array
+     */
+    public function getVariables(): array
+    {
+        return $this->variables;
+    }
+
+    /**
      * @return string|null
      */
     public function getTemplatePath()
@@ -108,6 +116,14 @@ class View
     public function setEventManager(EventManager\EventManager $eventManager)
     {
         $this->eventManager = $eventManager;
+    }
+
+    /**
+     * @return EventManager\EventManager|null
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 
     /**

@@ -13,6 +13,7 @@ use Tiny\Skeleton\Module\Core;
 use Tiny\Skeleton\View;
 
 return [
+    // core
     [
         'event'    => Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
         'listener' => Core\EventListener\Core\RegisterRouteCorsListener::class
@@ -34,8 +35,13 @@ return [
         'event'    => View::EVENT_CALL_VIEW_HELPER . 'config',
         'listener' => Core\EventListener\ViewHelper\ViewHelperConfigListener::class
     ],
+    // view helper
     [
         'event'    => View::EVENT_CALL_VIEW_HELPER . 'url',
         'listener' => Core\EventListener\ViewHelper\ViewHelperUrlListener::class
+    ],
+    [
+        'event'    => View::EVENT_CALL_VIEW_HELPER . 'partialView',
+        'listener' => Core\EventListener\ViewHelper\ViewHelperPartialViewListener::class
     ],
 ];

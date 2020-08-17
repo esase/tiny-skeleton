@@ -12,25 +12,27 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper;
  */
 
 use Tiny\EventManager\Event;
+use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\View;
 
-class ViewHelperConfigListener
+class ViewHelperPartialViewListener
 {
 
     /**
-     * @var Core\Service\ConfigService
+     * @var EventManager
      */
-    private Core\Service\ConfigService $configService;
+    private EventManager $eventManager;
 
     /**
-     * ViewHelperConfigListener constructor.
+     * ViewHelperPartialViewListener constructor.
      *
-     * @param  Core\Service\ConfigService  $configService
+     * @param  EventManager  $eventManager
      */
     public function __construct(
-        Core\Service\ConfigService $configService
+        EventManager $eventManager
     ) {
-        $this->configService = $configService;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -39,10 +41,13 @@ class ViewHelperConfigListener
     public function __invoke(Event $event)
     {
         $arguments = $event->getParams()['arguments'];
-        list($configName) = $arguments;
+        list($templatePath) = $arguments;
+
+        $view = new View(($arguments[1] ?? []), $templatePath);
+        $view->setEventManager($this->eventManager);
 
         $event->setData(
-            $this->configService->getConfig($configName)
+            $view
         );
     }
 

@@ -1,8 +1,14 @@
-
 <ul>
-    <?php foreach($this->users as $user): ?>
-    <li><?php echo $user['name'] ?></li>
+    <?php foreach ($this->users as $user): ?>
+        <li><?php echo $user['name'] ?></li>
     <?php endforeach ?>
 </ul>
 
 <a href="<?= $this->url('UserController', 'list', 'User') ?>">Users</a>
+
+<h2>-- <?= $this->name ?> --</h2>
+<?= $this->partialView(
+    __DIR__.'/../partial/test.phtml', [
+    'name' => 'eSASe',
+]
+) ?>

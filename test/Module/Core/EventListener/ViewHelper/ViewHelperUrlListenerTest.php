@@ -12,6 +12,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperUrlListener;
 use Tiny\Router;
@@ -34,7 +35,7 @@ class ViewHelperUrlListenerTest extends TestCase
             ->willReturn('/test');
 
         $eventMock = $this->createMock(
-            Core\EventManager\RouteEvent::class
+            EventManager\Event::class
         );
         $eventMock->expects($this->once())
             ->method('getParams')
