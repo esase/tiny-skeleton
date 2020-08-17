@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener;
+namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 /*
  * This file is part of the Tiny package.
@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use Tiny\EventManager\EventManager;
 use Tiny\Http;
 use Tiny\Router;
 use Tiny\Skeleton\Module\Core;
@@ -37,8 +38,12 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
                 'template_path_mask' => '{module}/view/{controller_name}/{action}.phtml'
             ]);
 
+        $eventManagerStub = $this->createMock(
+            EventManager::class
+        );
         $listener = new AfterCallingControllerViewInitListener(
-            $configServiceMock
+            $configServiceMock,
+            $eventManagerStub
         );
 
         $viewMock = $this->createMock(View::class);
@@ -48,8 +53,11 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
             ->will($this->returnSelf());
         $viewMock->expects($this->once())
             ->method('setTemplatePath')
-            ->with($this->stringContains('Module/Core/view/AfterCallingControllerViewInitListenerTest/index.phtml'))
+            ->with($this->stringContains('Module/Core/EventListener/view/AfterCallingControllerViewInitListenerTest/index.phtml'))
             ->will($this->returnSelf());
+        $viewMock->expects($this->once())
+            ->method('setEventManager')
+            ->with($eventManagerStub);
 
         $responseMock = $this->createStub(Http\AbstractResponse::class);
         $responseMock->expects($this->once())

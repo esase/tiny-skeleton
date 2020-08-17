@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener;
+namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper;
 
 /*
  * This file is part of the Tiny package.
@@ -12,11 +12,11 @@ namespace Tiny\Skeleton\Module\Core\EventListener;
  */
 
 use PHPUnit\Framework\TestCase;
-use Tiny\Skeleton\Module\Core\EventListener\Factory\AfterCallingControllerViewInitListenerFactory;
 use Tiny\ServiceManager\ServiceManager;
+use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\Factory\ViewHelperConfigListenerFactory;
 use Tiny\Skeleton\Module\Core;
 
-class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
+class ViewHelperConfigListenerFactoryTest extends TestCase
 {
 
     public function testInvokeMethod()
@@ -28,11 +28,11 @@ class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
                 $this->createStub(Core\Service\ConfigService::class)
             );
 
-        $listenerFactory = new AfterCallingControllerViewInitListenerFactory();
+        $listenerFactory = new ViewHelperConfigListenerFactory();
         $listener = $listenerFactory($serviceManagerMock);
 
         $this->assertInstanceOf(
-            AfterCallingControllerViewInitListener::class,
+            ViewHelperConfigListener::class,
             $listener
         );
     }

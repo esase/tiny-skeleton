@@ -1,6 +1,7 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener\Factory;
+namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper\Factory;
+
 
 /*
  * This file is part of the Tiny package.
@@ -12,20 +13,20 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Factory;
  */
 
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Core\EventListener\AfterCallingControllerViewInitListener;
 use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperConfigListener;
 
-class AfterCallingControllerViewInitListenerFactory
+class ViewHelperConfigListenerFactory
 {
 
     /**
      * @param  ServiceManager  $serviceManager
      *
-     * @return AfterCallingControllerViewInitListener
+     * @return ViewHelperConfigListener
      */
     public function __invoke(ServiceManager $serviceManager
-    ): AfterCallingControllerViewInitListener {
-        return new AfterCallingControllerViewInitListener(
+    ): ViewHelperConfigListener {
+        return new ViewHelperConfigListener(
             $serviceManager->get(Core\Service\ConfigService::class)
         );
     }

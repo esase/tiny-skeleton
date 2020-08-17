@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener;
+namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 /*
  * This file is part of the Tiny package.
@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener;
 
 use ReflectionClass;
 use ReflectionException;
+use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 use Tiny\Skeleton\View;
@@ -27,14 +28,22 @@ class AfterCallingControllerViewInitListener
     private Core\Service\ConfigService $configService;
 
     /**
+     * @var EventManager
+     */
+    private EventManager $eventManager;
+
+    /**
      * AfterCallingControllerViewInitListener constructor.
      *
      * @param  Core\Service\ConfigService  $configService
+     * @param  EventManager                $eventManager
      */
     public function __construct(
-        Core\Service\ConfigService $configService
+        Core\Service\ConfigService $configService,
+        EventManager $eventManager
     ) {
         $this->configService = $configService;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -62,7 +71,8 @@ class AfterCallingControllerViewInitListener
                         $event->getParams()['route'],
                         $viewConfig
                     )
-                );
+                )
+                ->setEventManager($this->eventManager);
 
             // return the modified response
             $response->setResponse(

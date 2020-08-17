@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "esase/tiny-event-manager",
-            "version": "v1.0.1",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/esase/tiny-event-manager.git",
-                "reference": "c1b6d0c2e9015574628d01898399a8a593ae7de6"
+                "reference": "562790db8588920b6bb3d4e982d1d4226861c290"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/esase/tiny-event-manager/zipball/c1b6d0c2e9015574628d01898399a8a593ae7de6",
-                "reference": "c1b6d0c2e9015574628d01898399a8a593ae7de6",
+                "url": "https://api.github.com/repos/esase/tiny-event-manager/zipball/562790db8588920b6bb3d4e982d1d4226861c290",
+                "reference": "562790db8588920b6bb3d4e982d1d4226861c290",
                 "shasum": ""
             },
             "require": {
@@ -56,20 +56,20 @@
                 "observer",
                 "tinyframework"
             ],
-            "time": "2020-08-14T13:47:52+00:00"
+            "time": "2020-08-17T10:13:36+00:00"
         },
         {
             "name": "esase/tiny-http",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/esase/tiny-http.git",
-                "reference": "b0d9eee61377d13bdda2421c45b7ad0e5d5d4cf6"
+                "reference": "5dc0b8cdead92e393aaa5fd73f2827cf3fdcca01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/esase/tiny-http/zipball/b0d9eee61377d13bdda2421c45b7ad0e5d5d4cf6",
-                "reference": "b0d9eee61377d13bdda2421c45b7ad0e5d5d4cf6",
+                "url": "https://api.github.com/repos/esase/tiny-http/zipball/5dc0b8cdead92e393aaa5fd73f2827cf3fdcca01",
+                "reference": "5dc0b8cdead92e393aaa5fd73f2827cf3fdcca01",
                 "shasum": ""
             },
             "require": {
@@ -106,20 +106,20 @@
                 "response",
                 "tinyframework"
             ],
-            "time": "2020-08-14T16:18:26+00:00"
+            "time": "2020-08-15T12:18:00+00:00"
         },
         {
             "name": "esase/tiny-router",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/esase/tiny-router.git",
-                "reference": "f176dd0fb96c5750bf23f93bc7b850c53e270907"
+                "reference": "07ce436c5e59453e5bb2ec942b732938f362d6eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/esase/tiny-router/zipball/f176dd0fb96c5750bf23f93bc7b850c53e270907",
-                "reference": "f176dd0fb96c5750bf23f93bc7b850c53e270907",
+                "url": "https://api.github.com/repos/esase/tiny-router/zipball/07ce436c5e59453e5bb2ec942b732938f362d6eb",
+                "reference": "07ce436c5e59453e5bb2ec942b732938f362d6eb",
                 "shasum": ""
             },
             "require": {
@@ -156,20 +156,20 @@
                 "routing",
                 "tinyframework"
             ],
-            "time": "2020-08-13T13:10:59+00:00"
+            "time": "2020-08-15T12:25:28+00:00"
         },
         {
             "name": "esase/tiny-service-manager",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/esase/tiny-service-manager.git",
-                "reference": "46649e10a611e1e630c2a078faaaf3d9774d5b30"
+                "reference": "9547626d30f6c19c93639bd1ce09e76bd83fa6da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/esase/tiny-service-manager/zipball/46649e10a611e1e630c2a078faaaf3d9774d5b30",
-                "reference": "46649e10a611e1e630c2a078faaaf3d9774d5b30",
+                "url": "https://api.github.com/repos/esase/tiny-service-manager/zipball/9547626d30f6c19c93639bd1ce09e76bd83fa6da",
+                "reference": "9547626d30f6c19c93639bd1ce09e76bd83fa6da",
                 "shasum": ""
             },
             "require": {
@@ -209,7 +209,7 @@
                 "servicemanager",
                 "tinyframework"
             ],
-            "time": "2020-08-13T16:10:57+00:00"
+            "time": "2020-08-15T12:23:02+00:00"
         },
         {
             "name": "psr/container",
@@ -1080,16 +1080,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "5.2.0",
+            "version": "5.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "3170448f5769fe19f456173d833734e0ff1b84df"
+                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/3170448f5769fe19f456173d833734e0ff1b84df",
-                "reference": "3170448f5769fe19f456173d833734e0ff1b84df",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/d870572532cd70bc3fab58f2e23ad423c8404c44",
+                "reference": "d870572532cd70bc3fab58f2e23ad423c8404c44",
                 "shasum": ""
             },
             "require": {
@@ -1128,7 +1128,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-07-20T20:05:34+00:00"
+            "time": "2020-08-15T11:14:08+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",

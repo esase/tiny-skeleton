@@ -10,6 +10,9 @@
  */
 
 return [
+    'site' => [
+        'name' => 'Test site'
+    ],
     'view'            => [
         'base_layout_path'   => __DIR__.'/view/layout/base.phtml',
         'template_path_mask' => '{module}/view/{controller_name}/{action}.phtml',

@@ -83,7 +83,7 @@ class ViewTest extends TestCase
 
     public function test_toStringMethodUsingEmptyTemplatePath()
     {
-        $this->expectException(Exception\UnexpectedValueException::class);
+        $this->expectException(Exception\InvalidArgumentException::class);
         $this->expectExceptionMessage('Template file path is empty.');
 
         $view = new View();

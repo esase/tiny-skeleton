@@ -17,23 +17,26 @@ use Tiny\Skeleton\Module\Core\Router;
 return [
     'shared' => [
         // event manager
-        Tiny\EventManager\EventManager::class                            => Core\EventManager\Factory\EventManagerFactory::class,
+        Tiny\EventManager\EventManager::class                                 => Core\EventManager\Factory\EventManagerFactory::class,
 
         // router
-        Tiny\Router\Router::class                                        => Core\Router\Factory\RouterFactory::class,
+        Tiny\Router\Router::class                                             => Core\Router\Factory\RouterFactory::class,
 
         // http
-        Tiny\Http\Request::class                                         => Core\Http\Factory\RequestFactory::class,
-        Tiny\Http\AbstractResponse::class                                => Core\Http\Factory\ResponseFactory::class,
-        Tiny\Http\ResponseHttpUtils::class                               => InvokableFactory::class,
+        Tiny\Http\Request::class                                              => Core\Http\Factory\RequestFactory::class,
+        Tiny\Http\AbstractResponse::class                                     => Core\Http\Factory\ResponseFactory::class,
+        Tiny\Http\ResponseHttpUtils::class                                    => InvokableFactory::class,
 
         // service
-        Core\Service\ConfigService::class                                => InvokableFactory::class,
+        Core\Service\ConfigService::class                                     => InvokableFactory::class,
 
-        // listener
-        Core\EventListener\AfterCallingControllerViewInitListener::class => Core\EventListener\Factory\AfterCallingControllerViewInitListenerFactory::class,
-        Core\EventListener\BeforeCallingControllerCorsListener::class    => Core\EventListener\Factory\BeforeCallingControllerCorsListenerFactory::class,
-        Core\EventListener\RegisterRouteCorsListener::class              => Core\EventListener\Factory\RegisterRouteCorsListenerFactory::class,
-        Core\EventListener\BeforeDisplayingResponseCorsListener::class   => Core\EventListener\Factory\BeforeDisplayingResponseCorsListenerFactory::class,
+        // core listener
+        Core\EventListener\Core\AfterCallingControllerViewInitListener::class => Core\EventListener\Core\Factory\AfterCallingControllerViewInitListenerFactory::class,
+        Core\EventListener\Core\BeforeCallingControllerCorsListener::class    => Core\EventListener\Core\Factory\BeforeCallingControllerCorsListenerFactory::class,
+        Core\EventListener\Core\RegisterRouteCorsListener::class              => Core\EventListener\Core\Factory\RegisterRouteCorsListenerFactory::class,
+        Core\EventListener\Core\BeforeDisplayingResponseCorsListener::class   => Core\EventListener\Core\Factory\BeforeDisplayingResponseCorsListenerFactory::class,
+
+        // view helper listener
+        Core\EventListener\ViewHelper\ViewHelperConfigListener::class         => Core\EventListener\ViewHelper\Factory\ViewHelperConfigListenerFactory::class,
     ],
 ];

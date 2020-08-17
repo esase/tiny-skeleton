@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener;
+namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 /*
  * This file is part of the Tiny package.
@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
-use Tiny\Skeleton\Module\Core\EventListener\Factory\RegisterRouteCorsListenerFactory;
+use Tiny\Skeleton\Module\Core\EventListener\Core\Factory\RegisterRouteCorsListenerFactory;
 
 class RegisterRouteCorsListenerFactoryTest extends TestCase
 {

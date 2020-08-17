@@ -12,10 +12,13 @@ namespace Tiny\Skeleton;
  * file that was distributed with this source code.
  */
 
+use Tiny\EventManager;
 use Tiny\Skeleton\Module\Core\Exception;
 
 class View
 {
+
+    const EVENT_CALL_VIEW_HELPER = 'view.call.helper.';
 
     /**
      * @var array
@@ -38,9 +41,14 @@ class View
     private ?string $content;
 
     /**
+     * @var EventManager\EventManager|null
+     */
+    private ?EventManager\EventManager $eventManager;
+
+    /**
      * View constructor.
      *
-     * @param  array        $variables
+     * @param  array  $variables
      * @param  string|null  $templatePath
      * @param  string|null  $layoutPath
      */
@@ -95,6 +103,14 @@ class View
     }
 
     /**
+     * @param  EventManager\EventManager  $eventManager
+     */
+    public function setEventManager(EventManager\EventManager $eventManager)
+    {
+        $this->eventManager = $eventManager;
+    }
+
+    /**
      * @param  string  $name
      *
      * @return mixed
@@ -107,13 +123,49 @@ class View
     }
 
     /**
+     * @param  string  $name
+     * @param  mixed   $arguments
+     *
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $eventName = self::EVENT_CALL_VIEW_HELPER . $name;
+
+        if (!$this->eventManager
+            || !$this->eventManager->isEventHasSubscribers(
+                $eventName
+            )
+        ) {
+            throw new Exception\InvalidArgumentException(
+                sprintf(
+                    'The method "%s()" is unsupported.',
+                    $name
+                )
+            );
+        }
+
+        $callEvent = new EventManager\Event(null, [
+            'arguments' => $arguments
+        ]);
+        $callEvent->setStopped(true);
+
+        $this->eventManager->trigger(
+            $eventName,
+            $callEvent
+        );
+
+        return $callEvent->getData();
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string
     {
         if (!$this->templatePath) {
-            throw new Exception\UnexpectedValueException(
-                 'Template file path is empty.'
+            throw new Exception\InvalidArgumentException(
+                'Template file path is empty.'
             );
         }
 

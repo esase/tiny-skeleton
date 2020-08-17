@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener;
+namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 /*
  * This file is part of the Tiny package.

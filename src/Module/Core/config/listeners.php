@@ -10,23 +10,28 @@
  */
 
 use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\View;
 
 return [
     [
         'event'    => Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
-        'listener' => Core\EventListener\RegisterRouteCorsListener::class
+        'listener' => Core\EventListener\Core\RegisterRouteCorsListener::class
     ],
     [
         'event'    => Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
-        'listener' => Core\EventListener\BeforeCallingControllerCorsListener::class,
+        'listener' => Core\EventListener\Core\BeforeCallingControllerCorsListener::class,
         'priority' => -1000
     ],
     [
         'event'    => Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
-        'listener' => Core\EventListener\BeforeDisplayingResponseCorsListener::class
+        'listener' => Core\EventListener\Core\BeforeDisplayingResponseCorsListener::class
     ],
     [
         'event'    => Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
-        'listener' => Core\EventListener\AfterCallingControllerViewInitListener::class
+        'listener' => Core\EventListener\Core\AfterCallingControllerViewInitListener::class
+    ],
+    [
+        'event'    => View::EVENT_CALL_VIEW_HELPER . 'config',
+        'listener' => Core\EventListener\ViewHelper\ViewHelperConfigListener::class
     ],
 ];

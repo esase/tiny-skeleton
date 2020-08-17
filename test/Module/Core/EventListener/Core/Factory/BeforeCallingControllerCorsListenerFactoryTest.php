@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener;
+namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 /*
  * This file is part of the Tiny package.
@@ -12,21 +12,22 @@ namespace Tiny\Skeleton\Module\Core\EventListener;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\Skeleton\Module\Core\EventListener\Core\Factory\BeforeCallingControllerCorsListenerFactory;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Core;
-use Tiny\Skeleton\Module\Core\EventListener\Factory\BeforeDisplayingResponseCorsListenerFactory;
 use Tiny\Http;
 
-class BeforeDisplayingResponseCorsListenerFactoryTest extends TestCase
+class BeforeCallingControllerCorsListenerFactoryTest extends TestCase
 {
 
     public function testInvokeMethod()
     {
         $serviceManagerMock = $this->createMock(ServiceManager::class);
-        $serviceManagerMock->expects($this->exactly(2))
+        $serviceManagerMock->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [Http\Request::class],
+                [Http\AbstractResponse::class],
                 [Http\ResponseHttpUtils::class]
             )
         ->will(
@@ -36,6 +37,11 @@ class BeforeDisplayingResponseCorsListenerFactoryTest extends TestCase
                         case Http\Request::class:
                             return $this->createStub(
                                 Http\Request::class
+                            );
+
+                        case Http\AbstractResponse::class:
+                            return $this->createStub(
+                                Http\AbstractResponse::class
                             );
 
                         case Http\ResponseHttpUtils::class:
@@ -50,11 +56,11 @@ class BeforeDisplayingResponseCorsListenerFactoryTest extends TestCase
             )
         );
 
-        $listenerFactory = new BeforeDisplayingResponseCorsListenerFactory();
+        $listenerFactory = new BeforeCallingControllerCorsListenerFactory();
         $listener = $listenerFactory($serviceManagerMock);
 
         $this->assertInstanceOf(
-            BeforeDisplayingResponseCorsListener::class,
+            BeforeCallingControllerCorsListener::class,
             $listener
         );
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener\Factory;
+namespace Tiny\Skeleton\Module\Core\EventListener\Core\Factory;
 
 /*
  * This file is part of the Tiny package.
@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Factory;
 
 use Tiny\Http;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Core\EventListener\BeforeDisplayingResponseCorsListener;
+use Tiny\Skeleton\Module\Core\EventListener\Core\BeforeDisplayingResponseCorsListener;
 
 class BeforeDisplayingResponseCorsListenerFactory
 {
