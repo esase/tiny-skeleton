@@ -43,7 +43,7 @@ class View
     /**
      * @var EventManager\EventManager|null
      */
-    private ?EventManager\EventManager $eventManager;
+    private ?EventManager\EventManager $eventManager = null;
 
     /**
      * View constructor.
@@ -132,6 +132,7 @@ class View
     {
         $eventName = self::EVENT_CALL_VIEW_HELPER . $name;
 
+        // we use the event manager as a proxy for helpers calling
         if (!$this->eventManager
             || !$this->eventManager->isEventHasSubscribers(
                 $eventName
@@ -148,6 +149,8 @@ class View
         $callEvent = new EventManager\Event(null, [
             'arguments' => $arguments
         ]);
+
+        // we only need to get data from a first listener (all other should be skipped)
         $callEvent->setStopped(true);
 
         $this->eventManager->trigger(
