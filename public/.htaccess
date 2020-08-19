@@ -1,5 +1,5 @@
 Options -Indexes
-SetEnv APPLICATION_ENV pod
+SetEnv APPLICATION_ENV dev
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
