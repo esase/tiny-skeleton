@@ -13,9 +13,10 @@ return [
     'site' => [
         'name' => 'Test site'
     ],
+    'modules_root' => dirname(__DIR__),
     'view'            => [
-        'base_layout_path'   => __DIR__.'/view/layout/base.phtml',
-        'template_path_mask' => '{module}/view/{controller_name}/{action}.phtml',
+        'base_layout_path'   => 'layout/base',
+        'template_extension' => 'phtml',
     ],
     'service_manager' => require_once 'config/service-manager.php',
     'listeners'       => require_once 'config/listeners.php',

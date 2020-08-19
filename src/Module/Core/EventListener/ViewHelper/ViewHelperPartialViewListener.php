@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper;
 
 use Tiny\EventManager\Event;
 use Tiny\EventManager\EventManager;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
 use Tiny\Skeleton\View;
 
 class ViewHelperPartialViewListener
@@ -25,14 +25,22 @@ class ViewHelperPartialViewListener
     private EventManager $eventManager;
 
     /**
+     * @var ViewHelperUtils
+     */
+    private ViewHelperUtils $viewHelperUtils;
+
+    /**
      * ViewHelperPartialViewListener constructor.
      *
-     * @param  EventManager  $eventManager
+     * @param  EventManager     $eventManager
+     * @param  ViewHelperUtils  $viewHelperUtils
      */
     public function __construct(
-        EventManager $eventManager
+        EventManager $eventManager,
+        ViewHelperUtils $viewHelperUtils
     ) {
         $this->eventManager = $eventManager;
+        $this->viewHelperUtils = $viewHelperUtils;
     }
 
     /**
@@ -41,9 +49,12 @@ class ViewHelperPartialViewListener
     public function __invoke(Event $event)
     {
         $arguments = $event->getParams()['arguments'];
-        list($templatePath) = $arguments;
+        list($templatePath, $module) = $arguments;
 
-        $view = new View(($arguments[1] ?? []), $templatePath);
+        $view = new View(
+            ($arguments[2] ?? []), // variables
+            $this->viewHelperUtils->getTemplatePath($templatePath, $module)
+        );
         $view->setEventManager($this->eventManager);
 
         $event->setData(

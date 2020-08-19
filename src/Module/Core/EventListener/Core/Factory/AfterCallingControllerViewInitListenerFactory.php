@@ -28,7 +28,8 @@ class AfterCallingControllerViewInitListenerFactory
     ): AfterCallingControllerViewInitListener {
         return new AfterCallingControllerViewInitListener(
             $serviceManager->get(Core\Service\ConfigService::class),
-            $serviceManager->get(EventManager::class)
+            $serviceManager->get(EventManager::class),
+            $serviceManager->get(Core\Utils\ViewHelperUtils::class)
         );
     }
 

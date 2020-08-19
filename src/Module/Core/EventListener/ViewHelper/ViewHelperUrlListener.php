@@ -24,14 +24,22 @@ class ViewHelperUrlListener
     private Router\Router $router;
 
     /**
+     * @var Core\Utils\ViewHelperUtils
+     */
+    private Core\Utils\ViewHelperUtils $viewHelperUtils;
+
+    /**
      * ViewHelperUrlListener constructor.
      *
-     * @param  Router\Router  $router
+     * @param  Router\Router               $router
+     * @param  Core\Utils\ViewHelperUtils  $viewHelperUtils
      */
     public function __construct(
-        Router\Router $router
+        Router\Router $router,
+        Core\Utils\ViewHelperUtils $viewHelperUtils
     ) {
         $this->router = $router;
+        $this->viewHelperUtils = $viewHelperUtils;
     }
 
     /**
@@ -44,10 +52,7 @@ class ViewHelperUrlListener
 
         $event->setData(
             $this->router->assembleRequest(
-                vsprintf('Tiny\Skeleton\Module\%s\Controller\%s', [
-                    $module,
-                    $controller
-                ]),
+                $this->viewHelperUtils->getControllerPath($controller, $module),
                 $action,
                 ($arguments[3] ?? [])
             )

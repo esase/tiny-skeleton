@@ -5,6 +5,10 @@
         <title><?= $this->config('site')['name'] ?></title>
     </head>
     <body>
+        <nav>
+            <a href="<?= $this->url('UserController', 'list', 'User') ?>">Users</a>
+        </nav>
+        <hr />
         <div class="container">
             <?= $this->content ?>
             <hr>

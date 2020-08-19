@@ -23,11 +23,12 @@ class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
     public function testInvokeMethod()
     {
         $serviceManagerMock = $this->createMock(ServiceManager::class);
-        $serviceManagerMock->expects($this->exactly(2))
+        $serviceManagerMock->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [Core\Service\ConfigService::class],
-                [EventManager::class]
+                [EventManager::class],
+                [Core\Utils\ViewHelperUtils::class]
             )
             ->will(
                 $this->returnCallback(
@@ -41,6 +42,11 @@ class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
                             case EventManager::class:
                                 return $this->createStub(
                                     EventManager::class
+                                );
+
+                            case Core\Utils\ViewHelperUtils::class:
+                                return $this->createStub(
+                                    Core\Utils\ViewHelperUtils::class
                                 );
 
                             default :

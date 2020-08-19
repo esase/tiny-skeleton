@@ -23,10 +23,31 @@ class ViewHelperPartialViewListenerFactoryTest extends TestCase
     public function testInvokeMethod()
     {
         $serviceManagerMock = $this->createMock(ServiceManager::class);
-        $serviceManagerMock->expects($this->once())
+        $serviceManagerMock->expects($this->exactly(2))
             ->method('get')
-            ->willReturn(
-                $this->createStub(EventManager::class)
+            ->withConsecutive(
+                [EventManager::class],
+                [Core\Utils\ViewHelperUtils::class]
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $serviceName) {
+                        switch ($serviceName) {
+                            case EventManager::class:
+                                return $this->createStub(
+                                    EventManager::class
+                                );
+
+                            case Core\Utils\ViewHelperUtils::class:
+                                return $this->createStub(
+                                    Core\Utils\ViewHelperUtils::class
+                                );
+
+                            default :
+                                return null;
+                        }
+                    }
+                )
             );
 
         $listenerFactory = new ViewHelperPartialViewListenerFactory();

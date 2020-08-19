@@ -12,7 +12,6 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  */
 
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use Tiny\EventManager\EventManager;
 use Tiny\Http;
 use Tiny\Router;
@@ -22,9 +21,6 @@ use Tiny\Skeleton\View;
 class AfterCallingControllerViewInitListenerTest extends TestCase
 {
 
-    /**
-     * @throws ReflectionException
-     */
     public function testInvokeMethod()
     {
         $configServiceMock = $this->createMock(
@@ -34,26 +30,43 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
             ->method('getConfig')
             ->with('view', [])
             ->willReturn([
-                'base_layout_path' => 'test_layout',
-                'template_path_mask' => '{module}/view/{controller_name}/{action}.phtml'
+                'base_layout_path' => 'test_layout'
             ]);
 
         $eventManagerStub = $this->createMock(
             EventManager::class
         );
+
+        $viewUtilsMock = $this->createMock(
+            Core\Utils\ViewHelperUtils::class
+        );
+        $viewUtilsMock->expects($this->exactly(2))
+            ->method('getTemplatePath')
+            ->withConsecutive(
+                ['test_layout', 'Core'],
+                ['TestController/index', 'Test']
+            )
+            ->willReturn('test_template');
+
+        $viewUtilsMock->expects($this->once())
+            ->method('extractModuleName')
+            ->with('\\Test\\Controller\\TestController')
+            ->willReturn('Test');
+
         $listener = new AfterCallingControllerViewInitListener(
             $configServiceMock,
-            $eventManagerStub
+            $eventManagerStub,
+            $viewUtilsMock
         );
 
         $viewMock = $this->createMock(View::class);
         $viewMock->expects($this->once())
             ->method('setLayoutPath')
-            ->with('test_layout')
+            ->with('test_template')
             ->will($this->returnSelf());
         $viewMock->expects($this->once())
             ->method('setTemplatePath')
-            ->with($this->stringContains('Module/Core/EventListener/view/AfterCallingControllerViewInitListenerTest/index.phtml'))
+            ->with('test_template')
             ->will($this->returnSelf());
         $viewMock->expects($this->once())
             ->method('setEventManager')
@@ -70,7 +83,7 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
         $routeMock = $this->createStub(Router\Route::class);
         $routeMock->expects($this->exactly(2))
             ->method('getController')
-            ->willReturn(AfterCallingControllerViewInitListenerTest::class);
+            ->willReturn('\\Test\\Controller\\TestController');
         $routeMock->expects($this->once())
             ->method('getMatchedAction')
             ->willReturn('index');

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper\Factory;
+namespace Tiny\Skeleton\Module\Core\Utils\Factory;
 
 
 /*
@@ -14,22 +14,20 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper\Factory;
 
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Core;
-use Tiny\Router;
-use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperUrlListener;
+use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
 
-class ViewHelperUrlListenerFactory
+class ViewHelperUtilsFactory
 {
 
     /**
      * @param  ServiceManager  $serviceManager
      *
-     * @return ViewHelperUrlListener
+     * @return ViewHelperUtils
      */
     public function __invoke(ServiceManager $serviceManager
-    ): ViewHelperUrlListener {
-        return new ViewHelperUrlListener(
-            $serviceManager->get(Router\Router::class),
-            $serviceManager->get(Core\Utils\ViewHelperUtils::class)
+    ): ViewHelperUtils {
+        return new ViewHelperUtils(
+            $serviceManager->get(Core\Service\ConfigService::class)
         );
     }
 

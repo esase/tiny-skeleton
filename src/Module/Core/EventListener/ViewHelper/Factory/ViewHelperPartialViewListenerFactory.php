@@ -15,6 +15,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper\Factory;
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperPartialViewListener;
+use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
 
 class ViewHelperPartialViewListenerFactory
 {
@@ -27,7 +28,8 @@ class ViewHelperPartialViewListenerFactory
     public function __invoke(ServiceManager $serviceManager
     ): ViewHelperPartialViewListener {
         return new ViewHelperPartialViewListener(
-            $serviceManager->get(EventManager::class)
+            $serviceManager->get(EventManager::class),
+            $serviceManager->get(ViewHelperUtils::class)
         );
     }
 

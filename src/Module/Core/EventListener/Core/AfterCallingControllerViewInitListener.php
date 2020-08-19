@@ -11,8 +11,6 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  * file that was distributed with this source code.
  */
 
-use ReflectionClass;
-use ReflectionException;
 use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
@@ -33,23 +31,29 @@ class AfterCallingControllerViewInitListener
     private EventManager $eventManager;
 
     /**
+     * @var Core\Utils\ViewHelperUtils
+     */
+    private Core\Utils\ViewHelperUtils $viewHelperUtils;
+
+    /**
      * AfterCallingControllerViewInitListener constructor.
      *
      * @param  Core\Service\ConfigService  $configService
      * @param  EventManager                $eventManager
+     * @param  Core\Utils\ViewHelperUtils  $viewHelperUtils
      */
     public function __construct(
         Core\Service\ConfigService $configService,
-        EventManager $eventManager
+        EventManager $eventManager,
+        Core\Utils\ViewHelperUtils $viewHelperUtils
     ) {
         $this->configService = $configService;
         $this->eventManager = $eventManager;
+        $this->viewHelperUtils = $viewHelperUtils;
     }
 
     /**
      * @param  Core\EventManager\ControllerEvent  $event
-     *
-     * @throws ReflectionException
      */
     public function __invoke(Core\EventManager\ControllerEvent $event)
     {
@@ -64,13 +68,13 @@ class AfterCallingControllerViewInitListener
 
             // set both layout and template path
             $controllerResponse->setLayoutPath(
-                ($viewConfig['base_layout_path'] ?? '')
+                $this->viewHelperUtils->getTemplatePath(
+                    $viewConfig['base_layout_path'],
+                    'Core'
+                )
             )
                 ->setTemplatePath(
-                    $this->getTemplatePath(
-                        $event->getParams()['route'],
-                        $viewConfig
-                    )
+                    $this->getTemplatePath($event->getParams()['route'])
                 )
                 ->setEventManager($this->eventManager);
 
@@ -86,27 +90,26 @@ class AfterCallingControllerViewInitListener
 
     /**
      * @param  Router\Route  $route
-     * @param  array         $viewConfigs
      *
      * @return string
-     * @throws ReflectionException
      */
     private function getTemplatePath(
-        Router\Route $route,
-        array $viewConfigs
+        Router\Route $route
     ): string {
-        $reflector = new ReflectionClass($route->getController());
+        // extract the controller's name and action from the route
+        $template = vsprintf(
+            '%s/%s', [
+                substr(strrchr($route->getController(), '\\'), 1),
+                $route->getMatchedAction(),
+            ]
+        );
 
-        return str_replace(
-            [
-                '{module}',
-                '{controller_name}',
-                '{action}',
-            ], [
-            dirname($reflector->getFileName(), 2),
-            substr(strrchr($route->getController(), '\\'), 1),
-            $route->getMatchedAction(),
-        ], $viewConfigs['template_path_mask']
+        // build the template path based on the received controller and action
+        return $this->viewHelperUtils->getTemplatePath(
+            $template,
+            $this->viewHelperUtils->extractModuleName(
+                $route->getController()
+            )
         );
     }
 

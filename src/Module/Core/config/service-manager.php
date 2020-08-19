@@ -40,5 +40,8 @@ return [
         Core\EventListener\ViewHelper\ViewHelperConfigListener::class         => Core\EventListener\ViewHelper\Factory\ViewHelperConfigListenerFactory::class,
         Core\EventListener\ViewHelper\ViewHelperUrlListener::class            => Core\EventListener\ViewHelper\Factory\ViewHelperUrlListenerFactory::class,
         Core\EventListener\ViewHelper\ViewHelperPartialViewListener::class    => Core\EventListener\ViewHelper\Factory\ViewHelperPartialViewListenerFactory::class,
+
+        // utils
+        Core\Utils\ViewHelperUtils::class                                     => Core\Utils\Factory\ViewHelperUtilsFactory::class,
     ],
 ];

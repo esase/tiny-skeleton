@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Tiny\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperPartialViewListener;
+use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
 use Tiny\Skeleton\View;
 
 class ViewHelperPartialViewListenerTest extends TestCase
@@ -35,6 +36,7 @@ class ViewHelperPartialViewListenerTest extends TestCase
                 [
                     'arguments' => [
                         'test/test.phtml',
+                        'Test',
                         [
                             'test' => 'testValue',
                         ],
@@ -70,8 +72,18 @@ class ViewHelperPartialViewListenerTest extends TestCase
                 )
             );
 
+
+        $viewHelperUtilsMock = $this->createMock(
+            ViewHelperUtils::class
+        );
+        $viewHelperUtilsMock->expects($this->once())
+            ->method('getTemplatePath')
+            ->with('test/test.phtml', 'Test')
+            ->willReturn('test/test.phtml');
+
         $listener = new ViewHelperPartialViewListener(
-            $eventManagerStub
+            $eventManagerStub,
+            $viewHelperUtilsMock
         );
 
         $listener($eventMock);

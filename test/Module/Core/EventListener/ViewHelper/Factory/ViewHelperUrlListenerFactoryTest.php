@@ -22,11 +22,33 @@ class ViewHelperUrlListenerFactoryTest extends TestCase
 
     public function testInvokeMethod()
     {
+
         $serviceManagerMock = $this->createMock(ServiceManager::class);
-        $serviceManagerMock->expects($this->once())
+        $serviceManagerMock->expects($this->exactly(2))
             ->method('get')
-            ->willReturn(
-                $this->createStub(Router\Router::class)
+            ->withConsecutive(
+                [Router\Router::class],
+                [Core\Utils\ViewHelperUtils::class]
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $serviceName) {
+                        switch ($serviceName) {
+                            case Router\Router::class:
+                                return $this->createStub(
+                                    Router\Router::class
+                                );
+
+                            case Core\Utils\ViewHelperUtils::class:
+                                return $this->createStub(
+                                    Core\Utils\ViewHelperUtils::class
+                                );
+
+                            default :
+                                return null;
+                        }
+                    }
+                )
             );
 
         $listenerFactory = new ViewHelperUrlListenerFactory();

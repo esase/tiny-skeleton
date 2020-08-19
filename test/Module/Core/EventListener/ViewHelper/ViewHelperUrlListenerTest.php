@@ -16,6 +16,7 @@ use Tiny\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperUrlListener;
 use Tiny\Router;
+use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
 
 class ViewHelperUrlListenerTest extends TestCase
 {
@@ -53,8 +54,17 @@ class ViewHelperUrlListenerTest extends TestCase
             ->method('setData')
             ->with('/test');
 
+        $viewHelperUtilsMock = $this->createMock(
+            ViewHelperUtils::class
+        );
+        $viewHelperUtilsMock->expects($this->once())
+            ->method('getControllerPath')
+            ->with('TestController', 'Test')
+            ->willReturn('Tiny\Skeleton\Module\Test\Controller\TestController');
+
         $listener = new ViewHelperUrlListener(
-            $routerMock
+            $routerMock,
+            $viewHelperUtilsMock
         );
 
         $listener($eventMock);

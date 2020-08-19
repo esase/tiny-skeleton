@@ -31,11 +31,11 @@ return [
         'event'    => Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
         'listener' => Core\EventListener\Core\AfterCallingControllerViewInitListener::class
     ],
+    // view helper
     [
         'event'    => View::EVENT_CALL_VIEW_HELPER . 'config',
         'listener' => Core\EventListener\ViewHelper\ViewHelperConfigListener::class
     ],
-    // view helper
     [
         'event'    => View::EVENT_CALL_VIEW_HELPER . 'url',
         'listener' => Core\EventListener\ViewHelper\ViewHelperUrlListener::class
