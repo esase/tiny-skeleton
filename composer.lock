@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fdeaffd6cb386169c8413553084c92b5",
+    "content-hash": "36dd048e75a072bf3299968b7a7bef1b",
     "packages": [
         {
             "name": "esase/tiny-event-manager",
@@ -210,6 +210,59 @@
                 "tinyframework"
             ],
             "time": "2020-08-15T12:23:02+00:00"
+        },
+        {
+            "name": "esase/tiny-view",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/esase/tiny-view.git",
+                "reference": "70994cc56258e5102a6857d8b5fc22241dbd3f25"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/esase/tiny-view/zipball/70994cc56258e5102a6857d8b5fc22241dbd3f25",
+                "reference": "70994cc56258e5102a6857d8b5fc22241dbd3f25",
+                "shasum": ""
+            },
+            "require": {
+                "esase/tiny-event-manager": "^1.0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.2",
+                "phpunit/phpunit": "^9.0 || ^10.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tiny\\View\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Ermashev",
+                    "email": "alexermashev@gmail.com"
+                }
+            ],
+            "description": "The simple template engine for representation of your html code.",
+            "keywords": [
+                "esase",
+                "framework",
+                "html",
+                "layout",
+                "lightweight",
+                "microservices",
+                "renderer",
+                "templateengine",
+                "tinyframework",
+                "view"
+            ],
+            "time": "2020-08-19T09:55:10+00:00"
         },
         {
             "name": "psr/container",
@@ -4023,7 +4076,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "esase/tiny-view": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

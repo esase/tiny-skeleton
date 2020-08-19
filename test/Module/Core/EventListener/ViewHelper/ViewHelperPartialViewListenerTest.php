@@ -16,7 +16,7 @@ use Tiny\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperPartialViewListener;
 use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
-use Tiny\Skeleton\View;
+use Tiny\View\View;
 
 class ViewHelperPartialViewListenerTest extends TestCase
 {

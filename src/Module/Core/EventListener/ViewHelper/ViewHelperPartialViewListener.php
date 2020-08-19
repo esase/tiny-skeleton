@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper;
 use Tiny\EventManager\Event;
 use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
-use Tiny\Skeleton\View;
+use Tiny\View\View;
 
 class ViewHelperPartialViewListener
 {

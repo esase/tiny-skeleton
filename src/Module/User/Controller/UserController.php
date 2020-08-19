@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Module\User\Controller;
 
 use Tiny\Http;
 use Tiny\Skeleton\Module\User;
-use Tiny\Skeleton\View;
+use Tiny\View\View;
 
 class UserController
 {

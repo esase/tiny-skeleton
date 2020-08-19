@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
-use Tiny\Skeleton\View;
+use Tiny\View\View;
 use Tiny\Router;
 
 class AfterCallingControllerViewInitListener

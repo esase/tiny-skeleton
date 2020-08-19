@@ -10,7 +10,7 @@
  */
 
 use Tiny\Skeleton\Module\Core;
-use Tiny\Skeleton\View;
+use Tiny\View\View;
 
 return [
     // core

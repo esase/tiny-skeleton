@@ -16,7 +16,7 @@ use Tiny\EventManager\EventManager;
 use Tiny\Http;
 use Tiny\Router;
 use Tiny\Skeleton\Module\Core;
-use Tiny\Skeleton\View;
+use Tiny\View\View;
 
 class AfterCallingControllerViewInitListenerTest extends TestCase
 {
