@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36dd048e75a072bf3299968b7a7bef1b",
+    "content-hash": "883e2d277e875442630b0baa34bef324",
     "packages": [
         {
             "name": "esase/tiny-event-manager",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/esase/tiny-event-manager.git",
-                "reference": "562790db8588920b6bb3d4e982d1d4226861c290"
+                "reference": "1b60c7a1ef3b42d851ff6da86741f80a9bfe3ffb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/esase/tiny-event-manager/zipball/562790db8588920b6bb3d4e982d1d4226861c290",
-                "reference": "562790db8588920b6bb3d4e982d1d4226861c290",
+                "url": "https://api.github.com/repos/esase/tiny-event-manager/zipball/1b60c7a1ef3b42d851ff6da86741f80a9bfe3ffb",
+                "reference": "1b60c7a1ef3b42d851ff6da86741f80a9bfe3ffb",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 "observer",
                 "tinyframework"
             ],
-            "time": "2020-08-17T10:13:36+00:00"
+            "time": "2020-08-19T14:49:46+00:00"
         },
         {
             "name": "esase/tiny-http",
@@ -213,16 +213,16 @@
         },
         {
             "name": "esase/tiny-view",
-            "version": "dev-master",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/esase/tiny-view.git",
-                "reference": "70994cc56258e5102a6857d8b5fc22241dbd3f25"
+                "reference": "a9047417e959fcf1f3967045918844bec6519f2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/esase/tiny-view/zipball/70994cc56258e5102a6857d8b5fc22241dbd3f25",
-                "reference": "70994cc56258e5102a6857d8b5fc22241dbd3f25",
+                "url": "https://api.github.com/repos/esase/tiny-view/zipball/a9047417e959fcf1f3967045918844bec6519f2c",
+                "reference": "a9047417e959fcf1f3967045918844bec6519f2c",
                 "shasum": ""
             },
             "require": {
@@ -262,7 +262,7 @@
                 "tinyframework",
                 "view"
             ],
-            "time": "2020-08-19T09:55:10+00:00"
+            "time": "2020-08-19T14:47:49+00:00"
         },
         {
             "name": "psr/container",
@@ -630,16 +630,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.8.0",
+            "version": "v4.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "8c58eb4cd4f3883f82611abeac2efbc3dbed787e"
+                "reference": "aaee038b912e567780949787d5fe1977be11a778"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/8c58eb4cd4f3883f82611abeac2efbc3dbed787e",
-                "reference": "8c58eb4cd4f3883f82611abeac2efbc3dbed787e",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/aaee038b912e567780949787d5fe1977be11a778",
+                "reference": "aaee038b912e567780949787d5fe1977be11a778",
                 "shasum": ""
             },
             "require": {
@@ -647,7 +647,7 @@
                 "php": ">=7.0"
             },
             "require-dev": {
-                "ircmaxell/php-yacc": "^0.0.6",
+                "ircmaxell/php-yacc": "^0.0.7",
                 "phpunit/phpunit": "^6.5 || ^7.0 || ^8.0 || ^9.0"
             },
             "bin": [
@@ -656,7 +656,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.8-dev"
+                    "dev-master": "4.9-dev"
                 }
             },
             "autoload": {
@@ -678,7 +678,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2020-08-09T10:23:20+00:00"
+            "time": "2020-08-18T19:48:01+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -4076,9 +4076,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "esase/tiny-view": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

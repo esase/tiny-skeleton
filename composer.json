@@ -25,7 +25,7 @@
     "esase/tiny-service-manager": "^1.0",
     "esase/tiny-event-manager": "^1.0",
     "esase/tiny-http": "^1.1",
-    "esase/tiny-view": "dev-master",
+    "esase/tiny-view": "^1.0",
     "ext-json": "*"
   },
   "require-dev": {
