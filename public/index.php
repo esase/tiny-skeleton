@@ -11,16 +11,21 @@
 
 use Tiny\Skeleton;
 
-require_once __DIR__.'/../vendor/autoload.php';
+chdir(dirname(__DIR__));
+
+$currentAppEnv = getenv('APPLICATION_ENV') === 'prod' ? 'prod' : 'dev';
+
+require_once 'application-env/'.$currentAppEnv.'.php';
+require_once 'vendor/autoload.php';
 
 // init application
 $application = new Skeleton\Application(
     new Skeleton\Bootstrapper(
-        new Skeleton\BootstrapperUtils(dirname(__DIR__)),
-        getenv('APPLICATION_ENV') === 'prod'
+        new Skeleton\BootstrapperUtils(getcwd()),
+        $currentAppEnv === 'prod'
     ),
     php_sapi_name() === 'cli',
-    require_once __DIR__.'/../modules.php'
+    require_once 'modules.php'
 );
 
 echo $application->run();
