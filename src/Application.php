@@ -11,6 +11,7 @@ namespace Tiny\Skeleton;
  * file that was distributed with this source code.
  */
 
+use Throwable;
 use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Router;

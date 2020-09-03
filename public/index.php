@@ -13,10 +13,22 @@ use Tiny\Skeleton;
 
 chdir(dirname(__DIR__));
 
+require_once 'vendor/autoload.php';
+
 $currentAppEnv = getenv('APPLICATION_ENV') === 'prod' ? 'prod' : 'dev';
+$isCliContext = php_sapi_name() === 'cli';
+
+// init error handler
+$errorHandler = new Skeleton\ErrorHandler(
+    $currentAppEnv === 'prod',
+    $isCliContext,
+    'src/Module/Core/view/layout/500.phtml',
+    'data/log/error.log'
+);
+
+$errorHandler->initHandlers();
 
 require_once 'application-env/'.$currentAppEnv.'.php';
-require_once 'vendor/autoload.php';
 
 // init application
 $application = new Skeleton\Application(
@@ -24,8 +36,11 @@ $application = new Skeleton\Application(
         new Skeleton\BootstrapperUtils(getcwd()),
         $currentAppEnv === 'prod'
     ),
-    php_sapi_name() === 'cli',
+    $isCliContext,
     require_once 'modules.php'
 );
 
 echo $application->run();
+
+// The schema is very simple:
+// Either you control you exceptions or the core will handle all error for you and shows  the 500 page
