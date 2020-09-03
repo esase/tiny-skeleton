@@ -11,7 +11,7 @@ namespace Tiny\Skeleton;
  * file that was distributed with this source code.
  */
 
-use ErrorException;
+use Throwable;
 use Tiny\View\View;
 
 class ErrorHandler
@@ -30,67 +30,63 @@ class ErrorHandler
     /**
      * @var string
      */
-    private string $errorlayout;
+    private string $errorTemplate;
 
     /**
      * @var bool
      */
     private bool $isProdEnv;
 
-
-    public function __construct(bool $isProdEnv, bool $isCliContext, string $errorlayout, string $errorLogPath)
-    {
+    /**
+     * ErrorHandler constructor.
+     *
+     * @param  bool    $isProdEnv
+     * @param  bool    $isCliContext
+     * @param  string  $errorTemplate
+     * @param  string  $errorLogPath
+     */
+    public function __construct(
+        bool $isProdEnv,
+        bool $isCliContext,
+        string $errorTemplate,
+        string $errorLogPath
+    ) {
         $this->isProdEnv = $isProdEnv;
         $this->isCliContext = $isCliContext;
-        $this->errorlayout = $errorlayout;
+        $this->errorTemplate = $errorTemplate;
         $this->errorLogPath = $errorLogPath;
     }
 
-    public function initHandlers()
+    /**
+     * @param  Throwable  $exception
+     *
+     * @return View|null
+     * @throws Throwable
+     */
+    public function logError(Throwable $exception)
     {
-        // convert all php errors to exceptions
-        set_error_handler(function ($severity, $message, $file, $line) {
-            if (error_reporting() & $severity) {
-                throw new ErrorException($message, 0, $severity, $file, $line);
-            }
-        });
+        // developers must see the error
+        if (!$this->isProdEnv) {
+            throw $exception;
+        }
 
-        set_exception_handler(function ($exception) {
-            // TODO: log the error
-            echo 'log error';
+        // save the error log
+        file_put_contents(
+            $this->errorLogPath, json_encode(
+                [
+                    'date'    => date('Y-m-d H:i:s'),
+                    'message' => $exception->getMessage(),
+                    'file'    => $exception->getFile(),
+                    'line'    => $exception->getLine(),
+                    'trace'   => $exception->getTrace(),
+                ]
+            )."\n", FILE_APPEND
+        );
 
-            // developers must see the error
-            if (!$this->isProdEnv) {
-                throw $exception;
-            }
-
-
-            // show the 500 page
-            if (!$this->isCliContext) {
-                $this->display500Page();
-            }
-
-//            // TODO: if is dev mode just re throw exception
-//            // otherwise show
-//            // TODO: log the error in the file
-//            echo '!!!log error and show 500 page??? FOR THE WEB';
-//
-////            echo $exception; /// what should we do with dev mode ??
-//            /// I have to display the error
-//
-//            if (!$this->isCliContext) {
-//                $this->display500Page();
-//            }
-//
-//
-//            throw $exception;
-        });
-    }
-
-    protected function display500Page()
-    {
-        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-        echo new View([], $this->errorlayout);
+        // show the 500 page (only in the http context)
+        if (!$this->isCliContext) {
+            return new View(['error' => $exception], $this->errorTemplate);
+        }
     }
 
 }
