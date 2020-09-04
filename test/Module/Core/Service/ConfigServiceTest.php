@@ -12,7 +12,7 @@ namespace Tiny\Skeleton\Module\Core\Service;
  */
 
 use PHPUnit\Framework\TestCase;
-use Tiny\Skeleton\Module\Core\Exception;
+use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 
 class ConfigServiceTest extends TestCase
 {
@@ -43,7 +43,7 @@ class ConfigServiceTest extends TestCase
     public function testGetConfigMethodUsingMissingConfig()
     {
         $name = 'test';
-        $this->expectException(Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             sprintf(
                 'Unknown config "%s"',

@@ -11,6 +11,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  * file that was distributed with this source code.
  */
 
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 use Tiny\Router;
@@ -67,9 +68,9 @@ class BeforeCallingControllerCorsListener
     }
 
     /**
-     * @param  Core\EventManager\ControllerEvent  $event
+     * @param ControllerEvent  $event
      */
-    public function __invoke(Core\EventManager\ControllerEvent $event)
+    public function __invoke(ControllerEvent $event)
     {
         // send additional cors headers
         if ($this->request->isOptions()) {

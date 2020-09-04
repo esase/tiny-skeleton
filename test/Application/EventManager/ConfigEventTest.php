@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventManager;
+namespace Tiny\Skeleton\Application\EventManager;
 
 /*
  * This file is part of the Tiny package.
@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventManager;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 use Tiny\Skeleton\Module\Core;
 
 class ConfigEventTest extends TestCase
@@ -20,7 +21,7 @@ class ConfigEventTest extends TestCase
 
     public function testCreation()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Data must be array'
         );
@@ -30,7 +31,7 @@ class ConfigEventTest extends TestCase
 
     public function testSetDataMethod()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Data must be array'
         );

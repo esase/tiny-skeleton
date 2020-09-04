@@ -1,15 +1,15 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventManager;
+namespace Tiny\Skeleton\Application\EventManager;
 
 use Tiny\EventManager\AbstractEvent;
 use Tiny\EventManager\Event;
-use Tiny\Skeleton\Module\Core\Exception;
+use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 
 class ConfigEvent extends Event
 {
 
-    const EVENT_SET_CONFIGS = 'core.set.configs';
+    const EVENT_SET_CONFIGS = 'application.set.configs';
 
     /**
      * ConfigEvent constructor.
@@ -45,7 +45,7 @@ class ConfigEvent extends Event
     private function checkData($data)
     {
         if (null !== $data && !is_array($data)) {
-            throw new Exception\InvalidArgumentException('Data must be array');
+            throw new InvalidArgumentException('Data must be array');
         }
     }
 

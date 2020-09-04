@@ -12,6 +12,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  */
 
 use Tiny\EventManager\EventManager;
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 use Tiny\View\View;
@@ -53,9 +54,9 @@ class AfterCallingControllerViewInitListener
     }
 
     /**
-     * @param  Core\EventManager\ControllerEvent  $event
+     * @param  ControllerEvent  $event
      */
-    public function __invoke(Core\EventManager\ControllerEvent $event)
+    public function __invoke(ControllerEvent $event)
     {
         /** @var Http\AbstractResponse $response */
         $response = $event->getData();

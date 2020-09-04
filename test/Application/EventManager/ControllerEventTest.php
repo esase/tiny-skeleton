@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\EventManager;
+namespace Tiny\Skeleton\Application\EventManager;
 
 /*
  * This file is part of the Tiny package.
@@ -12,37 +12,38 @@ namespace Tiny\Skeleton\Module\Core\EventManager;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 use Tiny\Skeleton\Module\Core;
-use Tiny\Router;
+use Tiny\Http;
 use stdClass;
 
-class RouteEventTest extends TestCase
+class ControllerEventTest extends TestCase
 {
 
     public function testCreation()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             sprintf(
                 'Data must be instance of the "%s"',
-                Router\Route::class
+                Http\AbstractResponse::class
             )
         );
 
-        new RouteEvent(new stdClass());
+        new ControllerEvent(new stdClass());
     }
 
     public function testSetDataMethod()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             sprintf(
                 'Data must be instance of the "%s"',
-                Router\Route::class
+                Http\AbstractResponse::class
             )
         );
 
-        $configEvent = new RouteEvent();
+        $configEvent = new ControllerEvent();
         $configEvent->setData(new stdClass());
     }
 

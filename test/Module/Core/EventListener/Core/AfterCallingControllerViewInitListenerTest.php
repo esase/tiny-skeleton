@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Tiny\EventManager\EventManager;
 use Tiny\Http;
 use Tiny\Router;
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Core;
 use Tiny\View\View;
 
@@ -89,7 +90,7 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
             ->willReturn('index');
 
         $eventMock = $this->createStub(
-            Core\EventManager\ControllerEvent::class
+            ControllerEvent::class
         );
         $eventMock->expects($this->once())
             ->method('getData')

@@ -11,7 +11,7 @@ namespace Tiny\Skeleton\Module\Core\Service;
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton\Module\Core\Exception;
+use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 
 class ConfigService
 {
@@ -34,7 +34,7 @@ class ConfigService
      * @param  mixed|null  $defaultValue
      *
      * @return mixed
-     * @throws Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getConfig(string $name, $defaultValue = null)
     {
@@ -46,7 +46,7 @@ class ConfigService
             return $defaultValue;
         }
 
-        throw new Exception\InvalidArgumentException(
+        throw new InvalidArgumentException(
             sprintf(
                 'Unknown config "%s"',
                 $name

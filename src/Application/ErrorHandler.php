@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton;
+namespace Tiny\Skeleton\Application;
 
 /*
  * This file is part of the Tiny package.

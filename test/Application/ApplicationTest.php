@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tiny\Skeleton;
+namespace Tiny\Skeleton\Application;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;

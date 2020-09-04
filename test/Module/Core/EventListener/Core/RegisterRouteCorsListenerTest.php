@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Router;
+use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 
@@ -42,7 +43,7 @@ class RegisterRouteCorsListenerTest extends TestCase
             ]);
 
         $eventMock = $this->createStub(
-            Core\EventManager\RouteEvent::class
+            RouteEvent::class
         );
         $eventMock->expects($this->once())
             ->method('getData')

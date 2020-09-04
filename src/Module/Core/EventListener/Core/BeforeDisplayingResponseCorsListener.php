@@ -12,6 +12,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  */
 
 use Tiny\Http;
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Core;
 
 class BeforeDisplayingResponseCorsListener
@@ -50,9 +51,9 @@ class BeforeDisplayingResponseCorsListener
     }
 
     /**
-     * @param  Core\EventManager\ControllerEvent  $event
+     * @param ControllerEvent  $event
      */
-    public function __invoke(Core\EventManager\ControllerEvent $event)
+    public function __invoke(ControllerEvent $event)
     {
         // send basic cors headers
         if (!$this->request->isConsole() && $this->httpOrigin) {

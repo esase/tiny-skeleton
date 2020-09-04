@@ -12,6 +12,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 
@@ -44,7 +45,7 @@ class BeforeDisplayingResponseCorsListenerTest extends TestCase
 
         $listener(
             $this->createStub(
-                Core\EventManager\ControllerEvent::class
+                ControllerEvent::class
             )
         );
     }

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tiny\Skeleton\Module\Core\Exception;
+namespace Tiny\Skeleton\Application\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException
     implements ExceptionInterface

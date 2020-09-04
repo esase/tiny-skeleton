@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tiny\Skeleton;
+namespace Tiny\Skeleton\Application;
 
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +28,7 @@ class BootstrapperUtilsTest extends TestCase
     protected function setUp(): void
     {
         $this->utils = new BootstrapperUtils(
-            __DIR__.'/fixtures'
+            __DIR__.'/../fixtures'
         );
     }
 

@@ -14,6 +14,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
 use PHPUnit\Framework\TestCase;
 use Tiny\Http;
 use Tiny\Router;
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Core;
 
 class BeforeCallingControllerCorsListenerTest extends TestCase
@@ -55,7 +56,7 @@ class BeforeCallingControllerCorsListenerTest extends TestCase
             ]);
 
         $eventMock = $this->createStub(
-            Core\EventManager\ControllerEvent::class
+            ControllerEvent::class
         );
         $eventMock->expects($this->once())
             ->method('getParams')
@@ -103,7 +104,7 @@ class BeforeCallingControllerCorsListenerTest extends TestCase
             ->willReturn('index'); // we don't specify http method, we are expecting the route is working with all http methods
 
         $eventMock = $this->createStub(
-            Core\EventManager\ControllerEvent::class
+            ControllerEvent::class
         );
         $eventMock->expects($this->once())
             ->method('getParams')

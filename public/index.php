@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton;
+use Tiny\Skeleton\Application;
 
 chdir(dirname(__DIR__));
 
@@ -22,9 +22,9 @@ require_once 'error-handler.php';
 require_once 'application-env/'.$applicationEnv.'.php';
 
 // init application
-$application = new Skeleton\Application(
-    new Skeleton\Bootstrapper(
-        new Skeleton\BootstrapperUtils(getcwd()),
+$application = new Application\Application(
+    new Application\Bootstrapper(
+        new Application\BootstrapperUtils(getcwd()),
         $isProdEnv
     ),
     $isCliContext,

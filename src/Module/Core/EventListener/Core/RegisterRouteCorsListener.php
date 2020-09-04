@@ -11,6 +11,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  * file that was distributed with this source code.
  */
 
+use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 use Tiny\Router;
@@ -34,9 +35,9 @@ class RegisterRouteCorsListener
     }
 
     /**
-     * @param  Core\EventManager\RouteEvent  $event
+     * @param RouteEvent  $event
      */
-    public function __invoke(Core\EventManager\RouteEvent $event)
+    public function __invoke(RouteEvent $event)
     {
         if ($this->request->isOptions()) {
             /** @var Router\Route $route */

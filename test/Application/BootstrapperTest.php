@@ -9,11 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Tiny\Skeleton;
+namespace Tiny\Skeleton\Application;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tiny\EventManager\EventManager;
+use Tiny\Skeleton\Application\EventManager\ConfigEvent;
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
+use Tiny\Skeleton\Application\EventManager\RouteEvent;
+use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Router;
 use Tiny\Http;
@@ -54,7 +58,7 @@ class BootstrapperTest extends TestCase
 
     public function testInitEventManagerMethodUsingEmptyParams()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Event name or listener class is missing, check you config'
         );
@@ -94,18 +98,18 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->once())
             ->method('trigger')
             ->with(
-                Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
-                $this->isInstanceOf(Core\EventManager\RouteEvent::class)
+                RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+                $this->isInstanceOf(RouteEvent::class)
             )
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\RouteEvent $eventParams
+                        RouteEvent $eventParams
                     ) use (
                         $routeModifiedStub
                     ) {
                         $this->assertEquals(
-                            Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+                            RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
                             $eventName
                         );
 
@@ -143,8 +147,8 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->once())
             ->method('trigger')
             ->with(
-                Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
-                $this->isInstanceOf(Core\EventManager\RouteEvent::class)
+                RouteEvent::EVENT_REGISTER_ROUTE,
+                $this->isInstanceOf(RouteEvent::class)
             );
 
         $routerMock = $this->createMock(
@@ -192,7 +196,7 @@ class BootstrapperTest extends TestCase
 
     public function testInitRoutesUsingEmptyConfig()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Both http and console routes are missing, check you config'
         );
@@ -230,7 +234,7 @@ class BootstrapperTest extends TestCase
 
     public function testInitRoutesUsingEmptyRouterConfig()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'One of: request, controller or action list is empty, check you config'
         );
@@ -283,16 +287,16 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->once())
             ->method('trigger')
             ->with(
-                Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
-                $this->isInstanceOf(Core\EventManager\RouteEvent::class)
+                RouteEvent::EVENT_REGISTER_ROUTE,
+                $this->isInstanceOf(RouteEvent::class)
             )
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\RouteEvent $event
+                        RouteEvent $event
                     ) {
                         $this->assertEquals(
-                            Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+                            RouteEvent::EVENT_REGISTER_ROUTE,
                             $eventName
                         );
 
@@ -378,21 +382,20 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->exactly(2))
             ->method('trigger')
             ->withConsecutive(
-                [Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
-                 $this->isInstanceOf(Core\EventManager\RouteEvent::class)],
-                [Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
-                 $this->isInstanceOf(Core\EventManager\RouteEvent::class)]
+                [RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+                 $this->isInstanceOf(RouteEvent::class)],
+                [RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
+                 $this->isInstanceOf(RouteEvent::class)]
             )
             ->will(
                 $this->returnCallback(
-                    function (string $eventName,
-                        Core\EventManager\RouteEvent $event
+                    function (string $eventName, RouteEvent $event
                     ) use (
                         $routeInitialStub,
                         $routeModifiedStub
                     ) {
                         if ($eventName
-                            == Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE
+                            == RouteEvent::EVENT_AFTER_MATCHING_ROUTE
                         ) {
                             // check the event's data
                             $this->assertEquals($routeInitialStub, $event->getData());
@@ -440,8 +443,8 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->once())
             ->method('trigger')
             ->with(
-                Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
-                $this->isInstanceOf(Core\EventManager\ConfigEvent::class)
+                ConfigEvent::EVENT_SET_CONFIGS,
+                $this->isInstanceOf(ConfigEvent::class)
             );
 
         $configServiceMock = $this->createMock(
@@ -483,16 +486,16 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->once())
             ->method('trigger')
             ->with(
-                Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
-                $this->isInstanceOf(Core\EventManager\ConfigEvent::class)
+                ConfigEvent::EVENT_SET_CONFIGS,
+                $this->isInstanceOf(ConfigEvent::class)
             )
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\ConfigEvent $event
+                        ConfigEvent $event
                     ) use ($modifiedConfigs, $initialConfigs) {
                         $this->assertEquals(
-                            Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
+                            ConfigEvent::EVENT_SET_CONFIGS,
                             $eventName
                         );
                         // ensure we received the initial configs
@@ -554,7 +557,7 @@ class BootstrapperTest extends TestCase
 
     public function testInitServiceManagerMethodUsingEmptyConfig()
     {
-        $this->expectException(Core\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Both shared and discrete services are empty, check you config'
         );
@@ -715,19 +718,19 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->once())
             ->method('trigger')
             ->with(
-                Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
-                $this->isInstanceOf(Core\EventManager\ControllerEvent::class)
+                ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                $this->isInstanceOf(ControllerEvent::class)
             )
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\ControllerEvent $event
+                        ControllerEvent $event
                     ) use (
                         $routeStub,
                         $responseModifiedStub
                     ) {
                         $this->assertEquals(
-                            Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                            ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
                             $eventName
                         );
 
@@ -795,22 +798,22 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->exactly(2))
             ->method('trigger')
             ->withConsecutive(
-                [Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
-                 $this->isInstanceOf(Core\EventManager\ControllerEvent::class)],
-                [Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
-                 $this->isInstanceOf(Core\EventManager\ControllerEvent::class)]
+                [ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                 $this->isInstanceOf(ControllerEvent::class)],
+                [ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
+                 $this->isInstanceOf(ControllerEvent::class)]
             )
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\ControllerEvent $event
+                        ControllerEvent $event
                     ) use (
                         $responseInitialStub,
                         $responseModifiedStub,
                         $routeMock
                     ) {
                         if ($eventName
-                            == Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER
+                            == ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER
                         ) {
                             // check the event's data and params
                             $this->assertEquals(
@@ -880,20 +883,20 @@ class BootstrapperTest extends TestCase
         $eventManagerMock->expects($this->once())
             ->method('trigger')
             ->with(
-                Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
-                $this->isInstanceOf(Core\EventManager\ControllerEvent::class)
+                ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+                $this->isInstanceOf(ControllerEvent::class)
             )
             ->will(
                 $this->returnCallback(
                     function (string $eventName,
-                        Core\EventManager\ControllerEvent $event
+                        ControllerEvent $event
                     ) use (
                         $responseInitialStub,
                         $responseModifiedMock
                     ) {
                         // check the event's name
                         $this->assertEquals(
-                            Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+                            ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
                             $eventName
                         );
 

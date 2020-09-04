@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton;
+namespace Tiny\Skeleton\Application;
 
 /*
  * This file is part of the Tiny package.
@@ -13,6 +13,10 @@ namespace Tiny\Skeleton;
 
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
+use Tiny\Skeleton\Application\EventManager\ConfigEvent;
+use Tiny\Skeleton\Application\EventManager\ControllerEvent;
+use Tiny\Skeleton\Application\EventManager\RouteEvent;
+use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 use Tiny\Router;
@@ -83,7 +87,7 @@ class Bootstrapper
         $discrete = ($configs['service_manager']['discrete'] ?? []);
 
         if (!$shared && !$discrete) {
-            throw new Core\Exception\InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Both shared and discrete services are empty, check you config'
             );
         }
@@ -104,9 +108,9 @@ class Bootstrapper
         Core\Service\ConfigService $configsService,
         array $configsArray
     ) {
-        $setEvent = new Core\EventManager\ConfigEvent($configsArray);
+        $setEvent = new ConfigEvent($configsArray);
         $eventManager->trigger(
-            Core\EventManager\ConfigEvent::EVENT_SET_CONFIGS,
+            ConfigEvent::EVENT_SET_CONFIGS,
             $setEvent
         );
 
@@ -131,7 +135,7 @@ class Bootstrapper
             $listenerClass = $listener['listener'] ?? '';
 
             if (!$eventName || !$listenerClass) {
-                throw new Core\Exception\InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'Event name or listener class is missing, check you config'
                 );
             }
@@ -165,7 +169,7 @@ class Bootstrapper
         $activeRoutes = $isConsole ? $consoleRoutes : $httpRoutes;
 
         if (!$consoleRoutes && !$httpRoutes) {
-            throw new Core\Exception\InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Both http and console routes are missing, check you config'
             );
         }
@@ -176,7 +180,7 @@ class Bootstrapper
             $actionList = $route['action_list'] ?? '';
 
             if (!$request || !$controller || !$actionList) {
-                throw new Core\Exception\InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'One of: request, controller or action list is empty, check you config'
                 );
             }
@@ -190,9 +194,9 @@ class Bootstrapper
                 ($route['spec'] ?? '')
             );
 
-            $registerEvent = new Core\EventManager\RouteEvent($route);
+            $registerEvent = new RouteEvent($route);
             $eventManager->trigger(
-                Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+                RouteEvent::EVENT_REGISTER_ROUTE,
                 $registerEvent
             );
 
@@ -211,9 +215,9 @@ class Bootstrapper
         Router\Router $router
     ): Router\Route {
         // trigger the router's events chain
-        $beforeEvent = new Core\EventManager\RouteEvent();
+        $beforeEvent = new RouteEvent();
         $eventManager->trigger(
-            Core\EventManager\RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+            RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
             $beforeEvent
         );
 
@@ -225,9 +229,9 @@ class Bootstrapper
         // find a matched route
         $route = $router->getMatchedRoute();
 
-        $afterEvent = new Core\EventManager\RouteEvent($route);
+        $afterEvent = new RouteEvent($route);
         $eventManager->trigger(
-            Core\EventManager\RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
+            RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
             $afterEvent
         );
 
@@ -251,13 +255,13 @@ class Bootstrapper
         Router\Route $route
     ): Http\AbstractResponse {
         // trigger the controller's events chain
-        $beforeEvent = new Core\EventManager\ControllerEvent(
+        $beforeEvent = new ControllerEvent(
             null, [
                 'route' => $route,
             ]
         );
         $eventManager->trigger(
-            Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+            ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
             $beforeEvent
         );
 
@@ -269,13 +273,13 @@ class Bootstrapper
         // call the controller's action
         $controller->{$route->getMatchedAction()}($response, $request);
 
-        $afterEvent = new Core\EventManager\ControllerEvent(
+        $afterEvent = new ControllerEvent(
             $response, [
                 'route' => $route,
             ]
         );
         $eventManager->trigger(
-            Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
+            ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
             $afterEvent
         );
 
@@ -297,7 +301,7 @@ class Bootstrapper
         string $action
     ): string {
         // trigger the response's events chain
-        $beforeEvent = new Core\EventManager\ControllerEvent(
+        $beforeEvent = new ControllerEvent(
             $response,
             [
                 'controller' => $controller,
@@ -305,7 +309,7 @@ class Bootstrapper
             ]
         );
         $eventManager->trigger(
-            Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+            ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
             $beforeEvent
         );
 

@@ -9,26 +9,27 @@
  * file that was distributed with this source code.
  */
 
+use Tiny\Skeleton\Application\EventManager;
 use Tiny\Skeleton\Module\Core;
 use Tiny\View\View;
 
 return [
     // core
     [
-        'event'    => Core\EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+        'event'    => EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
         'listener' => Core\EventListener\Core\RegisterRouteCorsListener::class
     ],
     [
-        'event'    => Core\EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+        'event'    => EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
         'listener' => Core\EventListener\Core\BeforeCallingControllerCorsListener::class,
         'priority' => -1000
     ],
     [
-        'event'    => Core\EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+        'event'    => EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
         'listener' => Core\EventListener\Core\BeforeDisplayingResponseCorsListener::class
     ],
     [
-        'event'    => Core\EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
+        'event'    => EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
         'listener' => Core\EventListener\Core\AfterCallingControllerViewInitListener::class
     ],
     // view helper
