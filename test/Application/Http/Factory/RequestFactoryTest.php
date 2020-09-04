@@ -15,7 +15,7 @@ use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Tiny\Http\Request;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Base;
 
 class RequestFactoryTest extends TestCase
 {

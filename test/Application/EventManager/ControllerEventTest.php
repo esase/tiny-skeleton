@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Application\EventManager;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
 use stdClass;
 

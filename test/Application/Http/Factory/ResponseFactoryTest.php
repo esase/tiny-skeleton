@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Application\Http\Factory;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
 
 class ResponseFactoryTest extends TestCase

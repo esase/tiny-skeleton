@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Application;
 
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Base;
 
 class BootstrapperUtilsTest extends TestCase
 {

@@ -10,6 +10,6 @@
  */
 
 return [
-    'Core',
+    'Base',
     'User'
 ];

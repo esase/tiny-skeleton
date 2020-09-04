@@ -5,7 +5,7 @@ namespace Tiny\Skeleton\Application\Router\Factory;
 use Tiny\Http\Request;
 use Tiny\Router\Router;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Base;
 
 class RouterFactory
 {

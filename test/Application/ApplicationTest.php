@@ -16,7 +16,7 @@ use stdClass;
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Base;
 use Tiny\Router;
 use Tiny\Http;
 

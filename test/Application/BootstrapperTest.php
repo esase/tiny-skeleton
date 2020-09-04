@@ -19,7 +19,7 @@ use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Core;
+use Tiny\Skeleton\Module\Base;
 use Tiny\Router;
 use Tiny\Http;
 
