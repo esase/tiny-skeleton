@@ -17,9 +17,9 @@ use Tiny\Skeleton\Application\EventManager\ConfigEvent;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Skeleton\Module\Core;
 use Tiny\Http;
 use Tiny\Router;
+use Tiny\Skeleton\Application\Service\ConfigService;
 
 class Bootstrapper
 {
@@ -99,13 +99,13 @@ class Bootstrapper
     }
 
     /**
-     * @param  EventManager                $eventManager
-     * @param  Core\Service\ConfigService  $configsService
-     * @param  array                       $configsArray
+     * @param  EventManager   $eventManager
+     * @param  ConfigService  $configsService
+     * @param  array          $configsArray
      */
     public function initConfigsService(
         EventManager $eventManager,
-        Core\Service\ConfigService $configsService,
+        ConfigService $configsService,
         array $configsArray
     ) {
         $setEvent = new ConfigEvent($configsArray);
@@ -149,15 +149,15 @@ class Bootstrapper
     }
 
     /**
-     * @param  EventManager                $eventManager
-     * @param  Router\Router               $router
-     * @param  Core\Service\ConfigService  $configsService
-     * @param  bool                        $isConsole
+     * @param  EventManager   $eventManager
+     * @param  Router\Router  $router
+     * @param  ConfigService  $configsService
+     * @param  bool           $isConsole
      */
     public function initRoutes(
         EventManager $eventManager,
         Router\Router $router,
-        Core\Service\ConfigService $configsService,
+        ConfigService $configsService,
         bool $isConsole = false
     ) {
         $allRoutes = $configsService->getConfig('routes', []);
@@ -327,7 +327,10 @@ class Bootstrapper
      */
     private function collectModulesConfigs(array $modules): array
     {
-        $configs = [];
+        // load application config
+        $configs = $this->utils->loadApplicationConfigArray();
+
+        // load modules config
         foreach ($modules as $module) {
             $configs = array_merge_recursive(
                 $configs,

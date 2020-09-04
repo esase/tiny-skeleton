@@ -12,6 +12,7 @@ namespace Tiny\Skeleton\Module\Core\Utils;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core;
 
 class ViewHelperUtilsTest extends TestCase
@@ -20,7 +21,7 @@ class ViewHelperUtilsTest extends TestCase
     public function testGetTemplatePathMethod()
     {
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
         $configServiceMock->expects($this->exactly(2))
             ->method('getConfig')
@@ -62,7 +63,7 @@ class ViewHelperUtilsTest extends TestCase
     public function testGetControllerPathMethod()
     {
         $utils = new ViewHelperUtils($this->createStub(
-            Core\Service\ConfigService::class
+            ConfigService::class
         ));
         $controllerPath = $utils->getControllerPath(
             'TestController',
@@ -78,7 +79,7 @@ class ViewHelperUtilsTest extends TestCase
     public function testExtractModuleNameMethod()
     {
         $utils = new ViewHelperUtils($this->createStub(
-            Core\Service\ConfigService::class
+            ConfigService::class
         ));
         $moduleName = $utils->extractModuleName(
             'Tiny\Skeleton\Module\Test\Controller\TestController'

@@ -12,9 +12,9 @@ namespace Tiny\Skeleton\Application;
  */
 
 use Tiny\EventManager\EventManager;
-use Tiny\Skeleton\Module\Core;
 use Tiny\Router;
 use Tiny\Http;
+use Tiny\Skeleton\Application\Service\ConfigService;
 
 class Application
 {
@@ -75,7 +75,7 @@ class Application
         // init the configs service (the raw configs array must be wrapped in an object)
         $this->bootstrapper->initConfigsService(
             $serviceManager->get(EventManager::class),
-            $serviceManager->get(Core\Service\ConfigService::class),
+            $serviceManager->get(ConfigService::class),
             $configsArray
         );
 
@@ -83,7 +83,7 @@ class Application
         $this->bootstrapper->initRoutes(
             $serviceManager->get(EventManager::class),
             $serviceManager->get(Router\Router::class),
-            $serviceManager->get(Core\Service\ConfigService::class),
+            $serviceManager->get(ConfigService::class),
             $this->isCliContext
         );
 

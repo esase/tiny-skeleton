@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\Factory\ViewHelperConfigListenerFactory;
 use Tiny\Skeleton\Module\Core;
 
@@ -25,7 +26,7 @@ class ViewHelperConfigListenerFactoryTest extends TestCase
         $serviceManagerMock->expects($this->once())
             ->method('get')
             ->willReturn(
-                $this->createStub(Core\Service\ConfigService::class)
+                $this->createStub(ConfigService::class)
             );
 
         $listenerFactory = new ViewHelperConfigListenerFactory();

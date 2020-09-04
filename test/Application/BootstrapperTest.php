@@ -18,6 +18,7 @@ use Tiny\Skeleton\Application\EventManager\ConfigEvent;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Router;
 use Tiny\Http;
@@ -161,7 +162,7 @@ class BootstrapperTest extends TestCase
             );
 
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
 
         $configServiceMock->expects($this->once())
@@ -210,7 +211,7 @@ class BootstrapperTest extends TestCase
         );
 
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
 
         $configServiceMock->expects($this->once())
@@ -248,7 +249,7 @@ class BootstrapperTest extends TestCase
         );
 
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
 
         $configServiceMock->expects($this->once())
@@ -332,7 +333,7 @@ class BootstrapperTest extends TestCase
             );
 
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
 
         $configServiceMock->expects($this->once())
@@ -448,7 +449,7 @@ class BootstrapperTest extends TestCase
             );
 
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
 
         $configServiceMock->expects($this->once())
@@ -508,7 +509,7 @@ class BootstrapperTest extends TestCase
             );
 
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
 
         $configServiceMock->expects($this->once())
@@ -575,11 +576,14 @@ class BootstrapperTest extends TestCase
     public function testLoadModulesConfigsMethodUsingProdEnvAndNotCachedConfigs(
     )
     {
-        $module1Config = [
+        $applicationConfig = [
             'services' => [1],
         ];
+        $module1Config = [
+            'services' => [2],
+        ];
         $module2Config = [
-            'services'    => [2],
+            'services'    => [3],
             'controllers' => [
                 'TestController' => 'TestControllerFactory',
             ],
@@ -593,6 +597,10 @@ class BootstrapperTest extends TestCase
             ->method('loadCachedModulesConfigArray')
             ->willReturn(null);
 
+        $bootstrapUtilsMock->expects($this->once())
+            ->method('loadApplicationConfigArray')
+            ->willReturn($applicationConfig);
+
         $bootstrapUtilsMock->expects($this->exactly(2))
             ->method('loadModuleConfigArray')
             ->will($this->onConsecutiveCalls($module1Config, $module2Config));
@@ -601,7 +609,7 @@ class BootstrapperTest extends TestCase
             ->method('saveCachedModulesConfigArray')
             ->with(
                 [
-                    'services'    => [1, 2],
+                    'services'    => [1, 2, 3],
                     'controllers' => [
                         'TestController' => 'TestControllerFactory',
                     ],
@@ -623,7 +631,7 @@ class BootstrapperTest extends TestCase
         // configs should be properly merged
         $this->assertEquals(
             [
-                'services'    => [1, 2],
+                'services'    => [1, 2, 3],
                 'controllers' => [
                     'TestController' => 'TestControllerFactory',
                 ],
@@ -663,11 +671,14 @@ class BootstrapperTest extends TestCase
 
     public function testLoadModulesConfigsMethodUsingDevEnvironment()
     {
-        $module1Config = [
+        $applicationConfig = [
             'services' => [1],
         ];
+        $module1Config = [
+            'services' => [2],
+        ];
         $module2Config = [
-            'services'    => [2],
+            'services'    => [3],
             'controllers' => [
                 'TestController' => 'TestControllerFactory',
             ],
@@ -676,6 +687,11 @@ class BootstrapperTest extends TestCase
         $bootstrapUtilsMock = $this->createMock(
             BootstrapperUtils::class
         );
+
+        $bootstrapUtilsMock->expects($this->once())
+            ->method('loadApplicationConfigArray')
+            ->willReturn($applicationConfig);
+
         $bootstrapUtilsMock->expects($this->exactly(2))
             ->method('loadModuleConfigArray')
             ->will($this->onConsecutiveCalls($module1Config, $module2Config));
@@ -695,7 +711,7 @@ class BootstrapperTest extends TestCase
         // configs should be properly merged
         $this->assertEquals(
             [
-                'services'    => [1, 2],
+                'services'    => [1, 2, 3],
                 'controllers' => [
                     'TestController' => 'TestControllerFactory',
                 ],

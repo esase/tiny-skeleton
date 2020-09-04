@@ -71,6 +71,19 @@ class BootstrapperUtils
     }
 
     /**
+     * @return array
+     */
+    public function loadApplicationConfigArray(): array
+    {
+        $configPath = vsprintf('%s/src/Application/%s', [
+            $this->projectRootDir,
+            self::CONFIG_FILE
+        ]);
+
+        return require_once $configPath;
+    }
+
+    /**
      * @return string
      */
     private function getCachedModulesConfigArrayPath(): string

@@ -13,6 +13,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper\Factory;
  */
 
 use Tiny\ServiceManager\ServiceManager;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperConfigListener;
 
@@ -27,7 +28,7 @@ class ViewHelperConfigListenerFactory
     public function __invoke(ServiceManager $serviceManager
     ): ViewHelperConfigListener {
         return new ViewHelperConfigListener(
-            $serviceManager->get(Core\Service\ConfigService::class)
+            $serviceManager->get(ConfigService::class)
         );
     }
 

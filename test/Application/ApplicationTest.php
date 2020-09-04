@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core;
 use Tiny\Router;
 use Tiny\Http;
@@ -35,10 +36,10 @@ class ApplicationTest extends TestCase
             ->withConsecutive(
                 [EventManager::class],
                 [EventManager::class],
-                [Core\Service\ConfigService::class],
+                [ConfigService::class],
                 [EventManager::class],
                 [Router\Router::class],
-                [Core\Service\ConfigService::class],
+                [ConfigService::class],
                 [EventManager::class],
                 [Router\Router::class],
                 [EventManager::class],
@@ -56,9 +57,9 @@ class ApplicationTest extends TestCase
                                     EventManager::class
                                 );
 
-                            case Core\Service\ConfigService::class:
+                            case ConfigService::class:
                                 return $this->createStub(
-                                    Core\Service\ConfigService::class
+                                    ConfigService::class
                                 );
 
                             case Router\Router::class:
@@ -111,7 +112,7 @@ class ApplicationTest extends TestCase
             ->method('initConfigsService')
             ->with(
                 $this->isInstanceOf(EventManager::class),
-                $this->isInstanceOf(Core\Service\ConfigService::class),
+                $this->isInstanceOf(ConfigService::class),
                 []
             );
 
@@ -120,7 +121,7 @@ class ApplicationTest extends TestCase
             ->with(
                 $this->isInstanceOf(EventManager::class),
                 $this->isInstanceOf(Router\Router::class),
-                $this->isInstanceOf(Core\Service\ConfigService::class),
+                $this->isInstanceOf(ConfigService::class),
                 false
             );
 

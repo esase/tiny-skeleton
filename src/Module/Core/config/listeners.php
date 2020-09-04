@@ -17,20 +17,20 @@ return [
     // core
     [
         'event'    => EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
-        'listener' => Core\EventListener\Core\RegisterRouteCorsListener::class
+        'listener' => Core\EventListener\Application\RegisterRouteCorsListener::class
     ],
     [
         'event'    => EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
-        'listener' => Core\EventListener\Core\BeforeCallingControllerCorsListener::class,
+        'listener' => Core\EventListener\Application\BeforeCallingControllerCorsListener::class,
         'priority' => -1000
     ],
     [
         'event'    => EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
-        'listener' => Core\EventListener\Core\BeforeDisplayingResponseCorsListener::class
+        'listener' => Core\EventListener\Application\BeforeDisplayingResponseCorsListener::class
     ],
     [
         'event'    => EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
-        'listener' => Core\EventListener\Core\AfterCallingControllerViewInitListener::class
+        'listener' => Core\EventListener\Application\AfterCallingControllerViewInitListener::class
     ],
     // view helper
     [

@@ -1,7 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Core\Utils\Factory;
-
+namespace Tiny\Skeleton\Module\Core\EventListener\Application\Factory;
 
 /*
  * This file is part of the Tiny package.
@@ -12,23 +11,22 @@ namespace Tiny\Skeleton\Module\Core\Utils\Factory;
  * file that was distributed with this source code.
  */
 
+use Tiny\Http;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Core;
-use Tiny\Skeleton\Module\Core\Utils\ViewHelperUtils;
+use Tiny\Skeleton\Module\Core\EventListener\Application\RegisterRouteCorsListener;
 
-class ViewHelperUtilsFactory
+class RegisterRouteCorsListenerFactory
 {
 
     /**
      * @param  ServiceManager  $serviceManager
      *
-     * @return ViewHelperUtils
+     * @return RegisterRouteCorsListener
      */
     public function __invoke(ServiceManager $serviceManager
-    ): ViewHelperUtils {
-        return new ViewHelperUtils(
-            $serviceManager->get(ConfigService::class)
+    ): RegisterRouteCorsListener {
+        return new RegisterRouteCorsListener(
+            $serviceManager->get(Http\Request::class)
         );
     }
 

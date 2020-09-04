@@ -11,23 +11,24 @@ namespace Tiny\Skeleton\Module\Core\Utils;
  * file that was distributed with this source code.
  */
 
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core;
 
 class ViewHelperUtils
 {
 
     /**
-     * @var Core\Service\ConfigService
+     * @var ConfigService
      */
-    private Core\Service\ConfigService $configService;
+    private ConfigService $configService;
 
     /**
      * ViewHelperConfigListener constructor.
      *
-     * @param  Core\Service\ConfigService  $configService
+     * @param  ConfigService  $configService
      */
     public function __construct(
-        Core\Service\ConfigService $configService
+        ConfigService $configService
     ) {
         $this->configService = $configService;
     }
@@ -46,11 +47,11 @@ class ViewHelperUtils
 
         return vsprintf(
             '%s/%s/view/%s.%s', [
-            $this->configService->getConfig('modules_root'),
-            $module,
-            $template,
-            $viewConfig['template_extension']
-        ]
+                $this->configService->getConfig('modules_root'),
+                $module,
+                $template,
+                $viewConfig['template_extension'],
+            ]
         );
     }
 
@@ -64,10 +65,12 @@ class ViewHelperUtils
         string $controller,
         string $module
     ): string {
-        return vsprintf('Tiny\Skeleton\Module\%s\Controller\%s', [
+        return vsprintf(
+            'Tiny\Skeleton\Module\%s\Controller\%s', [
             $module,
-            $controller
-        ]);
+            $controller,
+        ]
+        );
     }
 
     /**
@@ -77,7 +80,7 @@ class ViewHelperUtils
      */
     public function extractModuleName(string $className): string
     {
-        list(,,, $moduleName) = explode('\\', $className);
+        list(, , , $moduleName) = explode('\\', $className);
 
         return $moduleName;
     }

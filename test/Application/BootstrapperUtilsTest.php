@@ -77,4 +77,15 @@ class BootstrapperUtilsTest extends TestCase
         );
     }
 
+    public function testLoadApplicationConfigArrayMethod()
+    {
+        $config = $this->utils->loadApplicationConfigArray();
+
+        $this->assertEquals(
+            [
+                'test_application' => 'test_application_value',
+            ], $config
+        );
+    }
+
 }

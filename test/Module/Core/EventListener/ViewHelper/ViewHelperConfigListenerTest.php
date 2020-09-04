@@ -12,6 +12,7 @@ namespace Tiny\Skeleton\Module\Core\EventListener\Core;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core;
 use Tiny\EventManager;
 use Tiny\Skeleton\Module\Core\EventListener\ViewHelper\ViewHelperConfigListener;
@@ -22,7 +23,7 @@ class ViewHelperConfigListenerTest extends TestCase
     public function testInvokeMethod()
     {
         $configServiceMock = $this->createMock(
-            Core\Service\ConfigService::class
+            ConfigService::class
         );
         $configServiceMock->expects($this->once())
             ->method('getConfig')

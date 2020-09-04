@@ -27,7 +27,7 @@ set_error_handler(
 $errorHandler = new Application\ErrorHandler(
     $isProdEnv,
     $isCliContext,
-    'src/Module/Core/view/500.phtml',
+    'src/Application/view/500.phtml',
     'data/log/error.log'
 );
 

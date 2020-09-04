@@ -12,23 +12,24 @@ namespace Tiny\Skeleton\Module\Core\EventListener\ViewHelper;
  */
 
 use Tiny\EventManager\Event;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Core;
 
 class ViewHelperConfigListener
 {
 
     /**
-     * @var Core\Service\ConfigService
+     * @var ConfigService
      */
-    private Core\Service\ConfigService $configService;
+    private ConfigService $configService;
 
     /**
      * ViewHelperConfigListener constructor.
      *
-     * @param  Core\Service\ConfigService  $configService
+     * @param  ConfigService  $configService
      */
     public function __construct(
-        Core\Service\ConfigService $configService
+        ConfigService $configService
     ) {
         $this->configService = $configService;
     }
