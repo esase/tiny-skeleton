@@ -18,6 +18,7 @@ use Tiny\Skeleton\Application\EventManager\ConfigEvent;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
+use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
 use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Base;
 use Tiny\Router;
@@ -83,6 +84,125 @@ class BootstrapperTest extends TestCase
         $bootstrap->initEventManager(
             $eventManagerStub,
             $configs
+        );
+    }
+
+    public function testInitRouterMethodUsingExceptionAndExceptionListener()
+    {
+        $routeStub = $this->createMock(
+            Router\Route::class
+        );
+
+        $exception = new Router\Exception\InvalidArgumentException('Route not found');
+
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->exactly(2))
+            ->method('trigger')
+            ->withConsecutive(
+                [RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+                 $this->isInstanceOf(RouteEvent::class)],
+                [RouteEvent::EVENT_ROUTE_EXCEPTION,
+                 $this->isInstanceOf(RouteEvent::class)]
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $eventName, RouteEvent $event
+                    ) use ($routeStub, $exception) {
+                        // emulation of route not found
+                        if ($eventName
+                            == RouteEvent::EVENT_BEFORE_MATCHING_ROUTE
+                        ) {
+                            throw $exception;
+                        }
+
+                        // next event should provide a default route
+                        $this->assertEquals(
+                            RouteEvent::EVENT_ROUTE_EXCEPTION,
+                            $eventName
+                        );
+
+                        $params = $event->getParams();
+
+                        $this->assertSame($exception, $params['exception']);
+
+                        // add a route
+                        $event->setData($routeStub);
+                    }
+                )
+            );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $routerStub = $this->createStub(
+            Router\Router::class
+        );
+
+        $route = $bootstrap->initRouter(
+            $eventManagerMock,
+            $routerStub
+        );
+
+        // make sure we received a default route from a listener
+        $this->assertSame($routeStub, $route);
+    }
+
+    public function testInitRouterMethodUsingException()
+    {
+        $this->expectException(Router\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Route not found'
+        );
+
+        $exception = new Router\Exception\InvalidArgumentException('Route not found');
+
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->exactly(2))
+            ->method('trigger')
+            ->withConsecutive(
+                [RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+                 $this->isInstanceOf(RouteEvent::class)],
+                [RouteEvent::EVENT_ROUTE_EXCEPTION,
+                 $this->isInstanceOf(RouteEvent::class)]
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $eventName, RouteEvent $event
+                    ) use ($exception) {
+                        // emulation of route not found
+                        if ($eventName
+                            == RouteEvent::EVENT_BEFORE_MATCHING_ROUTE
+                        ) {
+                            throw $exception;
+                        }
+                    }
+                )
+            );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $routerStub = $this->createStub(
+            Router\Router::class
+        );
+
+        $bootstrap->initRouter(
+            $eventManagerMock,
+            $routerStub
         );
     }
 
@@ -716,6 +836,136 @@ class BootstrapperTest extends TestCase
                     'TestController' => 'TestControllerFactory',
                 ],
             ], $configs
+        );
+    }
+
+    public function testInitControllerMethodUsingExceptionAndExceptionListener()
+    {
+        $routeStub = $this->createStub(Router\Route::class);
+
+        $responseStub = $this->createMock(
+            Http\AbstractResponse::class
+        );
+
+        $exception = new NotFoundException('Item not found');
+
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->exactly(2))
+            ->method('trigger')
+            ->withConsecutive(
+                [ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                 $this->isInstanceOf(ControllerEvent::class)],
+                [ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
+                 $this->isInstanceOf(ControllerEvent::class)]
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $eventName, ControllerEvent $event
+                    ) use ($routeStub, $responseStub, $exception) {
+                        // emulation of the not found exception
+                        if ($eventName
+                            == ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER
+                        ) {
+                            throw $exception;
+                        }
+
+                        // next event should provide a default response
+                        $this->assertEquals(
+                            ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
+                            $eventName
+                        );
+
+                        $params = $event->getParams();
+
+                        $this->assertSame($exception, $params['exception']);
+                        $this->assertSame($routeStub, $params['route']);
+
+                        // add a response
+                        $event->setData($responseStub);
+                    }
+                )
+            );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $response = $bootstrap->initController(
+            $eventManagerMock,
+            $this->createStub(stdClass::class),
+            $this->createMock(
+                Http\Request::class
+            ),
+            $responseStub,
+            $routeStub
+        );
+
+        // make sure we received a default response from a listener
+        $this->assertSame($responseStub, $response);
+    }
+
+    public function testInitControllerMethodUsingExceptionAndException()
+    {
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage(
+            'Item not found'
+        );
+
+        $routeStub = $this->createStub(Router\Route::class);
+
+        $responseStub = $this->createMock(
+            Http\AbstractResponse::class
+        );
+
+        $exception = new NotFoundException('Item not found');
+
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->exactly(2))
+            ->method('trigger')
+            ->withConsecutive(
+                [ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                 $this->isInstanceOf(ControllerEvent::class)],
+                [ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
+                 $this->isInstanceOf(ControllerEvent::class)]
+            )
+            ->will(
+                $this->returnCallback(
+                    function (string $eventName, ControllerEvent $event
+                    ) use ($routeStub, $responseStub, $exception) {
+                        // emulation of the not found exception
+                        if ($eventName
+                            == ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER
+                        ) {
+                            throw $exception;
+                        }
+                    }
+                )
+            );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+         $bootstrap->initController(
+            $eventManagerMock,
+            $this->createStub(stdClass::class),
+            $this->createMock(
+                Http\Request::class
+            ),
+            $responseStub,
+            $routeStub
         );
     }
 

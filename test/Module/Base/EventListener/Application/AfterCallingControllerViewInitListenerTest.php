@@ -45,8 +45,8 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
         $viewUtilsMock->expects($this->exactly(2))
             ->method('getTemplatePath')
             ->withConsecutive(
-                ['test_layout', 'Base'],
-                ['TestController/index', 'Test']
+                ['TestController/index', 'Test'],
+                ['test_layout', 'Base']
             )
             ->willReturn('test_template');
 

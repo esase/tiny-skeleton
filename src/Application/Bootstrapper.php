@@ -17,9 +17,10 @@ use Tiny\Skeleton\Application\EventManager\ConfigEvent;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
+use Tiny\Skeleton\Application\Exception\Request\ExceptionInterface as RequestExceptionInterface;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Http;
 use Tiny\Router;
-use Tiny\Skeleton\Application\Service\ConfigService;
 
 class Bootstrapper
 {
@@ -214,28 +215,48 @@ class Bootstrapper
         EventManager $eventManager,
         Router\Router $router
     ): Router\Route {
-        // trigger the router's events chain
-        $beforeEvent = new RouteEvent();
-        $eventManager->trigger(
-            RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
-            $beforeEvent
-        );
+        try {
+            // trigger the router's events chain
+            $beforeEvent = new RouteEvent();
+            $eventManager->trigger(
+                RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+                $beforeEvent
+            );
 
-        // return a modified route
-        if ($beforeEvent->getData()) {
-            return $beforeEvent->getData();
+            // return a modified route
+            if ($beforeEvent->getData()) {
+                return $beforeEvent->getData();
+            }
+
+            // find a matched route
+            $route = $router->getMatchedRoute();
+
+            $afterEvent = new RouteEvent($route);
+            $eventManager->trigger(
+                RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
+                $afterEvent
+            );
+
+            return $afterEvent->getData();
         }
+        catch (Router\Exception\InvalidArgumentException $e) {
+            $routeExceptionEvent = new RouteEvent(
+                null, [
+                    'exception' => $e
+                ]
+            );
+            $eventManager->trigger(
+                RouteEvent::EVENT_ROUTE_EXCEPTION,
+                $routeExceptionEvent
+            );
 
-        // find a matched route
-        $route = $router->getMatchedRoute();
+            // return a modified route
+            if ($routeExceptionEvent->getData()) {
+                return $routeExceptionEvent->getData();
+            }
 
-        $afterEvent = new RouteEvent($route);
-        $eventManager->trigger(
-            RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
-            $afterEvent
-        );
-
-        return $afterEvent->getData();
+            throw $e;
+        }
     }
 
     /**
@@ -254,36 +275,56 @@ class Bootstrapper
         Http\AbstractResponse $response,
         Router\Route $route
     ): Http\AbstractResponse {
-        // trigger the controller's events chain
-        $beforeEvent = new ControllerEvent(
-            null, [
-                'route' => $route,
-            ]
-        );
-        $eventManager->trigger(
-            ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
-            $beforeEvent
-        );
+        try {
+            // trigger the controller's events chain
+            $beforeEvent = new ControllerEvent(
+                null, [
+                    'route' => $route,
+                ]
+            );
+            $eventManager->trigger(
+                ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                $beforeEvent
+            );
 
-        // return a modified response
-        if ($beforeEvent->getData()) {
-            return $beforeEvent->getData();
+            // return a modified response
+            if ($beforeEvent->getData()) {
+                return $beforeEvent->getData();
+            }
+
+            // call the controller's action
+            $controller->{$route->getMatchedAction()}($response, $request);
+
+            $afterEvent = new ControllerEvent(
+                $response, [
+                    'route' => $route,
+                ]
+            );
+            $eventManager->trigger(
+                ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
+                $afterEvent
+            );
+
+            return $afterEvent->getData();
+        } catch (RequestExceptionInterface $e) {
+            $requestExceptionEvent = new ControllerEvent(
+                null, [
+                    'exception' => $e,
+                    'route'     => $route,
+                ]
+            );
+            $eventManager->trigger(
+                ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
+                $requestExceptionEvent
+            );
+
+            // return a modified response
+            if ($requestExceptionEvent->getData()) {
+                return $requestExceptionEvent->getData();
+            }
+
+            throw $e;
         }
-
-        // call the controller's action
-        $controller->{$route->getMatchedAction()}($response, $request);
-
-        $afterEvent = new ControllerEvent(
-            $response, [
-                'route' => $route,
-            ]
-        );
-        $eventManager->trigger(
-            ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
-            $afterEvent
-        );
-
-        return $afterEvent->getData();
     }
 
     /**

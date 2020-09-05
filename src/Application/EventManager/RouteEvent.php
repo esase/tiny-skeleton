@@ -16,6 +16,8 @@ class RouteEvent extends Event
 
     const EVENT_AFTER_MATCHING_ROUTE = 'application.after.matching.route';
 
+    const EVENT_ROUTE_EXCEPTION = 'application.route.exception';
+
     /**
      * RouteEvent constructor.
      *

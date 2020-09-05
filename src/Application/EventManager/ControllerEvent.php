@@ -16,6 +16,8 @@ class ControllerEvent extends Event
 
     const EVENT_AFTER_CALLING_CONTROLLER = 'application.after.calling.controller';
 
+    const EVENT_CONTROLLER_EXCEPTION = 'application.controller.exception';
+
     /**
      * RouteEvent constructor.
      *

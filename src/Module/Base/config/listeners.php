@@ -32,6 +32,14 @@ return [
         'event'    => EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
         'listener' => Base\EventListener\Application\AfterCallingControllerViewInitListener::class,
     ],
+    [
+        'event'    => EventManager\ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
+        'listener' => Base\EventListener\Application\ControllerExceptionNotFoundListener::class,
+    ],
+    [
+        'event'    => EventManager\RouteEvent::EVENT_ROUTE_EXCEPTION,
+        'listener' => Base\EventListener\Application\RouteExceptionNotRegisteredListener::class,
+    ],
     // view helper
     [
         'event'    => View::EVENT_CALL_VIEW_HELPER.'config',

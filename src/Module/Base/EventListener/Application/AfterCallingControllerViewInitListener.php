@@ -65,20 +65,26 @@ class AfterCallingControllerViewInitListener
 
         // initialize the view with additional settings
         if ($controllerResponse instanceof View) {
-            // get the View's configs
-            $viewConfig = $this->configService->getConfig('view', []);
-
-            // set both layout and template path
-            $controllerResponse->setLayoutPath(
-                $this->viewHelperUtils->getTemplatePath(
-                    $viewConfig['base_layout_path'],
-                    'Base'
-                )
-            )
-                ->setTemplatePath(
+            // set both layout and template path (if they are missing)
+            if (!$controllerResponse->getTemplatePath()) {
+                $controllerResponse->setTemplatePath(
                     $this->getTemplatePath($event->getParams()['route'])
-                )
-                ->setEventManager($this->eventManager);
+                );
+            }
+
+            if (!$controllerResponse->getLayoutPath()) {
+                // get the View's configs
+                $viewConfig = $this->configService->getConfig('view', []);
+
+                $controllerResponse->setLayoutPath(
+                    $this->viewHelperUtils->getTemplatePath(
+                        $viewConfig['base_layout_path'],
+                        'Base'
+                    )
+                );
+            }
+
+            $controllerResponse->setEventManager($this->eventManager);
 
             // return the modified response
             $response->setResponse(
