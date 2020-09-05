@@ -15,7 +15,6 @@ use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Tiny\Http\Request;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
 
 class RequestFactoryTest extends TestCase
 {
@@ -30,14 +29,14 @@ class RequestFactoryTest extends TestCase
         );
         $sapiName->expects($this->once())->willReturn('cli');
 
-        $listenerFactory = new RequestFactory();
-        $listener = $listenerFactory(
+        $factory = new RequestFactory();
+        $object = $factory(
             $this->createStub(ServiceManager::class)
         );
 
         $this->assertInstanceOf(
             Request::class,
-            $listener
+            $object
         );
     }
 

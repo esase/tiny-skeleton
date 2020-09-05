@@ -14,7 +14,6 @@ namespace Tiny\Skeleton\Application\Http\Factory;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
 
 class ResponseFactoryTest extends TestCase
@@ -30,14 +29,14 @@ class ResponseFactoryTest extends TestCase
         );
         $sapiName->expects($this->once())->willReturn('cli');
 
-        $listenerFactory = new ResponseFactory();
-        $listener = $listenerFactory(
+        $factory = new ResponseFactory();
+        $object = $factory(
             $this->createStub(ServiceManager::class)
         );
 
         $this->assertInstanceOf(
             Http\ResponseCli::class,
-            $listener
+            $object
         );
     }
 
@@ -56,14 +55,14 @@ class ResponseFactoryTest extends TestCase
                 $this->createStub(Http\ResponseHttpUtils::class)
             );
 
-        $listenerFactory = new ResponseFactory();
-        $listener = $listenerFactory(
+        $factory = new ResponseFactory();
+        $object = $factory(
             $serviceManagerMock
         );
 
         $this->assertInstanceOf(
             Http\ResponseHttp::class,
-            $listener
+            $object
         );
     }
 

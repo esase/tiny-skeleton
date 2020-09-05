@@ -42,6 +42,10 @@ set_exception_handler(
                 500
             );
             echo $result;
+
+            return;
         }
+
+        echo 'Error occurred, please try again later';
     }
 );

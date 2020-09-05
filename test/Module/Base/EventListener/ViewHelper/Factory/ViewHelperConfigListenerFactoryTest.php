@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Base\EventListener\ViewHelper\Factory\ViewHelperConfigListenerFactory;
-use Tiny\Skeleton\Module\Base;
 
 class ViewHelperConfigListenerFactoryTest extends TestCase
 {
@@ -29,12 +28,12 @@ class ViewHelperConfigListenerFactoryTest extends TestCase
                 $this->createStub(ConfigService::class)
             );
 
-        $listenerFactory = new ViewHelperConfigListenerFactory();
-        $listener = $listenerFactory($serviceManagerMock);
+        $factory = new ViewHelperConfigListenerFactory();
+        $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
             ViewHelperConfigListener::class,
-            $listener
+            $object
         );
     }
 

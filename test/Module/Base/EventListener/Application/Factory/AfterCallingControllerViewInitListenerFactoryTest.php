@@ -57,12 +57,12 @@ class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
                 )
             );
 
-        $listenerFactory = new AfterCallingControllerViewInitListenerFactory();
-        $listener = $listenerFactory($serviceManagerMock);
+        $factory = new AfterCallingControllerViewInitListenerFactory();
+        $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
             AfterCallingControllerViewInitListener::class,
-            $listener
+            $object
         );
     }
 

@@ -28,12 +28,12 @@ class ViewHelperUtilsFactoryTest extends TestCase
                 $this->createStub(ConfigService::class)
             );
 
-        $listenerFactory = new ViewHelperUtilsFactory();
-        $listener = $listenerFactory($serviceManagerMock);
+        $factory = new ViewHelperUtilsFactory();
+        $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
             Base\Utils\ViewHelperUtils::class,
-            $listener
+            $object
         );
     }
 

@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
 use Tiny\Skeleton\Module\Base\EventListener\Application\BeforeDisplayingResponseCorsListener;
 
@@ -50,12 +49,12 @@ class BeforeDisplayingResponseCorsListenerFactoryTest extends TestCase
             )
         );
 
-        $listenerFactory = new BeforeDisplayingResponseCorsListenerFactory();
-        $listener = $listenerFactory($serviceManagerMock);
+        $factory = new BeforeDisplayingResponseCorsListenerFactory();
+        $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
             BeforeDisplayingResponseCorsListener::class,
-            $listener
+            $object
         );
     }
 

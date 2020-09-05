@@ -51,12 +51,12 @@ class ViewHelperUrlListenerFactoryTest extends TestCase
                 )
             );
 
-        $listenerFactory = new ViewHelperUrlListenerFactory();
-        $listener = $listenerFactory($serviceManagerMock);
+        $factory = new ViewHelperUrlListenerFactory();
+        $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
             ViewHelperUrlListener::class,
-            $listener
+            $object
         );
     }
 

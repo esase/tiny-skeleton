@@ -14,7 +14,6 @@ namespace Tiny\Skeleton\Application\EventManager;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Skeleton\Module\Base;
 
 class ConfigEventTest extends TestCase
 {

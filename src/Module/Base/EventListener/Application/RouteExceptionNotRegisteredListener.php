@@ -12,7 +12,6 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  */
 
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Router;
 use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 

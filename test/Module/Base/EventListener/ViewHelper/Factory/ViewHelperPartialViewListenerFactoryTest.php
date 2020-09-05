@@ -50,12 +50,12 @@ class ViewHelperPartialViewListenerFactoryTest extends TestCase
                 )
             );
 
-        $listenerFactory = new ViewHelperPartialViewListenerFactory();
-        $listener = $listenerFactory($serviceManagerMock);
+        $factory = new ViewHelperPartialViewListenerFactory();
+        $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
             ViewHelperPartialViewListener::class,
-            $listener
+            $object
         );
     }
 

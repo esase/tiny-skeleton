@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
 use Tiny\Skeleton\Module\Base\EventListener\Application\RegisterRouteCorsListener;
 
@@ -29,12 +28,12 @@ class RegisterRouteCorsListenerFactoryTest extends TestCase
                 $this->createStub(Http\Request::class)
             );
 
-        $listenerFactory = new RegisterRouteCorsListenerFactory();
-        $listener = $listenerFactory($serviceManagerMock);
+        $factory = new RegisterRouteCorsListenerFactory();
+        $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
             RegisterRouteCorsListener::class,
-            $listener
+            $object
         );
     }
 

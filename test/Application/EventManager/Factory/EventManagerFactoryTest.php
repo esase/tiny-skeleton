@@ -22,12 +22,12 @@ class EventManagerFactoryTest extends TestCase
     {
         $serviceManagerStub = $this->createMock(ServiceManager::class);
 
-        $listenerFactory = new EventManagerFactory();
-        $listener = $listenerFactory($serviceManagerStub);
+        $factory = new EventManagerFactory();
+        $object = $factory($serviceManagerStub);
 
         $this->assertInstanceOf(
             EventManager::class,
-            $listener
+            $object
         );
     }
 

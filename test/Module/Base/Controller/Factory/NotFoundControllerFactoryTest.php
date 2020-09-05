@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Application\Router\Factory;
+namespace Tiny\Skeleton\Module\Base\Controller\Factory;
 
 /*
  * This file is part of the Tiny package.
@@ -12,11 +12,11 @@ namespace Tiny\Skeleton\Application\Router\Factory;
  */
 
 use PHPUnit\Framework\TestCase;
-use Tiny\Router\Router;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Http;
+use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
+use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 
-class RouterFactoryTest extends TestCase
+class NotFoundControllerFactoryTest extends TestCase
 {
 
     public function testInvokeMethod()
@@ -25,14 +25,16 @@ class RouterFactoryTest extends TestCase
         $serviceManagerMock->expects($this->once())
             ->method('get')
             ->willReturn(
-                $this->createStub(Http\Request::class)
+                $this->createStub(NotFoundService::class)
             );
 
-        $factory = new RouterFactory();
-        $object = $factory($serviceManagerMock);
+        $factory = new NotFoundControllerFactory();
+        $object = $factory(
+            $serviceManagerMock
+        );
 
         $this->assertInstanceOf(
-            Router::class,
+            NotFoundController::class,
             $object
         );
     }
