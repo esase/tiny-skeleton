@@ -11,6 +11,7 @@
 
 namespace Tiny\Skeleton\Application;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tiny\EventManager\EventManager;
@@ -18,7 +19,6 @@ use Tiny\Skeleton\Application\EventManager\ConfigEvent;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
 use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Base;
 use Tiny\Router;
@@ -93,7 +93,7 @@ class BootstrapperTest extends TestCase
             Router\Route::class
         );
 
-        $exception = new Router\Exception\InvalidArgumentException('Route not found');
+        $exception = new Exception('Error occurred');
 
         $eventManagerMock = $this->createMock(
             EventManager::class
@@ -156,12 +156,12 @@ class BootstrapperTest extends TestCase
 
     public function testInitRouterMethodUsingException()
     {
-        $this->expectException(Router\Exception\InvalidArgumentException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            'Route not found'
+            'Error occurred'
         );
 
-        $exception = new Router\Exception\InvalidArgumentException('Route not found');
+        $exception = new Exception('Error occurred');
 
         $eventManagerMock = $this->createMock(
             EventManager::class
@@ -847,7 +847,7 @@ class BootstrapperTest extends TestCase
             Http\AbstractResponse::class
         );
 
-        $exception = new NotFoundException('Item not found');
+        $exception = new Exception('Error occurred');
 
         $eventManagerMock = $this->createMock(
             EventManager::class
@@ -912,9 +912,9 @@ class BootstrapperTest extends TestCase
 
     public function testInitControllerMethodUsingExceptionAndException()
     {
-        $this->expectException(NotFoundException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage(
-            'Item not found'
+            'Error occurred'
         );
 
         $routeStub = $this->createStub(Router\Route::class);
@@ -923,7 +923,7 @@ class BootstrapperTest extends TestCase
             Http\AbstractResponse::class
         );
 
-        $exception = new NotFoundException('Item not found');
+        $exception = new Exception('Error occurred');
 
         $eventManagerMock = $this->createMock(
             EventManager::class

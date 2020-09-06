@@ -19,21 +19,38 @@ class RouteExceptionNotRegisteredListener
 {
 
     /**
+     * @var bool
+     */
+    private bool $isCliContext;
+
+    /**
+     * RouteExceptionNotRegisteredListener constructor.
+     *
+     * @param  bool  $isCliContext
+     */
+    public function __construct(bool $isCliContext)
+    {
+        $this->isCliContext = $isCliContext;
+    }
+
+    /**
      * @param  RouteEvent  $event
      */
     public function __invoke(RouteEvent $event)
     {
         // by default the 'NotFoundController' will be assigned for all non existing routes
-        $route = new Router\Route(
-            '',
-            NotFoundController::class,
-            'index'
-        );
-        $route->setMatchedAction('index');
+        if (!$this->isCliContext) {
+            $route = new Router\Route(
+                '',
+                NotFoundController::class,
+                'index'
+            );
+            $route->setMatchedAction('index');
 
-        $event->setData(
-            $route
-        );
+            $event->setData(
+                $route
+            );
+        }
     }
 
 }

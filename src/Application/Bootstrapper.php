@@ -11,13 +11,13 @@ namespace Tiny\Skeleton\Application;
  * file that was distributed with this source code.
  */
 
+use Throwable;
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\EventManager\ConfigEvent;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Skeleton\Application\Exception\Request\ExceptionInterface as RequestExceptionInterface;
 use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Http;
 use Tiny\Router;
@@ -210,6 +210,7 @@ class Bootstrapper
      * @param  Router\Router  $router
      *
      * @return Router\Route
+     * @throws Throwable
      */
     public function initRouter(
         EventManager $eventManager,
@@ -239,7 +240,7 @@ class Bootstrapper
 
             return $afterEvent->getData();
         }
-        catch (Router\Exception\InvalidArgumentException $e) {
+        catch (Throwable $e) {
             $routeExceptionEvent = new RouteEvent(
                 null, [
                     'exception' => $e
@@ -267,6 +268,7 @@ class Bootstrapper
      * @param  Router\Route           $route
      *
      * @return Http\AbstractResponse
+     * @throws Throwable
      */
     public function initController(
         EventManager $eventManager,
@@ -306,7 +308,7 @@ class Bootstrapper
             );
 
             return $afterEvent->getData();
-        } catch (RequestExceptionInterface $e) {
+        } catch (Throwable $e) {
             $requestExceptionEvent = new ControllerEvent(
                 null, [
                     'exception' => $e,

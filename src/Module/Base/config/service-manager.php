@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Module\Base;
 
 return [
@@ -20,7 +19,7 @@ return [
         Base\EventListener\Application\RegisterRouteCorsListener::class              => Base\EventListener\Application\Factory\RegisterRouteCorsListenerFactory::class,
         Base\EventListener\Application\BeforeDisplayingResponseCorsListener::class   => Base\EventListener\Application\Factory\BeforeDisplayingResponseCorsListenerFactory::class,
         Base\EventListener\Application\ControllerExceptionNotFoundListener::class    => Base\EventListener\Application\Factory\ControllerExceptionNotFoundListenerFactory::class,
-        Base\EventListener\Application\RouteExceptionNotRegisteredListener::class    => InvokableFactory::class,
+        Base\EventListener\Application\RouteExceptionNotRegisteredListener::class    => Base\EventListener\Application\Factory\RouteExceptionNotRegisteredListenerFactory::class,
 
         // view helper listener
         Base\EventListener\ViewHelper\ViewHelperConfigListener::class                => Base\EventListener\ViewHelper\Factory\ViewHelperConfigListenerFactory::class,

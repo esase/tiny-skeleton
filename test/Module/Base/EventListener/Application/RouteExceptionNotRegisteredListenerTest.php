@@ -56,7 +56,7 @@ class RouteExceptionNotRegisteredListenerTest extends TestCase
                 )
             );
 
-        $listener = new RouteExceptionNotRegisteredListener();
+        $listener = new RouteExceptionNotRegisteredListener(false);
 
         $listener($eventMock);
     }
