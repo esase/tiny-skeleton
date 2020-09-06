@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Application\EventManager;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Router;
+use Tiny\Router\Route;
 use stdClass;
 
 class RouteEventTest extends TestCase
@@ -25,7 +25,7 @@ class RouteEventTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'Data must be instance of the "%s"',
-                Router\Route::class
+                Route::class
             )
         );
 
@@ -38,7 +38,7 @@ class RouteEventTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'Data must be instance of the "%s"',
-                Router\Route::class
+                Route::class
             )
         );
 

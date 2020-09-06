@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Module\Base\Utils\Factory;
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ViewHelperUtilsFactoryTest extends TestCase
 {
@@ -32,7 +32,7 @@ class ViewHelperUtilsFactoryTest extends TestCase
         $object = $factory($serviceManagerMock);
 
         $this->assertInstanceOf(
-            Base\Utils\ViewHelperUtils::class,
+            ViewHelperUtils::class,
             $object
         );
     }

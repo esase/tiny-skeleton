@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Base;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\EventManager;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Skeleton\Module\Base\EventListener\ViewHelper\ViewHelperPartialViewListener;
 use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 use Tiny\View\View;

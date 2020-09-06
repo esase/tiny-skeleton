@@ -13,17 +13,17 @@ namespace Tiny\Skeleton\Module\Base\Service;
 
 use Tiny\EventManager\EventManager;
 use Tiny\Http\AbstractResponse;
-use Tiny\Skeleton\Application\Exception\Request\BaseException;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Application\Exception\Request\AbstractException;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 use Tiny\View\View;
 
 class NotFoundService
 {
 
     /**
-     * @var Base\Utils\ViewHelperUtils
+     * @var ViewHelperUtils
      */
-    private Base\Utils\ViewHelperUtils $viewHelperUtils;
+    private ViewHelperUtils $viewHelperUtils;
 
     /**
      * @var EventManager
@@ -38,12 +38,12 @@ class NotFoundService
     /**
      * NotFoundService constructor.
      *
-     * @param  Base\Utils\ViewHelperUtils  $viewHelperUtils
-     * @param  EventManager                $eventManager
-     * @param  bool                        $isCliContext
+     * @param  ViewHelperUtils  $viewHelperUtils
+     * @param  EventManager     $eventManager
+     * @param  bool             $isCliContext
      */
     public function __construct(
-        Base\Utils\ViewHelperUtils $viewHelperUtils,
+        ViewHelperUtils $viewHelperUtils,
         EventManager $eventManager,
         bool $isCliContext
     ) {
@@ -78,10 +78,12 @@ class NotFoundService
         }
 
         switch ($type) {
-            case BaseException::TYPE_HTML :
-                $view = new View([
-                    'message' => $errorMessage
-                ]);
+            case AbstractException::TYPE_HTML :
+                $view = new View(
+                    [
+                        'message' => $errorMessage,
+                    ]
+                );
                 $view->setTemplatePath(
                     $this->viewHelperUtils->getTemplatePath(
                         '404', 'Base'
@@ -101,11 +103,15 @@ class NotFoundService
 
                 return $response;
 
-            case BaseException::TYPE_JSON:
-                $response->setResponse(json_encode([
-                    'error' => $errorMessage,
-                    'code' => AbstractResponse::RESPONSE_NOT_FOUND
-                ]))
+            case AbstractException::TYPE_JSON:
+                $response->setResponse(
+                    json_encode(
+                        [
+                            'error' => $errorMessage,
+                            'code'  => AbstractResponse::RESPONSE_NOT_FOUND,
+                        ]
+                    )
+                )
                     ->setCode(AbstractResponse::RESPONSE_OK)
                     ->setResponseType(
                         AbstractResponse::RESPONSE_TYPE_JSON
@@ -113,7 +119,7 @@ class NotFoundService
 
                 return $response;
 
-            case BaseException::TYPE_TEXT:
+            case AbstractException::TYPE_TEXT:
             default :
                 $response->setResponse($errorMessage)
                     ->setResponseType(

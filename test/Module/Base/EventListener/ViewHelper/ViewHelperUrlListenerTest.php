@@ -12,10 +12,9 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Base;
  */
 
 use PHPUnit\Framework\TestCase;
-use Tiny\EventManager;
-use Tiny\Skeleton\Module\Base;
+use Tiny\EventManager\Event;
 use Tiny\Skeleton\Module\Base\EventListener\ViewHelper\ViewHelperUrlListener;
-use Tiny\Router;
+use Tiny\Router\Router;
 use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ViewHelperUrlListenerTest extends TestCase
@@ -24,7 +23,7 @@ class ViewHelperUrlListenerTest extends TestCase
     public function testInvokeMethod()
     {
         $routerMock = $this->createMock(
-            Router\Router::class
+            Router::class
         );
         $routerMock->expects($this->once())
             ->method('assembleRequest')
@@ -36,7 +35,7 @@ class ViewHelperUrlListenerTest extends TestCase
             ->willReturn('/test');
 
         $eventMock = $this->createMock(
-            EventManager\Event::class
+            Event::class
         );
         $eventMock->expects($this->once())
             ->method('getParams')

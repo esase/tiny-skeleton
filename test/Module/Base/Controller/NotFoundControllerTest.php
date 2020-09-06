@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Base\Utils;
+namespace Tiny\Skeleton\Module\Base\Controller;
 
 /*
  * This file is part of the Tiny package.
@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\Utils;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Http\AbstractResponse;
-use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 
 class NotFoundControllerTest extends TestCase

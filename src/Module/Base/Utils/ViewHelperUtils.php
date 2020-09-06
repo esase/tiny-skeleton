@@ -12,7 +12,6 @@ namespace Tiny\Skeleton\Module\Base\Utils;
  */
 
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
 
 class ViewHelperUtils
 {
@@ -67,9 +66,9 @@ class ViewHelperUtils
     ): string {
         return vsprintf(
             'Tiny\Skeleton\Module\%s\Controller\%s', [
-            $module,
-            $controller,
-        ]
+                $module,
+                $controller,
+            ]
         );
     }
 

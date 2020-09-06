@@ -9,15 +9,17 @@
  * file that was distributed with this source code.
  */
 
+use Tiny\EventManager\EventManager;
+use Tiny\Router\Router;
 use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Application;
 
 return [
     'api_route_prefix' => 'api/',
-    'service_manager' => [
+    'service_manager'  => [
         'shared' => [
             // event manager
-            Tiny\EventManager\EventManager::class    => Application\EventManager\Factory\EventManagerFactory::class,
+            EventManager::class                      => Application\EventManager\Factory\EventManagerFactory::class,
 
             // http
             Tiny\Http\Request::class                 => Application\Http\Factory\RequestFactory::class,
@@ -25,7 +27,7 @@ return [
             Tiny\Http\ResponseHttpUtils::class       => InvokableFactory::class,
 
             // router
-            Tiny\Router\Router::class                => Application\Router\Factory\RouterFactory::class,
+            Router::class                            => Application\Router\Factory\RouterFactory::class,
 
             // service
             Application\Service\ConfigService::class => InvokableFactory::class,

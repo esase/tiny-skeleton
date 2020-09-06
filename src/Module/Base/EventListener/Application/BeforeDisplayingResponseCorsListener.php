@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
 
 use Tiny\Http;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
-use Tiny\Skeleton\Module\Base;
 
 class BeforeDisplayingResponseCorsListener
 {
@@ -51,7 +50,7 @@ class BeforeDisplayingResponseCorsListener
     }
 
     /**
-     * @param ControllerEvent  $event
+     * @param  ControllerEvent  $event
      */
     public function __invoke(ControllerEvent $event)
     {

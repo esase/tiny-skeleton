@@ -14,10 +14,10 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
 use Tiny\EventManager\EventManager;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
-use Tiny\Http;
+use Tiny\Http\AbstractResponse;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 use Tiny\View\View;
-use Tiny\Router;
+use Tiny\Router\Route;
 
 class AfterCallingControllerViewInitListener
 {
@@ -33,21 +33,21 @@ class AfterCallingControllerViewInitListener
     private EventManager $eventManager;
 
     /**
-     * @var Base\Utils\ViewHelperUtils
+     * @var ViewHelperUtils
      */
-    private Base\Utils\ViewHelperUtils $viewHelperUtils;
+    private ViewHelperUtils $viewHelperUtils;
 
     /**
      * AfterCallingControllerViewInitListener constructor.
      *
-     * @param  ConfigService  $configService
-     * @param  EventManager                $eventManager
-     * @param  Base\Utils\ViewHelperUtils  $viewHelperUtils
+     * @param  ConfigService    $configService
+     * @param  EventManager     $eventManager
+     * @param  ViewHelperUtils  $viewHelperUtils
      */
     public function __construct(
         ConfigService $configService,
         EventManager $eventManager,
-        Base\Utils\ViewHelperUtils $viewHelperUtils
+        ViewHelperUtils $viewHelperUtils
     ) {
         $this->configService = $configService;
         $this->eventManager = $eventManager;
@@ -59,7 +59,7 @@ class AfterCallingControllerViewInitListener
      */
     public function __invoke(ControllerEvent $event)
     {
-        /** @var Http\AbstractResponse $response */
+        /** @var AbstractResponse $response */
         $response = $event->getData();
         $controllerResponse = $response->getResponse();
 
@@ -97,12 +97,12 @@ class AfterCallingControllerViewInitListener
     }
 
     /**
-     * @param  Router\Route  $route
+     * @param  Route  $route
      *
      * @return string
      */
     private function getTemplatePath(
-        Router\Route $route
+        Route $route
     ): string {
         // extract the controller's name and action from the route
         $template = vsprintf(

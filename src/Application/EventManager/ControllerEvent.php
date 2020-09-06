@@ -2,12 +2,11 @@
 
 namespace Tiny\Skeleton\Application\EventManager;
 
-use Tiny\EventManager\AbstractEvent;
-use Tiny\EventManager\Event;
+use Tiny\EventManager;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Http;
+use Tiny\Http\AbstractResponse;
 
-class ControllerEvent extends Event
+class ControllerEvent extends EventManager\Event
 {
 
     const EVENT_BEFORE_DISPLAYING_RESPONSE = 'application.before.displaying.response';
@@ -38,7 +37,7 @@ class ControllerEvent extends Event
      *
      * @return $this
      */
-    function setData($data): AbstractEvent
+    function setData($data): EventManager\AbstractEvent
     {
         $this->checkData($data);
         $this->data = $data;
@@ -51,11 +50,11 @@ class ControllerEvent extends Event
      */
     private function checkData($data)
     {
-        if (null !== $data && !($data instanceof Http\AbstractResponse)) {
+        if (null !== $data && !($data instanceof AbstractResponse)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Data must be instance of the "%s"',
-                    Http\AbstractResponse::class
+                    AbstractResponse::class
                 )
             );
         }

@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
 
 class BeforeDisplayingResponseCorsListenerTest extends TestCase

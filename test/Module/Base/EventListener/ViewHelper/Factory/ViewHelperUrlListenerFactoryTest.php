@@ -13,9 +13,9 @@ namespace Tiny\Skeleton\Module\Base\EventListener\ViewHelper;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Skeleton\Module\Base\EventListener\ViewHelper\Factory\ViewHelperUrlListenerFactory;
-use Tiny\Router;
+use Tiny\Router\Router;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ViewHelperUrlListenerFactoryTest extends TestCase
 {
@@ -27,21 +27,21 @@ class ViewHelperUrlListenerFactoryTest extends TestCase
         $serviceManagerMock->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
-                [Router\Router::class],
-                [Base\Utils\ViewHelperUtils::class]
+                [Router::class],
+                [ViewHelperUtils::class]
             )
             ->will(
                 $this->returnCallback(
                     function (string $serviceName) {
                         switch ($serviceName) {
-                            case Router\Router::class:
+                            case Router::class:
                                 return $this->createStub(
-                                    Router\Router::class
+                                    Router::class
                                 );
 
-                            case Base\Utils\ViewHelperUtils::class:
+                            case ViewHelperUtils::class:
                                 return $this->createStub(
-                                    Base\Utils\ViewHelperUtils::class
+                                    ViewHelperUtils::class
                                 );
 
                             default :

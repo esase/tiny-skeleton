@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\Utils;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
 
 class ViewHelperUtilsTest extends TestCase
 {

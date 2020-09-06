@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Application;
 
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
-use Tiny\Skeleton\Module\Base;
 
 class BootstrapperUtilsTest extends TestCase
 {
@@ -34,6 +33,12 @@ class BootstrapperUtilsTest extends TestCase
 
     public function testLoadCachedModulesConfigArrayMethod()
     {
+        $fileExists = $this->getFunctionMock(
+            __NAMESPACE__,
+            'file_exists'
+        );
+        $fileExists->expects($this->once())->willReturn(true);
+
         $config = $this->utils->loadCachedModulesConfigArray();
 
         $this->assertEquals(
@@ -41,6 +46,19 @@ class BootstrapperUtilsTest extends TestCase
                 'test' => 'test_value',
             ], $config
         );
+    }
+
+    public function testLoadCachedModulesConfigArrayMethodUsingEmptyFile()
+    {
+        $fileExists = $this->getFunctionMock(
+            __NAMESPACE__,
+            'file_exists'
+        );
+        $fileExists->expects($this->once())->willReturn(false);
+
+        $config = $this->utils->loadCachedModulesConfigArray();
+
+        $this->assertNull($config);
     }
 
     public function testSaveCachedModulesConfigArrayMethod()

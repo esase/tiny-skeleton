@@ -12,35 +12,34 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  */
 
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
-use Tiny\Skeleton\Module\Base;
-use Tiny\Http;
-use Tiny\Router;
+use Tiny\Http\Request;
+use Tiny\Router\Route;
 
 class RegisterRouteCorsListener
 {
 
     /**
-     * @var Http\Request
+     * @var Request
      */
-    private Http\Request $request;
+    private Request $request;
 
     /**
      * RegisterRouteCorsListener constructor.
      *
-     * @param  Http\Request  $request
+     * @param  Request  $request
      */
-    public function __construct(Http\Request $request)
+    public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
     /**
-     * @param RouteEvent  $event
+     * @param  RouteEvent  $event
      */
     public function __invoke(RouteEvent $event)
     {
         if ($this->request->isOptions()) {
-            /** @var Router\Route $route */
+            /** @var Route $route */
             $route = $event->getData();
 
             // assign the 'OPTIONS' method to each route
@@ -48,8 +47,8 @@ class RegisterRouteCorsListener
                 $route->setActionList(
                     array_merge(
                         $route->getActionList(), [
-                        Http\Request::METHOD_OPTIONS => 'index',
-                    ]
+                            Request::METHOD_OPTIONS => 'index',
+                        ]
                     )
                 );
 

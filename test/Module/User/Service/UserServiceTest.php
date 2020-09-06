@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\User\Service;
+namespace Tiny\Skeleton\Module\User\Controller;
 
 /*
  * This file is part of the Tiny package.
@@ -11,18 +11,20 @@ namespace Tiny\Skeleton\Module\User\Service;
  * file that was distributed with this source code.
  */
 
-class UserService
+use PHPUnit\Framework\TestCase;
+use Tiny\Skeleton\Module\User\Service\UserService;
+
+class UserServiceTest extends TestCase
 {
 
-    /**
-     * @return array
-     */
-    public function getAllUsers(): array
+    public function testGetAllUsersMethod()
     {
-        return [
+        $service = new UserService();
+
+        $this->assertEquals([
             ['id' => 1, 'name' => 'tester'],
             ['id' => 2, 'name' => 'tester2']
-        ];
+        ], $service->getAllUsers());
     }
 
 }

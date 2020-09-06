@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
+namespace Tiny\Skeleton\Module\User\Controller\Factory;
 
 /*
  * This file is part of the Tiny package.
@@ -13,10 +13,10 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Http\Request;
-use Tiny\Skeleton\Module\Base\EventListener\Application\RegisterRouteCorsListener;
+use Tiny\Skeleton\Module\User\Service\UserService;
+use stdClass;
 
-class RegisterRouteCorsListenerFactoryTest extends TestCase
+class UserControllerFactoryTest extends TestCase
 {
 
     public function testInvokeMethod()
@@ -25,14 +25,17 @@ class RegisterRouteCorsListenerFactoryTest extends TestCase
         $serviceManagerMock->expects($this->once())
             ->method('get')
             ->willReturn(
-                $this->createStub(Request::class)
+                $this->createStub(UserService::class)
             );
 
-        $factory = new RegisterRouteCorsListenerFactory();
-        $object = $factory($serviceManagerMock);
+        $factory = new UserControllerFactory();
+        $object = $factory(
+            $serviceManagerMock,
+            stdClass::class
+        );
 
         $this->assertInstanceOf(
-            RegisterRouteCorsListener::class,
+            stdClass::class,
             $object
         );
     }

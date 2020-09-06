@@ -13,9 +13,9 @@ namespace Tiny\Skeleton\Module\Base\EventListener\ViewHelper\Factory;
  */
 
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\Base;
-use Tiny\Router;
+use Tiny\Router\Router;
 use Tiny\Skeleton\Module\Base\EventListener\ViewHelper\ViewHelperUrlListener;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ViewHelperUrlListenerFactory
 {
@@ -28,8 +28,8 @@ class ViewHelperUrlListenerFactory
     public function __invoke(ServiceManager $serviceManager
     ): ViewHelperUrlListener {
         return new ViewHelperUrlListener(
-            $serviceManager->get(Router\Router::class),
-            $serviceManager->get(Base\Utils\ViewHelperUtils::class)
+            $serviceManager->get(Router::class),
+            $serviceManager->get(ViewHelperUtils::class)
         );
     }
 

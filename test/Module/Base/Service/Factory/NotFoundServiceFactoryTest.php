@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class NotFoundServiceFactoryTest extends TestCase
 {
@@ -29,7 +29,7 @@ class NotFoundServiceFactoryTest extends TestCase
         $serviceManagerMock->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
-                [Base\Utils\ViewHelperUtils::class],
+                [ViewHelperUtils::class],
                 [EventManager::class],
                 )
             ->will(

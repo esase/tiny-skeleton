@@ -12,9 +12,8 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  */
 
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
-use Tiny\Router;
+use Tiny\Router\Route;
 use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 
 class BeforeCallingControllerCorsListener
@@ -75,7 +74,7 @@ class BeforeCallingControllerCorsListener
     {
         // send additional cors headers
         if ($this->request->isOptions()) {
-            /** @var Router\Route $route */
+            /** @var Route $route */
             $route = $event->getParams()['route'];
             $headers = [];
 
@@ -107,11 +106,11 @@ class BeforeCallingControllerCorsListener
     }
 
     /**
-     * @param  Router\Route  $route
+     * @param  Route  $route
      *
      * @return string
      */
-    private function collectAllowedMethods(Router\Route $route): string
+    private function collectAllowedMethods(Route $route): string
     {
         // we only accept specific http methods supported by the route
         if (is_array($route->getActionList())) {

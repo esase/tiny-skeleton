@@ -12,7 +12,7 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  */
 
 use PHPUnit\Framework\TestCase;
-use Tiny\Router;
+use Tiny\Router\Route;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
 use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 
@@ -25,11 +25,11 @@ class RouteExceptionNotRegisteredListenerTest extends TestCase
         $eventMock->expects($this->once())
             ->method('setData')
             ->with(
-                $this->isInstanceOf(Router\Route::class)
+                $this->isInstanceOf(Route::class)
             )
             ->will(
                 $this->returnCallback(
-                    function (Router\Route $route) use ($eventMock) {
+                    function (Route $route) use ($eventMock) {
                         // make sure the Route is constructed properly
                         $this->assertEquals(
                             '',

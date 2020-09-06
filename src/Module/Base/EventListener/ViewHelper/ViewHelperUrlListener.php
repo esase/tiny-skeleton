@@ -12,31 +12,31 @@ namespace Tiny\Skeleton\Module\Base\EventListener\ViewHelper;
  */
 
 use Tiny\EventManager\Event;
-use Tiny\Skeleton\Module\Base;
-use Tiny\Router;
+use Tiny\Router\Router;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ViewHelperUrlListener
 {
 
     /**
-     * @var Router\Router
+     * @var Router
      */
-    private Router\Router $router;
+    private Router $router;
 
     /**
-     * @var Base\Utils\ViewHelperUtils
+     * @var ViewHelperUtils
      */
-    private Base\Utils\ViewHelperUtils $viewHelperUtils;
+    private ViewHelperUtils $viewHelperUtils;
 
     /**
      * ViewHelperUrlListener constructor.
      *
-     * @param  Router\Router               $router
-     * @param  Base\Utils\ViewHelperUtils  $viewHelperUtils
+     * @param  Router           $router
+     * @param  ViewHelperUtils  $viewHelperUtils
      */
     public function __construct(
-        Router\Router $router,
-        Base\Utils\ViewHelperUtils $viewHelperUtils
+        Router $router,
+        ViewHelperUtils $viewHelperUtils
     ) {
         $this->router = $router;
         $this->viewHelperUtils = $viewHelperUtils;

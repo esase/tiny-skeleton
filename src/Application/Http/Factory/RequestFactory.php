@@ -3,9 +3,7 @@
 namespace Tiny\Skeleton\Application\Http\Factory;
 
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Http\Request;
-use Tiny\Http\RequestCliParams;
-use Tiny\Http\RequestHttpParams;
+use Tiny\Http;
 
 class RequestFactory
 {
@@ -13,14 +11,14 @@ class RequestFactory
     /**
      * @param  ServiceManager  $serviceManager
      *
-     * @return Request
+     * @return Http\Request
      */
-    public function __invoke(ServiceManager $serviceManager): Request
+    public function __invoke(ServiceManager $serviceManager): Http\Request
     {
-        return new Request(
+        return new Http\Request(
             php_sapi_name() === 'cli'
-                ? new RequestCliParams($_SERVER)
-                : new RequestHttpParams($_SERVER)
+                ? new Http\RequestCliParams($_SERVER)
+                : new Http\RequestHttpParams($_SERVER)
         );
     }
 

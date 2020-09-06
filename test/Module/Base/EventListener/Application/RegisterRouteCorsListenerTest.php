@@ -12,23 +12,22 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  */
 
 use PHPUnit\Framework\TestCase;
-use Tiny\Router;
+use Tiny\Router\Route;
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
-use Tiny\Skeleton\Module\Base;
-use Tiny\Http;
+use Tiny\Http\Request;
 
 class RegisterRouteCorsListenerTest extends TestCase
 {
 
     public function testInvokeMethod()
     {
-        $requestMock = $this->createMock(Http\Request::class);
+        $requestMock = $this->createMock(Request::class);
         $requestMock->expects($this->once())
             ->method('isOptions')
             ->willReturn(true);
 
         $routeMock = $this->createStub(
-            Router\Route::class
+            Route::class
         );
         $routeMock->expects($this->exactly(2))
             ->method('getActionList')

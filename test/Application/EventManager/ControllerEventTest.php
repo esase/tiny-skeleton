@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Application\EventManager;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Http;
+use Tiny\Http\AbstractResponse;
 use stdClass;
 
 class ControllerEventTest extends TestCase
@@ -25,7 +25,7 @@ class ControllerEventTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'Data must be instance of the "%s"',
-                Http\AbstractResponse::class
+                AbstractResponse::class
             )
         );
 
@@ -38,7 +38,7 @@ class ControllerEventTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'Data must be instance of the "%s"',
-                Http\AbstractResponse::class
+                AbstractResponse::class
             )
         );
 

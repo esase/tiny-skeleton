@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base\EventListener\Application\ControllerExceptionNotFoundListener;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
-use Tiny\Http;
+use Tiny\Http\AbstractResponse;
 
 class ControllerExceptionNotFoundListenerFactoryTest extends TestCase
 {
@@ -26,7 +26,7 @@ class ControllerExceptionNotFoundListenerFactoryTest extends TestCase
         $serviceManagerMock->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
-                [Http\AbstractResponse::class],
+                [AbstractResponse::class],
                 [NotFoundService::class]
             )
         ->will(

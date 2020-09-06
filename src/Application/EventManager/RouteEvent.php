@@ -2,12 +2,11 @@
 
 namespace Tiny\Skeleton\Application\EventManager;
 
-use Tiny\EventManager\AbstractEvent;
-use Tiny\EventManager\Event;
+use Tiny\EventManager;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
-use Tiny\Router;
+use Tiny\Router\Route;
 
-class RouteEvent extends Event
+class RouteEvent extends EventManager\Event
 {
 
     const EVENT_REGISTER_ROUTE = 'application.register.route';
@@ -38,7 +37,7 @@ class RouteEvent extends Event
      *
      * @return $this
      */
-    function setData($data): AbstractEvent
+    function setData($data): EventManager\AbstractEvent
     {
         $this->checkData($data);
         $this->data = $data;
@@ -51,11 +50,11 @@ class RouteEvent extends Event
      */
     private function checkData($data)
     {
-        if (null !== $data && !($data instanceof Router\Route)) {
+        if (null !== $data && !($data instanceof Route)) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Data must be instance of the "%s"',
-                    Router\Route::class
+                    Route::class
                 )
             );
         }

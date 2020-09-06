@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\Skeleton\Application;
+use Tiny\Skeleton\Application\ErrorHandler;
 use Tiny\View\View;
 
 // convert all php errors to exceptions
@@ -24,7 +24,7 @@ set_error_handler(
 );
 
 // init the error handler
-$errorHandler = new Application\ErrorHandler(
+$errorHandler = new ErrorHandler(
     $isProdEnv,
     $isCliContext,
     'src/Application/view/500.phtml',

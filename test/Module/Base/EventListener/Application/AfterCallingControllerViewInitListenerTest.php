@@ -13,11 +13,11 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\EventManager\EventManager;
-use Tiny\Http;
-use Tiny\Router;
+use Tiny\Http\AbstractResponse;
+use Tiny\Router\Route;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 use Tiny\View\View;
 
 class AfterCallingControllerViewInitListenerTest extends TestCase
@@ -40,7 +40,7 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
         );
 
         $viewUtilsMock = $this->createMock(
-            Base\Utils\ViewHelperUtils::class
+            ViewHelperUtils::class
         );
         $viewUtilsMock->expects($this->exactly(2))
             ->method('getTemplatePath')
@@ -74,7 +74,7 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
             ->method('setEventManager')
             ->with($eventManagerStub);
 
-        $responseMock = $this->createStub(Http\AbstractResponse::class);
+        $responseMock = $this->createStub(AbstractResponse::class);
         $responseMock->expects($this->once())
             ->method('getResponse')
             ->willReturn($viewMock);
@@ -82,7 +82,7 @@ class AfterCallingControllerViewInitListenerTest extends TestCase
             ->method('setResponse')
             ->with($viewMock);
 
-        $routeMock = $this->createStub(Router\Route::class);
+        $routeMock = $this->createStub(Route::class);
         $routeMock->expects($this->exactly(2))
             ->method('getController')
             ->willReturn('\\Test\\Controller\\TestController');

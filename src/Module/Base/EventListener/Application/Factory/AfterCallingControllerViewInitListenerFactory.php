@@ -15,7 +15,7 @@ use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Module\Base\EventListener\Application\AfterCallingControllerViewInitListener;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class AfterCallingControllerViewInitListenerFactory
 {
@@ -30,7 +30,7 @@ class AfterCallingControllerViewInitListenerFactory
         return new AfterCallingControllerViewInitListener(
             $serviceManager->get(ConfigService::class),
             $serviceManager->get(EventManager::class),
-            $serviceManager->get(Base\Utils\ViewHelperUtils::class)
+            $serviceManager->get(ViewHelperUtils::class)
         );
     }
 

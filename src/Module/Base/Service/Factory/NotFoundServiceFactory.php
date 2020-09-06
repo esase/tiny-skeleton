@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Module\Base\Service\Factory;
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class NotFoundServiceFactory
 {
@@ -27,7 +27,7 @@ class NotFoundServiceFactory
     public function __invoke(ServiceManager $serviceManager
     ): NotFoundService {
         return new NotFoundService(
-            $serviceManager->get(Base\Utils\ViewHelperUtils::class),
+            $serviceManager->get(ViewHelperUtils::class),
             $serviceManager->get(EventManager::class),
             php_sapi_name() === 'cli'
         );

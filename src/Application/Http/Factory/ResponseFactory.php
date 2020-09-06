@@ -2,10 +2,7 @@
 
 namespace Tiny\Skeleton\Application\Http\Factory;
 
-use Tiny\Http\AbstractResponse;
-use Tiny\Http\ResponseCli;
-use Tiny\Http\ResponseHttp;
-use Tiny\Http\ResponseHttpUtils;
+use Tiny\Http;
 use Tiny\ServiceManager\ServiceManager;
 
 class ResponseFactory
@@ -14,14 +11,14 @@ class ResponseFactory
     /**
      * @param  ServiceManager  $serviceManager
      *
-     * @return AbstractResponse
+     * @return Http\AbstractResponse
      */
-    public function __invoke(ServiceManager $serviceManager): AbstractResponse
-    {
+    public function __invoke(ServiceManager $serviceManager
+    ): Http\AbstractResponse {
         $response = php_sapi_name() === 'cli'
-            ? new ResponseCli()
-            : new ResponseHttp(
-                $serviceManager->get(ResponseHttpUtils::class)
+            ? new Http\ResponseCli()
+            : new Http\ResponseHttp(
+                $serviceManager->get(Http\ResponseHttpUtils::class)
             );
 
         return $response;

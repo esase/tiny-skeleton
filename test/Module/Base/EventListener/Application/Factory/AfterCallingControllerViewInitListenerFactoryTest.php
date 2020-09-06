@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Skeleton\Module\Base\EventListener\Application\AfterCallingControllerViewInitListener;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
 {
@@ -29,7 +29,7 @@ class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
             ->withConsecutive(
                 [ConfigService::class],
                 [EventManager::class],
-                [Base\Utils\ViewHelperUtils::class]
+                [ViewHelperUtils::class]
             )
             ->will(
                 $this->returnCallback(
@@ -45,9 +45,9 @@ class AfterCallingControllerViewInitListenerFactoryTest extends TestCase
                                     EventManager::class
                                 );
 
-                            case Base\Utils\ViewHelperUtils::class:
+                            case ViewHelperUtils::class:
                                 return $this->createStub(
-                                    Base\Utils\ViewHelperUtils::class
+                                    ViewHelperUtils::class
                                 );
 
                             default :

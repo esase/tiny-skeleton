@@ -2,11 +2,10 @@
 
 namespace Tiny\Skeleton\Application\EventManager;
 
-use Tiny\EventManager\AbstractEvent;
-use Tiny\EventManager\Event;
+use Tiny\EventManager;
 use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 
-class ConfigEvent extends Event
+class ConfigEvent extends EventManager\Event
 {
 
     const EVENT_SET_CONFIGS = 'application.set.configs';
@@ -31,7 +30,7 @@ class ConfigEvent extends Event
      *
      * @return $this
      */
-    function setData($data): AbstractEvent
+    function setData($data): EventManager\AbstractEvent
     {
         $this->checkData($data);
         $this->data = $data;

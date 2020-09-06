@@ -11,8 +11,7 @@ namespace Tiny\Skeleton\Module\Base\EventListener\ViewHelper;
  * file that was distributed with this source code.
  */
 
-use Tiny\EventManager\Event;
-use Tiny\EventManager\EventManager;
+use Tiny\EventManager;
 use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 use Tiny\View\View;
 
@@ -20,9 +19,9 @@ class ViewHelperPartialViewListener
 {
 
     /**
-     * @var EventManager
+     * @var EventManager\EventManager
      */
-    private EventManager $eventManager;
+    private EventManager\EventManager $eventManager;
 
     /**
      * @var ViewHelperUtils
@@ -32,11 +31,11 @@ class ViewHelperPartialViewListener
     /**
      * ViewHelperPartialViewListener constructor.
      *
-     * @param  EventManager     $eventManager
-     * @param  ViewHelperUtils  $viewHelperUtils
+     * @param  EventManager\EventManager  $eventManager
+     * @param  ViewHelperUtils            $viewHelperUtils
      */
     public function __construct(
-        EventManager $eventManager,
+        EventManager\EventManager $eventManager,
         ViewHelperUtils $viewHelperUtils
     ) {
         $this->eventManager = $eventManager;
@@ -44,9 +43,9 @@ class ViewHelperPartialViewListener
     }
 
     /**
-     * @param  Event  $event
+     * @param  EventManager\Event  $event
      */
-    public function __invoke(Event $event)
+    public function __invoke(EventManager\Event $event)
     {
         $arguments = $event->getParams()['arguments'];
         list($templatePath, $module) = $arguments;

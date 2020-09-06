@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Module\Base\Service;
 use PHPUnit\Framework\TestCase;
 use Tiny\EventManager\EventManager;
 use Tiny\Http\AbstractResponse;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 use Tiny\View\View;
 
 class NotFoundServiceTest extends TestCase
@@ -37,7 +37,7 @@ class NotFoundServiceTest extends TestCase
 
         $service = new NotFoundService(
             $this->createStub(
-                Base\Utils\ViewHelperUtils::class
+                ViewHelperUtils::class
             ),
             $this->createStub(
                 EventManager::class
@@ -103,7 +103,7 @@ class NotFoundServiceTest extends TestCase
             ->with('text/html');
 
         $viewHelperMock = $this->createMock(
-            Base\Utils\ViewHelperUtils::class
+            ViewHelperUtils::class
         );
         $viewHelperMock->expects($this->exactly(2))
             ->method('getTemplatePath')
@@ -155,7 +155,7 @@ class NotFoundServiceTest extends TestCase
 
         $service = new NotFoundService(
             $this->createMock(
-                Base\Utils\ViewHelperUtils::class
+                ViewHelperUtils::class
             ),
             $eventManagerStub,
             false
@@ -194,7 +194,7 @@ class NotFoundServiceTest extends TestCase
 
         $service = new NotFoundService(
             $this->createMock(
-                Base\Utils\ViewHelperUtils::class
+                ViewHelperUtils::class
             ),
             $eventManagerStub,
             false

@@ -11,8 +11,9 @@ namespace Tiny\Skeleton\Application;
  * file that was distributed with this source code.
  */
 
+use Throwable;
 use Tiny\EventManager\EventManager;
-use Tiny\Router;
+use Tiny\Router\Router;
 use Tiny\Http;
 use Tiny\Skeleton\Application\Service\ConfigService;
 
@@ -53,6 +54,7 @@ class Application
 
     /**
      * @return string
+     * @throws Throwable
      */
     public function run(): string
     {
@@ -82,7 +84,7 @@ class Application
         // init routes
         $this->bootstrapper->initRoutes(
             $serviceManager->get(EventManager::class),
-            $serviceManager->get(Router\Router::class),
+            $serviceManager->get(Router::class),
             $serviceManager->get(ConfigService::class),
             $this->isCliContext
         );
@@ -90,7 +92,7 @@ class Application
         // init the router and find a matched route
         $route = $this->bootstrapper->initRouter(
             $serviceManager->get(EventManager::class),
-            $serviceManager->get(Router\Router::class)
+            $serviceManager->get(Router::class)
         );
 
         // init a matched controller

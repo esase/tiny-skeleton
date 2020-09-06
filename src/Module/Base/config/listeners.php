@@ -10,47 +10,47 @@
  */
 
 use Tiny\Skeleton\Application\EventManager;
-use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\EventListener;
 use Tiny\View\View;
 
 return [
     // application
     [
         'event'    => EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
-        'listener' => Base\EventListener\Application\RegisterRouteCorsListener::class,
+        'listener' => EventListener\Application\RegisterRouteCorsListener::class,
     ],
     [
         'event'    => EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
-        'listener' => Base\EventListener\Application\BeforeCallingControllerCorsListener::class,
+        'listener' => EventListener\Application\BeforeCallingControllerCorsListener::class,
         'priority' => -1000,
     ],
     [
         'event'    => EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
-        'listener' => Base\EventListener\Application\BeforeDisplayingResponseCorsListener::class,
+        'listener' => EventListener\Application\BeforeDisplayingResponseCorsListener::class,
     ],
     [
         'event'    => EventManager\ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
-        'listener' => Base\EventListener\Application\AfterCallingControllerViewInitListener::class,
+        'listener' => EventListener\Application\AfterCallingControllerViewInitListener::class,
     ],
     [
         'event'    => EventManager\ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
-        'listener' => Base\EventListener\Application\ControllerExceptionNotFoundListener::class,
+        'listener' => EventListener\Application\ControllerExceptionNotFoundListener::class,
     ],
     [
         'event'    => EventManager\RouteEvent::EVENT_ROUTE_EXCEPTION,
-        'listener' => Base\EventListener\Application\RouteExceptionNotRegisteredListener::class,
+        'listener' => EventListener\Application\RouteExceptionNotRegisteredListener::class,
     ],
     // view helper
     [
         'event'    => View::EVENT_CALL_VIEW_HELPER.'config',
-        'listener' => Base\EventListener\ViewHelper\ViewHelperConfigListener::class,
+        'listener' => EventListener\ViewHelper\ViewHelperConfigListener::class,
     ],
     [
         'event'    => View::EVENT_CALL_VIEW_HELPER.'url',
-        'listener' => Base\EventListener\ViewHelper\ViewHelperUrlListener::class,
+        'listener' => EventListener\ViewHelper\ViewHelperUrlListener::class,
     ],
     [
         'event'    => View::EVENT_CALL_VIEW_HELPER.'partialView',
-        'listener' => Base\EventListener\ViewHelper\ViewHelperPartialViewListener::class,
+        'listener' => EventListener\ViewHelper\ViewHelperPartialViewListener::class,
     ],
 ];

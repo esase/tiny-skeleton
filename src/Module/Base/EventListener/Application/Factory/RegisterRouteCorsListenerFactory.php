@@ -11,7 +11,7 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
  * file that was distributed with this source code.
  */
 
-use Tiny\Http;
+use Tiny\Http\Request;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base\EventListener\Application\RegisterRouteCorsListener;
 
@@ -26,7 +26,7 @@ class RegisterRouteCorsListenerFactory
     public function __invoke(ServiceManager $serviceManager
     ): RegisterRouteCorsListener {
         return new RegisterRouteCorsListener(
-            $serviceManager->get(Http\Request::class)
+            $serviceManager->get(Request::class)
         );
     }
 

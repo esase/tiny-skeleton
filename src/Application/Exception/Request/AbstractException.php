@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Application\Exception\Request;
 
 use Exception;
 
-class BaseException extends Exception
+abstract class AbstractException extends Exception
 {
 
     const TYPE_JSON = 'json';
@@ -28,7 +28,7 @@ class BaseException extends Exception
     protected string $type;
 
     /**
-     * BaseException constructor.
+     * AbstractException constructor.
      *
      * @param  string  $type
      * @param  string  $message

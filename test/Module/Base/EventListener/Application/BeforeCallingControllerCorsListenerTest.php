@@ -13,9 +13,8 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Http;
-use Tiny\Router;
+use Tiny\Router\Route;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 
 class BeforeCallingControllerCorsListenerTest extends TestCase
@@ -29,7 +28,7 @@ class BeforeCallingControllerCorsListenerTest extends TestCase
             ->willReturn(true);
 
         $routeMock = $this->createStub(
-            Router\Route::class
+            Route::class
         );
         $routeMock->expects($this->once())
             ->method('getController')
@@ -81,7 +80,7 @@ class BeforeCallingControllerCorsListenerTest extends TestCase
         );
 
         $routeMock = $this->createStub(
-            Router\Route::class
+            Route::class
         );
         $routeMock->expects($this->exactly(2))
             ->method('getActionList')
@@ -132,7 +131,7 @@ class BeforeCallingControllerCorsListenerTest extends TestCase
         );
 
         $routeMock = $this->createStub(
-            Router\Route::class
+            Route::class
         );
         $routeMock->expects($this->once())
             ->method('getActionList')

@@ -14,8 +14,7 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base\EventListener\Application\ControllerExceptionNotFoundListener;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
-use Tiny\Skeleton\Module\Base;
-use Tiny\Http;
+use Tiny\Http\AbstractResponse;
 
 class ControllerExceptionNotFoundListenerFactory
 {
@@ -28,7 +27,7 @@ class ControllerExceptionNotFoundListenerFactory
     public function __invoke(ServiceManager $serviceManager
     ): ControllerExceptionNotFoundListener {
         return new ControllerExceptionNotFoundListener(
-            $serviceManager->get(Http\AbstractResponse::class),
+            $serviceManager->get(AbstractResponse::class),
             $serviceManager->get(NotFoundService::class)
         );
     }

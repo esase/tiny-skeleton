@@ -12,7 +12,7 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  */
 
 use Tiny\Skeleton\Application\EventManager\RouteEvent;
-use Tiny\Router;
+use Tiny\Router\Route;
 use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 
 class RouteExceptionNotRegisteredListener
@@ -40,7 +40,7 @@ class RouteExceptionNotRegisteredListener
     {
         // by default the 'NotFoundController' will be assigned for all non existing routes
         if (!$this->isCliContext) {
-            $route = new Router\Route(
+            $route = new Route(
                 '',
                 NotFoundController::class,
                 'index'

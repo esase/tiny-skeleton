@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Base\EventListener\ViewHelper;
 
 use Tiny\EventManager\Event;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
 
 class ViewHelperConfigListener
 {

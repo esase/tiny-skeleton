@@ -11,7 +11,7 @@
 
 namespace Tiny\Skeleton\Application\Exception\Request;
 
-class NotFoundException extends BaseException
+class NotFoundException extends AbstractException
 {
 
 }

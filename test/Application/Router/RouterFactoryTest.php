@@ -14,7 +14,7 @@ namespace Tiny\Skeleton\Application\Router\Factory;
 use PHPUnit\Framework\TestCase;
 use Tiny\Router\Router;
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Http;
+use Tiny\Http\Request;
 
 class RouterFactoryTest extends TestCase
 {
@@ -25,7 +25,7 @@ class RouterFactoryTest extends TestCase
         $serviceManagerMock->expects($this->once())
             ->method('get')
             ->willReturn(
-                $this->createStub(Http\Request::class)
+                $this->createStub(Request::class)
             );
 
         $factory = new RouterFactory();

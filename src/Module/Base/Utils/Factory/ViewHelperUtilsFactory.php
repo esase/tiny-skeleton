@@ -14,7 +14,6 @@ namespace Tiny\Skeleton\Module\Base\Utils\Factory;
 
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\ConfigService;
-use Tiny\Skeleton\Module\Base;
 use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ViewHelperUtilsFactory

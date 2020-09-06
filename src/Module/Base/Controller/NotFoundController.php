@@ -12,9 +12,8 @@ namespace Tiny\Skeleton\Module\Base\Controller;
  */
 
 use Tiny\Http\AbstractResponse;
-use Tiny\Skeleton\Application\Exception\Request\BaseException;
+use Tiny\Skeleton\Application\Exception\Request\AbstractException;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
-use Tiny\Skeleton\Module\User;
 
 class NotFoundController
 {
@@ -41,7 +40,7 @@ class NotFoundController
     {
         $this->service->getContent(
             $response,
-            BaseException::TYPE_HTML
+            AbstractException::TYPE_HTML
         );
     }
 
