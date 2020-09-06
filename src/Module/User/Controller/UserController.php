@@ -11,42 +11,19 @@ namespace Tiny\Skeleton\Module\User\Controller;
  * file that was distributed with this source code.
  */
 
-use Tiny\Http;
-use Tiny\Skeleton\Module\User;
-use Tiny\View\View;
+use Tiny\Http\AbstractResponse;
 
-class UserController
+class UserController extends AbstractUserController
 {
 
     /**
-     * @var User\Service\UserService
+     * @param  AbstractResponse  $response
      */
-    private User\Service\UserService $userService;
-
-    /**
-     * UserCliController constructor.
-     *
-     * @param  User\Service\UserService  $userService
-     */
-    public function __construct(User\Service\UserService $userService)
+    public function list(AbstractResponse $response)
     {
-        $this->userService = $userService;
-    }
-
-    /**
-     * @param  Http\AbstractResponse  $response
-     */
-    public function list(Http\AbstractResponse $response)
-    {
-        $response->setResponse(
-            new View([
-                'users' => $this->userService->getAllUsers()
-            ])
-        );
-    }
-
-    public function create()
-    {
+        $this->viewResponse($response, [
+            'users' => $this->userService->getAllUsers()
+        ]);
     }
 
 }

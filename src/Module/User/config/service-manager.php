@@ -16,7 +16,8 @@ return [
     'shared' => [
         // controller
         User\Controller\UserController::class    => User\Controller\Factory\UserControllerFactory::class,
-        User\Controller\UserCliController::class => User\Controller\Factory\UserCliControllerFactory::class,
+        User\Controller\UserCliController::class => User\Controller\Factory\UserControllerFactory::class,
+        User\Controller\UserApiController::class => User\Controller\Factory\UserControllerFactory::class,
 
         // service
         User\Service\UserService::class          => InvokableFactory::class,

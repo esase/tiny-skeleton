@@ -22,6 +22,14 @@ return [
                 Request::METHOD_POST => 'create'
             ],
         ],
+        [
+            'request'     => '/api/users',
+            'controller'  => User\Controller\UserApiController::class,
+            'action_list' => [
+                Request::METHOD_GET => 'list',
+                Request::METHOD_POST => 'create'
+            ],
+        ],
     ],
     'console' => [
         [

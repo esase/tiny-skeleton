@@ -1,1 +1,5 @@
-<b>Not found</b>
+<?php if ($this->message): ?>
+    <?= $this->message ?>
+<?php else: ?>
+    <b>Not found</b>
+<?php endif ?>

@@ -11,19 +11,18 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  * file that was distributed with this source code.
  */
 
+use Tiny\Http\AbstractResponse;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
-use Tiny\Skeleton\Module\Base;
-use Tiny\Http;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 
 class ControllerExceptionNotFoundListener
 {
 
     /**
-     * @var Http\AbstractResponse
+     * @var AbstractResponse
      */
-    private Http\AbstractResponse $response;
+    private AbstractResponse $response;
 
     /**
      * @var NotFoundService
@@ -33,11 +32,11 @@ class ControllerExceptionNotFoundListener
     /**
      * ControllerExceptionNotFoundListener constructor.
      *
-     * @param  Http\AbstractResponse  $response
-     * @param  NotFoundService        $service
+     * @param  AbstractResponse  $response
+     * @param  NotFoundService   $service
      */
     public function __construct(
-        Http\AbstractResponse $response,
+        AbstractResponse $response,
         NotFoundService $service
     ) {
         $this->response = $response;
@@ -52,11 +51,13 @@ class ControllerExceptionNotFoundListener
         $exception = $event->getParams()['exception'] ?? null;
 
         if ($exception && $exception instanceof NotFoundException) {
-            $this->response
-                ->setCode(Http\AbstractResponse::RESPONSE_NOT_FOUND)
-                ->setResponse($this->service->getContent());
-
-            $event->setData($this->response);
+            $event->setData(
+                $this->service->getContent(
+                    $this->response,
+                    $exception->getType(),
+                    $exception->getMessage()
+                )
+            );
         }
     }
 

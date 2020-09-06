@@ -12,6 +12,8 @@ namespace Tiny\Skeleton\Module\Base\Service;
  */
 
 use Tiny\EventManager\EventManager;
+use Tiny\Http\AbstractResponse;
+use Tiny\Skeleton\Application\Exception\Request\BaseException;
 use Tiny\Skeleton\Module\Base;
 use Tiny\View\View;
 
@@ -51,28 +53,75 @@ class NotFoundService
     }
 
     /**
-     * @return View|string
+     * @param  AbstractResponse  $response
+     * @param  string            $type
+     * @param  string            $message
+     *
+     * @return AbstractResponse
      */
-    public function getContent()
-    {
+    public function getContent(
+        AbstractResponse $response,
+        string $type,
+        string $message = ''
+    ): AbstractResponse {
+        $errorMessage = $message ?: 'Not found';
+        $response
+            ->setCode(AbstractResponse::RESPONSE_NOT_FOUND);
+
         if ($this->isCliContext) {
-            return 'Not found';
+            $response->setResponse($errorMessage)
+                ->setResponseType(
+                    AbstractResponse::RESPONSE_TYPE_TEXT
+                );
+
+            return $response;
         }
 
-        $view = new View();
-        $view->setTemplatePath(
-            $this->viewHelperUtils->getTemplatePath(
-                '404', 'Base'
-            )
-        )
-            ->setLayoutPath(
-                $this->viewHelperUtils->getTemplatePath(
-                    'layout/base', 'Base'
+        switch ($type) {
+            case BaseException::TYPE_HTML :
+                $view = new View([
+                    'message' => $errorMessage
+                ]);
+                $view->setTemplatePath(
+                    $this->viewHelperUtils->getTemplatePath(
+                        '404', 'Base'
+                    )
                 )
-            )
-            ->setEventManager($this->eventManager);
+                    ->setLayoutPath(
+                        $this->viewHelperUtils->getTemplatePath(
+                            'layout/base', 'Base'
+                        )
+                    )
+                    ->setEventManager($this->eventManager);
 
-        return $view;
+                $response->setResponse($view)
+                    ->setResponseType(
+                        AbstractResponse::RESPONSE_TYPE_HTML
+                    );
+
+                return $response;
+
+            case BaseException::TYPE_JSON:
+                $response->setResponse(json_encode([
+                    'error' => $errorMessage,
+                    'code' => AbstractResponse::RESPONSE_NOT_FOUND
+                ]))
+                    ->setCode(AbstractResponse::RESPONSE_OK)
+                    ->setResponseType(
+                        AbstractResponse::RESPONSE_TYPE_JSON
+                    );
+
+                return $response;
+
+            case BaseException::TYPE_TEXT:
+            default :
+                $response->setResponse($errorMessage)
+                    ->setResponseType(
+                        AbstractResponse::RESPONSE_TYPE_TEXT
+                    );
+
+                return $response;
+        }
     }
 
 }

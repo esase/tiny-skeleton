@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Module\User\Controller;
 
 use Tiny\Http\AbstractResponse;
 
-class UserCliController extends AbstractUserController
+class UserApiController extends AbstractUserController
 {
 
     /**

@@ -16,9 +16,44 @@ use Tiny\Http;
 use Tiny\Router;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Base;
+use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 
 class BeforeCallingControllerCorsListenerTest extends TestCase
 {
+
+    public function testInvokeMethodUsingNotFoundController()
+    {
+        $requestMock = $this->createMock(Http\Request::class);
+        $requestMock->expects($this->once())
+            ->method('isOptions')
+            ->willReturn(true);
+
+        $routeMock = $this->createStub(
+            Router\Route::class
+        );
+        $routeMock->expects($this->once())
+            ->method('getController')
+            ->willReturn(NotFoundController::class);
+
+        $eventMock = $this->createStub(
+            ControllerEvent::class
+        );
+        $eventMock->expects($this->once())
+            ->method('getParams')
+            ->willReturn([
+                'route' => $routeMock
+            ]);
+
+        $listener = new BeforeCallingControllerCorsListener(
+            $requestMock,
+            $this->createStub(Http\AbstractResponse::class),
+            $this->createStub(Http\ResponseHttpUtils::class),
+            '',
+            ''
+        );
+
+        $this->assertNull($listener($eventMock));
+    }
 
     public function testInvokeMethod()
     {

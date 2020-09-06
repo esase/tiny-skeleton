@@ -12,9 +12,9 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\Http\AbstractResponse;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
-use Tiny\Http;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 
 class ControllerExceptionNotFoundListenerTest extends TestCase
@@ -22,27 +22,28 @@ class ControllerExceptionNotFoundListenerTest extends TestCase
 
     public function testInvokeMethod()
     {
-        $exceptionStub = $this->createStub(NotFoundException::class);
+        $exceptionMock = $this->createMock(NotFoundException::class);
+        $exceptionMock->expects($this->once())
+            ->method('getType')
+            ->willReturn('html');
 
-        $responseMock = $this->createMock(Http\AbstractResponse::class);
-        $responseMock->expects($this->once())
-            ->method('setCode')
-            ->with(404)
-            ->will($this->returnSelf());
-        $responseMock->expects($this->once())
-            ->method('setResponse')
-            ->with('test_content');
+        $responseMock = $this->createMock(AbstractResponse::class);
 
         $serviceMock = $this->createMock(NotFoundService::class);
         $serviceMock->expects($this->once())
             ->method('getContent')
-            ->willReturn('test_content');
+            ->with(
+                $responseMock,
+                'html',
+                ''
+            )
+            ->willReturn($responseMock);
 
         $eventMock = $this->createMock(ControllerEvent::class);
         $eventMock->expects($this->once())
             ->method('getParams')
             ->willReturn([
-                'exception' => $exceptionStub
+                'exception' => $exceptionMock
             ]);
         $eventMock->expects($this->once())
             ->method('setData')

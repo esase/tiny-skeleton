@@ -11,7 +11,8 @@ namespace Tiny\Skeleton\Module\Base\Controller;
  * file that was distributed with this source code.
  */
 
-use Tiny\Http;
+use Tiny\Http\AbstractResponse;
+use Tiny\Skeleton\Application\Exception\Request\BaseException;
 use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 use Tiny\Skeleton\Module\User;
 
@@ -34,13 +35,14 @@ class NotFoundController
     }
 
     /**
-     * @param  Http\AbstractResponse  $response
+     * @param  AbstractResponse  $response
      */
-    public function index(Http\AbstractResponse $response)
+    public function index(AbstractResponse $response)
     {
-        $response->setResponse(
-            $this->service->getContent()
-        )->setCode(Http\AbstractResponse::RESPONSE_NOT_FOUND);
+        $this->service->getContent(
+            $response,
+            BaseException::TYPE_HTML
+        );
     }
 
 }

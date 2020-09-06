@@ -12,25 +12,25 @@ namespace Tiny\Skeleton\Module\User\Controller\Factory;
  */
 
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\User;
+use Tiny\Skeleton\Module\User\Service\UserService;
 
 class UserControllerFactory
 {
 
     /**
      * @param  ServiceManager  $serviceManager
+     * @param  string          $targetClass
      *
-     * @return User\Controller\UserController
+     * @return object
      */
-    public function __invoke(ServiceManager $serviceManager
-    ): User\Controller\UserController {
-        /** @var User\Service\UserService $userService */
-        $userService = $serviceManager->get(
-            User\Service\UserService::class
-        );
-
-        return new User\Controller\UserController(
-            $userService
+    public function __invoke(
+        ServiceManager $serviceManager,
+        string $targetClass
+    ) {
+        return new $targetClass (
+            $serviceManager->get(
+                UserService::class
+            )
         );
     }
 

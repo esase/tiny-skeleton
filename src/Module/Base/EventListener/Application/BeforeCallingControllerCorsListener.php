@@ -15,6 +15,7 @@ use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Module\Base;
 use Tiny\Http;
 use Tiny\Router;
+use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 
 class BeforeCallingControllerCorsListener
 {
@@ -77,6 +78,10 @@ class BeforeCallingControllerCorsListener
             /** @var Router\Route $route */
             $route = $event->getParams()['route'];
             $headers = [];
+
+            if ($route->getController() === NotFoundController::class) {
+                return;
+            }
 
             if ($this->requestMethod) {
                 $headers[] = sprintf(
