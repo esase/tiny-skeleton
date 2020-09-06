@@ -74,6 +74,7 @@ class ErrorHandler
         file_put_contents(
             $this->errorLogPath, json_encode(
                 [
+                    'context' => $this->isCliContext ? 'cli' : 'http',
                     'date'    => date('Y-m-d H:i:s'),
                     'message' => $exception->getMessage(),
                     'file'    => $exception->getFile(),
