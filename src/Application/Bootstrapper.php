@@ -25,6 +25,12 @@ use Tiny\Router;
 class Bootstrapper
 {
 
+    const ROUTE_CONTEXT_CLI = 'cli';
+
+    const ROUTE_CONTEXT_HTTP = 'http';
+
+    const ROUTE_CONTEXT_HTTP_API = 'http_api';
+
     /**
      * @var BootstrapperUtils
      */
@@ -165,43 +171,43 @@ class Bootstrapper
 
         $consoleRoutes = $allRoutes['console'] ?? [];
         $httpRoutes = $allRoutes['http'] ?? [];
+        $httpApiRoutes = $allRoutes['http_api'] ?? [];
 
-        // we only need to fetch specific routes (either http or console ones)
-        $activeRoutes = $isConsole ? $consoleRoutes : $httpRoutes;
-
-        if (!$consoleRoutes && !$httpRoutes) {
+        if (!$consoleRoutes && !$httpRoutes && !$httpApiRoutes) {
             throw new InvalidArgumentException(
-                'Both http and console routes are missing, check you config'
+                'Routes are missing, check you config'
             );
         }
 
-        foreach ($activeRoutes as $route) {
-            $request = $route['request'] ?? '';
-            $controller = $route['controller'] ?? '';
-            $actionList = $route['action_list'] ?? '';
-
-            if (!$request || !$controller || !$actionList) {
-                throw new InvalidArgumentException(
-                    'One of: request, controller or action list is empty, check you config'
-                );
-            }
-
-            $route = new Router\Route(
-                $request,
-                $controller,
-                $actionList,
-                ($route['type'] ?? Router\Route::TYPE_LITERAL),
-                ($route['request_params'] ?? []),
-                ($route['spec'] ?? '')
+        // register only console routes
+        if ($isConsole) {
+            $this->registerRoutes(
+                $consoleRoutes,
+                $eventManager,
+                $router,
+                self::ROUTE_CONTEXT_CLI
             );
 
-            $registerEvent = new RouteEvent($route);
-            $eventManager->trigger(
-                RouteEvent::EVENT_REGISTER_ROUTE,
-                $registerEvent
-            );
+            return;
+        }
 
-            $router->registerRoute($registerEvent->getData());
+        // register both http and http api routes
+        if ($httpRoutes) {
+            $this->registerRoutes(
+                $httpRoutes,
+                $eventManager,
+                $router,
+                self::ROUTE_CONTEXT_HTTP
+            );
+        }
+
+        if ($httpApiRoutes) {
+            $this->registerRoutes(
+                $httpApiRoutes,
+                $eventManager,
+                $router,
+                self::ROUTE_CONTEXT_HTTP_API
+            );
         }
     }
 
@@ -239,11 +245,10 @@ class Bootstrapper
             );
 
             return $afterEvent->getData();
-        }
-        catch (Throwable $e) {
+        } catch (Throwable $e) {
             $routeExceptionEvent = new RouteEvent(
                 null, [
-                    'exception' => $e
+                    'exception' => $e,
                 ]
             );
             $eventManager->trigger(
@@ -382,6 +387,49 @@ class Bootstrapper
         }
 
         return $configs;
+    }
+
+    /**
+     * @param  array          $routes
+     * @param  EventManager   $eventManager
+     * @param  Router\Router  $router
+     * @param  string         $context
+     */
+    private function registerRoutes(
+        array $routes,
+        EventManager $eventManager,
+        Router\Router $router,
+        string $context
+    ) {
+        foreach ($routes as $route) {
+            $request = $route['request'] ?? '';
+            $controller = $route['controller'] ?? '';
+            $actionList = $route['action_list'] ?? '';
+
+            if (!$request || !$controller || !$actionList) {
+                throw new InvalidArgumentException(
+                    'One of: request, controller or action list is empty, check you config'
+                );
+            }
+
+            $route = new Router\Route(
+                $request,
+                $controller,
+                $actionList,
+                ($route['type'] ?? Router\Route::TYPE_LITERAL),
+                ($route['request_params'] ?? []),
+                ($route['spec'] ?? ''),
+                $context
+            );
+
+            $registerEvent = new RouteEvent($route);
+            $eventManager->trigger(
+                RouteEvent::EVENT_REGISTER_ROUTE,
+                $registerEvent
+            );
+
+            $router->registerRoute($registerEvent->getData());
+        }
     }
 
 }

@@ -11,10 +11,11 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
  * file that was distributed with this source code.
  */
 
+use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base\EventListener\Application\ControllerExceptionNotFoundListener;
-use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 use Tiny\Http\AbstractResponse;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ControllerExceptionNotFoundListenerFactory
 {
@@ -28,7 +29,8 @@ class ControllerExceptionNotFoundListenerFactory
     ): ControllerExceptionNotFoundListener {
         return new ControllerExceptionNotFoundListener(
             $serviceManager->get(AbstractResponse::class),
-            $serviceManager->get(NotFoundService::class)
+            $serviceManager->get(EventManager::class),
+            $serviceManager->get(ViewHelperUtils::class)
         );
     }
 

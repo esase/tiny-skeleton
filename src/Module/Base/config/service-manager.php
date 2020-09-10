@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
  */
 
+use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Module\Base;
 
 return [
@@ -30,10 +31,6 @@ return [
         Base\Utils\ViewHelperUtils::class                                            => Base\Utils\Factory\ViewHelperUtilsFactory::class,
 
         // controller
-        Base\Controller\NotFoundController::class                                    => Base\Controller\Factory\NotFoundControllerFactory::class,
-
-        // service
-        Base\Service\NotFoundService::class                                          => Base\Service\Factory\NotFoundServiceFactory::class,
-
+        Base\Controller\NotFoundController::class                                    => InvokableFactory::class,
     ],
 ];

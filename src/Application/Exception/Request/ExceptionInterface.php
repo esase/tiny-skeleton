@@ -11,9 +11,7 @@
 
 namespace Tiny\Skeleton\Application\Exception\Request;
 
-use Exception;
-
-class NotFoundException extends Exception implements ExceptionInterface
+interface ExceptionInterface
 {
 
 }

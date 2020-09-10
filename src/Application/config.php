@@ -15,7 +15,6 @@ use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Application;
 
 return [
-    'api_route_prefix' => 'api/',
     'service_manager'  => [
         'shared' => [
             // event manager

@@ -13,27 +13,29 @@ use Tiny\Http\Request;
 use Tiny\Skeleton\Module\User\Controller;
 
 return [
-    'http'    => [
+    'http'     => [
         [
             'request'     => '/users',
             'controller'  => Controller\UserController::class,
             'action_list' => [
-                Request::METHOD_GET => 'list',
-                Request::METHOD_POST => 'create'
+                Request::METHOD_GET  => 'list',
+                Request::METHOD_POST => 'create',
             ],
         ],
+    ],
+    'http_api' => [
         [
             'request'     => '/api/users',
             'controller'  => Controller\UserApiController::class,
             'action_list' => [
-                Request::METHOD_GET => 'list',
-                Request::METHOD_POST => 'create'
+                Request::METHOD_GET  => 'list',
+                Request::METHOD_POST => 'create',
             ],
         ],
     ],
-    'console' => [
+    'console'  => [
         [
-            'request'     => 'users list',
+            'request'     => 'user list',
             'controller'  => Controller\UserCliController::class,
             'action_list' => 'list',
         ],

@@ -11,12 +11,16 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  * file that was distributed with this source code.
  */
 
+use Tiny\EventManager\EventManager;
 use Tiny\Http\AbstractResponse;
+use Tiny\Router\Route;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
 use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
-use Tiny\Skeleton\Module\Base\Service\NotFoundService;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
+use Tiny\View\View;
 
 class ControllerExceptionNotFoundListener
+    extends AbstractControllerExceptionListener
 {
 
     /**
@@ -25,22 +29,30 @@ class ControllerExceptionNotFoundListener
     private AbstractResponse $response;
 
     /**
-     * @var NotFoundService
+     * @var EventManager
      */
-    private NotFoundService $service;
+    private EventManager $eventManager;
+
+    /**
+     * @var ViewHelperUtils
+     */
+    private ViewHelperUtils $viewHelperUtils;
 
     /**
      * ControllerExceptionNotFoundListener constructor.
      *
      * @param  AbstractResponse  $response
-     * @param  NotFoundService   $service
+     * @param  EventManager      $eventManager
+     * @param  ViewHelperUtils   $viewHelperUtils
      */
     public function __construct(
         AbstractResponse $response,
-        NotFoundService $service
+        EventManager $eventManager,
+        ViewHelperUtils $viewHelperUtils
     ) {
         $this->response = $response;
-        $this->service = $service;
+        $this->eventManager = $eventManager;
+        $this->viewHelperUtils = $viewHelperUtils;
     }
 
     /**
@@ -50,15 +62,55 @@ class ControllerExceptionNotFoundListener
     {
         $exception = $event->getParams()['exception'] ?? null;
 
-        if ($exception && $exception instanceof NotFoundException) {
-            $event->setData(
-                $this->service->getContent(
+        /** @var Route $route */
+        $route = $event->getParams()['route'] ?? null;
+
+        if ($exception && $route && $exception instanceof NotFoundException) {
+            $errorMessage = $exception->getMessage() ?: 'Not found';
+
+            if ($this->isJsonErrorResponse($route->getContext())) {
+                $this->jsonErrorResponse(
                     $this->response,
-                    $exception->getType(),
-                    $exception->getMessage()
-                )
-            );
+                    $errorMessage,
+                    AbstractResponse::RESPONSE_NOT_FOUND
+                );
+            } else {
+                $this->viewErrorResponse(
+                    $this->response,
+                    $this->getView($errorMessage),
+                    AbstractResponse::RESPONSE_NOT_FOUND
+                );
+            }
+
+            $event->setData($this->response);
         }
+    }
+
+    /**
+     * @param  string  $errorMessage
+     *
+     * @return View
+     */
+    private function getView(string $errorMessage): View
+    {
+        $view = new View(
+            [
+                'message' => $errorMessage,
+            ]
+        );
+        $view->setTemplatePath(
+            $this->viewHelperUtils->getTemplatePath(
+                'NotFoundController/index', 'Base'
+            )
+        )
+            ->setLayoutPath(
+                $this->viewHelperUtils->getTemplatePath(
+                    'layout/base', 'Base'
+                )
+            )
+            ->setEventManager($this->eventManager);
+
+        return $view;
     }
 
 }

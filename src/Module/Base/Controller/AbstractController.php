@@ -24,7 +24,7 @@ abstract class AbstractController
      *
      * @return AbstractResponse
      */
-    public function viewResponse(
+    protected function viewResponse(
         AbstractResponse $response,
         array $variables = [],
         int $code = AbstractResponse::RESPONSE_OK
@@ -45,7 +45,7 @@ abstract class AbstractController
      *
      * @return AbstractResponse
      */
-    public function jsonResponse(
+    protected function jsonResponse(
         AbstractResponse $response,
         array $variables = [],
         int $code = AbstractResponse::RESPONSE_OK
@@ -66,7 +66,7 @@ abstract class AbstractController
      *
      * @return AbstractResponse
      */
-    public function textResponse(
+    protected function textResponse(
         AbstractResponse $response,
         string $responseText,
         int $code = AbstractResponse::RESPONSE_OK

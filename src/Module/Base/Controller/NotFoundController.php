@@ -12,35 +12,17 @@ namespace Tiny\Skeleton\Module\Base\Controller;
  */
 
 use Tiny\Http\AbstractResponse;
-use Tiny\Skeleton\Application\Exception\Request\AbstractException;
-use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 
-class NotFoundController
+class NotFoundController extends AbstractController
 {
-
-    /**
-     * @var NotFoundService
-     */
-    private NotFoundService $service;
-
-    /**
-     * NotFoundController constructor.
-     *
-     * @param  NotFoundService  $service
-     */
-    public function __construct(NotFoundService $service)
-    {
-        $this->service = $service;
-    }
 
     /**
      * @param  AbstractResponse  $response
      */
     public function index(AbstractResponse $response)
     {
-        $this->service->getContent(
-            $response,
-            AbstractException::TYPE_HTML
+        $this->viewResponse(
+            $response, [], AbstractResponse::RESPONSE_NOT_FOUND
         );
     }
 

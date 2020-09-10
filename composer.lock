@@ -110,16 +110,16 @@
         },
         {
             "name": "esase/tiny-router",
-            "version": "v1.0.4",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/esase/tiny-router.git",
-                "reference": "07ce436c5e59453e5bb2ec942b732938f362d6eb"
+                "reference": "3a197271e31ec0df676bcb5f1366792f7fcf79e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/esase/tiny-router/zipball/07ce436c5e59453e5bb2ec942b732938f362d6eb",
-                "reference": "07ce436c5e59453e5bb2ec942b732938f362d6eb",
+                "url": "https://api.github.com/repos/esase/tiny-router/zipball/3a197271e31ec0df676bcb5f1366792f7fcf79e8",
+                "reference": "3a197271e31ec0df676bcb5f1366792f7fcf79e8",
                 "shasum": ""
             },
             "require": {
@@ -156,7 +156,7 @@
                 "routing",
                 "tinyframework"
             ],
-            "time": "2020-08-15T12:25:28+00:00"
+            "time": "2020-09-10T05:36:36+00:00"
         },
         {
             "name": "esase/tiny-service-manager",
