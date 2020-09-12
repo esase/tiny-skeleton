@@ -59,25 +59,4 @@ abstract class AbstractController
         return $response;
     }
 
-    /**
-     * @param  AbstractResponse  $response
-     * @param  string            $responseText
-     * @param  int               $code
-     *
-     * @return AbstractResponse
-     */
-    protected function textResponse(
-        AbstractResponse $response,
-        string $responseText,
-        int $code = AbstractResponse::RESPONSE_OK
-    ): AbstractResponse {
-        $response->setResponse($responseText)
-            ->setCode($code)
-            ->setResponseType(
-                AbstractResponse::RESPONSE_TYPE_TEXT
-            );
-
-        return $response;
-    }
-
 }

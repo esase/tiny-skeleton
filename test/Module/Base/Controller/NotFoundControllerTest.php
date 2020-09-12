@@ -13,31 +13,31 @@ namespace Tiny\Skeleton\Module\Base\Controller;
 
 use PHPUnit\Framework\TestCase;
 use Tiny\Http\AbstractResponse;
-use Tiny\Skeleton\Module\Base\Service\NotFoundService;
+use Tiny\View\View;
 
 class NotFoundControllerTest extends TestCase
 {
 
     public function testIndexMethod()
     {
-        $responseStub = $this->createStub(
+        $responseMock = $this->createMock(
             AbstractResponse::class
         );
-        $notFoundServiceMock = $this->createMock(
-            NotFoundService::class
-        );
-        $notFoundServiceMock->expects($this->once())
-            ->method('getContent')
-            ->with(
-                $responseStub,
-                'html'
-            )
-            ->willReturn(
-                $responseStub
-            );
+        $responseMock->expects($this->once())
+            ->method('setResponse')
+            ->with($this->isInstanceOf(View::class))
+            ->will($this->returnSelf());
+        $responseMock->expects($this->once())
+            ->method('setCode')
+            ->with(404)
+            ->will($this->returnSelf());
+        $responseMock->expects($this->once())
+            ->method('setResponseType')
+            ->with('text/html')
+            ->will($this->returnSelf());
 
-        $controller = new NotFoundController($notFoundServiceMock);
-        $controller->index($responseStub);
+        $controller = new NotFoundController();
+        $controller->index($responseMock);
     }
 
 }

@@ -20,9 +20,22 @@ class UserCliControllerTest extends TestCase
 
     public function testListMethod()
     {
-        $responseStub = $this->createStub(
+        $responseMock = $this->createMock(
             AbstractResponse::class
         );
+        $responseMock->expects($this->once())
+            ->method('setResponse')
+            ->with(json_encode([]))
+            ->will($this->returnSelf());
+        $responseMock->expects($this->once())
+            ->method('setCode')
+            ->with(200)
+            ->will($this->returnSelf());
+        $responseMock->expects($this->once())
+            ->method('setResponseType')
+            ->with('application/json')
+            ->will($this->returnSelf());
+
         $userServiceMock = $this->createMock(
             UserService::class
         );
@@ -30,19 +43,8 @@ class UserCliControllerTest extends TestCase
             ->method('getAllUsers')
             ->willReturn([]);
 
-        $controllerMock = $this->getMockBuilder(UserCliController::class)
-            ->onlyMethods(['jsonResponse'])
-            ->setConstructorArgs([$userServiceMock])
-            ->getMock();
-
-        $controllerMock->expects($this->once())
-            ->method('jsonResponse')
-            ->with(
-                $responseStub,
-                []
-            );
-
-        $controllerMock->list($responseStub);
+        $controller = new UserCliController($userServiceMock);
+        $controller->list($responseMock);
     }
 
 }

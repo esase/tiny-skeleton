@@ -12,10 +12,11 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application\Factory;
  */
 
 use PHPUnit\Framework\TestCase;
+use Tiny\EventManager\EventManager;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Base\EventListener\Application\ControllerExceptionNotFoundListener;
-use Tiny\Skeleton\Module\Base\Service\NotFoundService;
 use Tiny\Http\AbstractResponse;
+use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
 
 class ControllerExceptionNotFoundListenerFactoryTest extends TestCase
 {
@@ -23,11 +24,12 @@ class ControllerExceptionNotFoundListenerFactoryTest extends TestCase
     public function testInvokeMethod()
     {
         $serviceManagerMock = $this->createMock(ServiceManager::class);
-        $serviceManagerMock->expects($this->exactly(2))
+        $serviceManagerMock->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [AbstractResponse::class],
-                [NotFoundService::class]
+                [EventManager::class],
+                [ViewHelperUtils::class]
             )
         ->will(
             $this->returnCallback(

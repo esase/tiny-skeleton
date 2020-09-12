@@ -60,10 +60,11 @@ class ControllerExceptionNotFoundListener
      */
     public function __invoke(ControllerEvent $event)
     {
-        $exception = $event->getParams()['exception'] ?? null;
+        $eventParams = $event->getParams();
+        $exception = $eventParams['exception'] ?? null;
 
         /** @var Route $route */
-        $route = $event->getParams()['route'] ?? null;
+        $route = $eventParams['route'] ?? null;
 
         if ($exception && $route && $exception instanceof NotFoundException) {
             $errorMessage = $exception->getMessage() ?: 'Not found';

@@ -20,6 +20,7 @@ use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Router;
 use Tiny\Http;
+use Tiny\View\View;
 
 class BootstrapperTest extends TestCase
 {
@@ -262,7 +263,7 @@ class BootstrapperTest extends TestCase
         $this->assertSame($routeModifiedStub, $route);
     }
 
-    public function testInitRoutes()
+    public function testInitRoutesMethodUsingConsoleRoute()
     {
         $eventManagerMock = $this->createMock(
             EventManager::class
@@ -282,7 +283,50 @@ class BootstrapperTest extends TestCase
             ->method('registerRoute')
             ->with(
                 $this->isInstanceOf(Router\Route::class)
-            );
+            )
+            ->will(
+                $this->returnCallback(
+                    function (Router\Route $route) use ($routerMock) {
+                        // make sure the Route is constructed properly
+                        $this->assertEquals(
+                            'users list',
+                            $route->getRequest()
+                        );
+
+                        $this->assertEquals(
+                            'TestConsoleController',
+                            $route->getController()
+                        );
+
+                        $this->assertEquals(
+                            'list',
+                            $route->getActionList()
+                        );
+
+                        $this->assertEquals(
+                            'literal',
+                            $route->getType()
+                        );
+
+                        $this->assertEquals(
+                            [],
+                            $route->getRequestParams()
+                        );
+
+                        $this->assertEquals(
+                            '',
+                            $route->getSpec()
+                        );
+
+                        $this->assertEquals(
+                            'cli',
+                            $route->getContext()
+                        );
+
+                        return $routerMock;
+                    }
+                )
+            );;
 
         $configServiceMock = $this->createMock(
             ConfigService::class
@@ -318,11 +362,210 @@ class BootstrapperTest extends TestCase
         );
     }
 
+    public function testInitRoutesMethodUsingHttpRoute()
+    {
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->once())
+            ->method('trigger')
+            ->with(
+                ApplicationEventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+                $this->isInstanceOf(ApplicationEventManager\RouteEvent::class)
+            );
+
+        $routerMock = $this->createMock(
+            Router\Router::class
+        );
+        $routerMock->expects($this->once())
+            ->method('registerRoute')
+            ->with(
+                $this->isInstanceOf(Router\Route::class)
+            )
+            ->will(
+                $this->returnCallback(
+                    function (Router\Route $route) use ($routerMock) {
+                        // make sure the Route is constructed properly
+                        $this->assertEquals(
+                            '/users',
+                            $route->getRequest()
+                        );
+
+                        $this->assertEquals(
+                            'TestController',
+                            $route->getController()
+                        );
+
+                        $this->assertEquals(
+                            'list',
+                            $route->getActionList()
+                        );
+
+                        $this->assertEquals(
+                            'literal',
+                            $route->getType()
+                        );
+
+                        $this->assertEquals(
+                            [],
+                            $route->getRequestParams()
+                        );
+
+                        $this->assertEquals(
+                            '',
+                            $route->getSpec()
+                        );
+
+                        $this->assertEquals(
+                            'http',
+                            $route->getContext()
+                        );
+
+                        return $routerMock;
+                    }
+                )
+            );
+
+        $configServiceMock = $this->createMock(
+            ConfigService::class
+        );
+
+        $configServiceMock->expects($this->once())
+            ->method('getConfig')
+            ->with('routes', [])
+            ->willReturn(
+                [
+                    'http' => [
+                        [
+                            'request'     => '/users',
+                            'controller'  => 'TestController',
+                            'action_list' => 'list',
+                        ],
+                    ],
+                ]
+            );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initRoutes(
+            $eventManagerMock,
+            $routerMock,
+            $configServiceMock,
+            false
+        );
+    }
+
+
+    public function testInitRoutesMethodUsingHttpApiRoute()
+    {
+        $eventManagerMock = $this->createMock(
+            EventManager::class
+        );
+
+        $eventManagerMock->expects($this->once())
+            ->method('trigger')
+            ->with(
+                ApplicationEventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+                $this->isInstanceOf(ApplicationEventManager\RouteEvent::class)
+            );
+
+        $routerMock = $this->createMock(
+            Router\Router::class
+        );
+        $routerMock->expects($this->once())
+            ->method('registerRoute')
+            ->with(
+                $this->isInstanceOf(Router\Route::class)
+            )
+            ->will(
+                $this->returnCallback(
+                    function (Router\Route $route) use ($routerMock) {
+                        // make sure the Route is constructed properly
+                        $this->assertEquals(
+                            '/users',
+                            $route->getRequest()
+                        );
+
+                        $this->assertEquals(
+                            'TestApiController',
+                            $route->getController()
+                        );
+
+                        $this->assertEquals(
+                            'list',
+                            $route->getActionList()
+                        );
+
+                        $this->assertEquals(
+                            'literal',
+                            $route->getType()
+                        );
+
+                        $this->assertEquals(
+                            [],
+                            $route->getRequestParams()
+                        );
+
+                        $this->assertEquals(
+                            '',
+                            $route->getSpec()
+                        );
+
+                        $this->assertEquals(
+                            'http_api',
+                            $route->getContext()
+                        );
+
+                        return $routerMock;
+                    }
+                )
+            );
+
+        $configServiceMock = $this->createMock(
+            ConfigService::class
+        );
+
+        $configServiceMock->expects($this->once())
+            ->method('getConfig')
+            ->with('routes', [])
+            ->willReturn(
+                [
+                    'http_api' => [
+                        [
+                            'request'     => '/users',
+                            'controller'  => 'TestApiController',
+                            'action_list' => 'list',
+                        ],
+                    ],
+                ]
+            );
+
+        $bootstrap = new Bootstrapper(
+            $this->createMock(
+                BootstrapperUtils::class
+            ),
+            true
+        );
+
+        $bootstrap->initRoutes(
+            $eventManagerMock,
+            $routerMock,
+            $configServiceMock,
+            false
+        );
+    }
+
     public function testInitRoutesUsingEmptyConfig()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Both http and console routes are missing, check you config'
+            'Routes are missing, check you config'
         );
 
         $eventManagerStub = $this->createMock(

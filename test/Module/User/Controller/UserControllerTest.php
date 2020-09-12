@@ -14,15 +14,41 @@ namespace Tiny\Skeleton\Module\User\Controller;
 use PHPUnit\Framework\TestCase;
 use Tiny\Http\AbstractResponse;
 use Tiny\Skeleton\Module\User\Service\UserService;
+use Tiny\View\View;
 
 class UserControllerTest extends TestCase
 {
 
     public function testListMethod()
     {
-        $responseStub = $this->createStub(
+        $responseMock = $this->createMock(
             AbstractResponse::class
         );
+        $responseMock->expects($this->once())
+            ->method('setResponse')
+            ->with($this->isInstanceOf(View::class))
+            ->will(
+                $this->returnCallback(
+                    function (View $view) use ($responseMock) {
+                        // make sure the View is constructed properly
+                        $this->assertEquals(
+                            ['users' => []],
+                            $view->getVariables()
+                        );
+
+                        return $responseMock;
+                    }
+                )
+            );
+        $responseMock->expects($this->once())
+            ->method('setCode')
+            ->with(200)
+            ->will($this->returnSelf());
+        $responseMock->expects($this->once())
+            ->method('setResponseType')
+            ->with('text/html')
+            ->will($this->returnSelf());
+
         $userServiceMock = $this->createMock(
             UserService::class
         );
@@ -30,21 +56,8 @@ class UserControllerTest extends TestCase
             ->method('getAllUsers')
             ->willReturn([]);
 
-        $controllerMock = $this->getMockBuilder(UserController::class)
-            ->onlyMethods(['viewResponse'])
-            ->setConstructorArgs([$userServiceMock])
-            ->getMock();
-
-        $controllerMock->expects($this->once())
-            ->method('viewResponse')
-            ->with(
-                $responseStub,
-                [
-                    'users' => [],
-                ]
-            );
-
-        $controllerMock->list($responseStub);
+        $controller = new UserController($userServiceMock);
+        $controller->list($responseMock);
     }
 
 }
