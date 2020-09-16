@@ -44,7 +44,7 @@ Entry point
 -----------
 
 We use the `Front controller <https://en.wikipedia.org/wiki/Front_controller>`_ pattern to capture all incoming :code:`web` and :code:`console` requests as well.
-The  :code:`public/index.php` is a requests handler  which runs the application.
+The  :code:`public/index.php` it's a requests handler  which runs the application.
 
 Aside from launching the handler also defines the working environment
 (there are two possible modes: :code:`dev` and :code:`prod`) which are responsible for displaying and catching errors.
@@ -176,7 +176,7 @@ Services definition are stored in `config files`:
 
 The config structure it’s a simple map with service names and its factories (classes which are responsible for creating those).
 
-**PS:** To not to make `modules main config` to big we split configs on small parts, example:
+**PS:** To not to make `modules main config` to big we split it on a few small parts, example:
 
 .. code-block:: php
 
@@ -256,6 +256,7 @@ Whenever you need an access to that configs you may inject the `config service` 
 
     <?php
 
+        // a factory
         return new AfterCallingControllerViewInitListener(
             $serviceManager->get(ConfigService::class),
             ...
@@ -263,6 +264,7 @@ Whenever you need an access to that configs you may inject the `config service` 
 
         ...
 
+        // somewhere inside the AfterCallingControllerViewInitListener
         $configValue = $this->configService->getConfig('config_key');
         ...
 
@@ -323,8 +325,8 @@ Routes definition are stored in `config files`:
             ],
         ];
 
-We slitted the :code:`http` and :code:`http api` routes due to different error handling. For example when the :code:`404`
-error occurred we display a normal `404 page` for the :code:`http` routes and a :code:`json response` for the api ones.
+We split the :code:`http` and :code:`http api` routes due to different error handling strategy.
+For example when the :code:`404` error occurred we display a normal `404 page`  but for the api routes whe display :code:`json response`.
 
 The routes registration process maybe changed by :code:`listeners`.
 For instance you can add a new route or delete some of existing ones using different criteria. Read more at: :ref:`Route events`
@@ -374,6 +376,24 @@ Read more at: :ref:`Controller events`
 ****************
 8. Init response
 ****************
+
+The latest step in the life cycle process. The received response from the controller from the previous step is triggering to listeners,
+then it displays in a browser or in the console.
+
+.. code-block:: php
+
+    <?php
+
+        $responseText = $this->bootstrapper->initResponse(
+            $serviceManager->get(EventManager::class),
+            $response,
+            $route->getController(),
+            $route->getMatchedAction()
+        );
+
+So it's a good place to process the response. For instance you may wrap received response with your custom content.
+For example you may show a profiler information.
+Read more at: :ref:`Response events`
 
 Lifecycle events
 ----------------
