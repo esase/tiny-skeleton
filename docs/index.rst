@@ -114,7 +114,7 @@ The list of all defined modules (:code:`$this->registeredModules`) is stored in 
             ...
         ];
 
-Generally speaking the skeleton collects all modules configs and merges they in a one global config.
+Generally speaking the :code:`application` collects all modules configs and merges they in a one global config.
 Example of a config file:
 
 .. code-block:: php
@@ -398,13 +398,201 @@ Read more at: :ref:`Response events`
 Lifecycle events
 ----------------
 
+Lifecycle events help you influence on the bootstrapping process using event listeners .
+
 --------------
 Configs events
 --------------
 
+When the :code:`application` finishes collecting configs from modules it triggers an :code:`Event`
+passing a raw list of configs (`a merged array`) to its  listeners:
+
+.. code-block:: php
+
+    <?php
+
+        // src/Application/EventManager/ConfigEvent.php
+        $setEvent = new ConfigEvent($configsArray); // a raw list of configs
+        $eventManager->trigger(
+            ConfigEvent::EVENT_SET_CONFIGS,
+            $setEvent
+        );
+
+        // register processed configs in the `ConfigService`
+        $configsService->setConfigs($setEvent->getData());
+
+So it gives us a beautiful opportunity to change the final config list from any custom module.
+In the example below we will try to implement a listener which changes some of existing config value.
+So lets imagine we have a module's config like:
+
+.. code-block:: php
+
+    <?php
+
+        return [
+            'test' => 'test_value'
+        ];
+
+Our target is to change the :code:`test` config value with a different one. For that we need a :code:`listener` class,
+lets say it would be the: :code:`Module/CustomModule/EventListener/Application/SetConfigChangerListener.php`
+
+.. code-block:: php
+
+    <?php
+
+        namespace Tiny\Skeleton\Module\CustomModule\EventListener\Application;
+
+        use Tiny\Skeleton\Application\EventManager\ConfigEvent;
+
+        class SetConfigChangerListener
+        {
+            /**
+             * @param  ConfigEvent  $event
+             */
+            public function __invoke(ConfigEvent $event)
+            {
+                $configs = $event->getData();
+
+                // change the the config value
+                if (isset($configs['test'])) {
+                    $configs['test'] = 'new_test_value';
+                }
+
+                $event->setData($configs);
+            }
+        }
+
+Now we only need to register the :code:`listener` in the config file:
+
+.. code-block:: php
+
+    <?php
+
+        // Module/CustomModule/config.php
+
+        use Tiny\Skeleton\Application\EventManager;
+        use Tiny\Skeleton\Module\CustomModule\EventListener;
+
+        return [
+            'listeners' => [
+                // application
+                [
+                    'event'    => EventManager\ConfigEvent::EVENT_SET_CONFIGS,
+                    'listener' => EventListener\Application\SetConfigChangerListener::class,
+                ],
+            ]
+        ];
+
 ------------
 Route events
 ------------
+
+Every time when the :code:`application` registers a new route (collected from `modules configs`) it triggers an :code:`Event`
+passing an instance of :code:`Router\Route` to its listeners:
+
+.. code-block:: php
+
+    <?php
+
+        $route = new Router\Route(
+            $request,
+            $controller,
+            $actionList,
+            ($route['type'] ?? Router\Route::TYPE_LITERAL),
+            ($route['request_params'] ?? []),
+            ($route['spec'] ?? ''),
+            $context
+        );
+
+        // src/Application/EventManager/RouteEvent.php
+        $registerEvent = new RouteEvent($route);
+        $eventManager->trigger(
+            RouteEvent::EVENT_REGISTER_ROUTE,
+            $registerEvent
+        );
+
+        // register the processed route
+        $router->registerRoute($registerEvent->getData());
+
+How can we use that? For instance there is an integration of `CORS <https://developer.mozilla.org/en/docs/Web/HTTP/CORS>`_
+in the application which just adds the :code:`HTTP` method :code:`OPTIONS` to each route automatically.
+Lets check it closer: (:code:`Module/Base/EventListener/Application/RegisterRouteCorsListener.php`):
+
+.. code-block:: php
+
+    <?php
+
+        namespace Tiny\Skeleton\Module\Base\EventListener\Application;
+
+        use Tiny\Skeleton\Application\EventManager\RouteEvent;
+        use Tiny\Http\Request;
+        use Tiny\Router\Route;
+
+        class RegisterRouteCorsListener
+        {
+
+            /**
+             * @var Request
+             */
+            private Request $request;
+
+            /**
+             * RegisterRouteCorsListener constructor.
+             *
+             * @param  Request  $request
+             */
+            public function __construct(Request $request)
+            {
+                $this->request = $request;
+            }
+
+            /**
+             * @param  RouteEvent  $event
+             */
+            public function __invoke(RouteEvent $event)
+            {
+                // whenever we receive the 'OPTIONS' request from a browser we assign the 'OPTIONS' method to each route
+                if ($this->request->isOptions()) {
+                    /** @var Route $route */
+                    $route = $event->getData();
+
+                    if (is_array($route->getActionList())) {
+                        // modify the route
+                        $route->setActionList(
+                            array_merge(
+                                $route->getActionList(), [
+                                    Request::METHOD_OPTIONS => 'index', // now we also support OPTIONS, and you don't need to define it manually
+                                ]
+                            )
+                        );
+
+                        $event->setData($route);
+                    }
+                }
+            }
+
+        }
+
+The listener is is registered in the :code:`config file`:
+
+.. code-block:: php
+
+    <?php
+
+        // Module/Base/config.php
+
+        use Tiny\Skeleton\Application\EventManager;
+        use Tiny\Skeleton\Module\Base\EventListener;
+
+        return [
+            'listeners' => [
+                // application
+                [
+                    'event'    => EventManager\RouteEvent::EVENT_REGISTER_ROUTE,
+                    'listener' => EventListener\Application\RegisterRouteCorsListener::class,
+                ],
+            ]
+        ];
 
 -------------
 Router events
