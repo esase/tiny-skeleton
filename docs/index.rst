@@ -54,6 +54,8 @@ The quick example of :code:`public/index.php`:
 
     <?php
 
+        // sourced from: public/index.php
+
         $applicationEnv = getenv('APPLICATION_ENV') ?: 'dev';
         ...
 
@@ -68,6 +70,8 @@ When all initialization steps are finished the handler runs the application usin
 .. code-block:: php
 
     <?php
+
+        // sourced from: public/index.php
 
         $application = new Application\Application(
             new Application\Bootstrapper(
@@ -97,6 +101,7 @@ The skeleton follows a modular structure, it means each module provides it's own
 .. code-block:: php
 
     <?php
+        // sourced from: src/Application/Application.php
 
         $configsArray = $this->bootstrapper->loadModulesConfigs(
             $this->registeredModules
@@ -107,6 +112,8 @@ The list of all defined modules (:code:`$this->registeredModules`) is stored in 
 .. code-block:: php
 
     <?php
+
+        // sourced from: modules.php
 
         return [
             'Base',
@@ -120,6 +127,8 @@ Example of a config file:
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Module/Base/config.php
 
         return [
             'site' => [
@@ -147,6 +156,8 @@ It looks like a big registry where you can get any service using factories (:ref
 
     <?php
 
+        // sourced from: src/Application/Application.php
+
         $serviceManager = $this->bootstrapper->initServiceManager(
             $configsArray
         );
@@ -156,6 +167,8 @@ Services definition are stored in `config files`:
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Module/Base/config/service-manager.php
 
         return [
             'shared' => [ // means we need only singletons
@@ -182,6 +195,8 @@ The config structure it’s a simple map with service names and its factories (c
 
     <?php
 
+        // sourced from: src/Module/Base/config.php
+
         return [
             'site' => [
                 'name' => 'Test site'
@@ -205,6 +220,8 @@ for instance we may notify listeners about an action or even ask provide us with
 
     <?php
 
+        // sourced from: src/Application/Application.php
+
         $this->bootstrapper->initEventManager(
             $serviceManager->get(EventManager::class),
             $configsArray
@@ -215,6 +232,8 @@ Listeners definition also are stored in `config files`:
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Module/Base/config/listeners.php
 
         return [
             // application
@@ -244,6 +263,8 @@ To make raw collected modules configs available in the application we need to re
 
     <?php
 
+        // sourced from: src/Application/Application.php
+
         $this->bootstrapper->initConfigsService(
             $serviceManager->get(EventManager::class),
             $serviceManager->get(ConfigService::class),
@@ -255,6 +276,8 @@ Whenever you need an access to that configs you may inject the `config service` 
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Module/Base/EventListener/Application/AfterCallingControllerViewInitListener.php
 
         // a factory
         return new AfterCallingControllerViewInitListener(
@@ -281,6 +304,8 @@ On this step application collects and registers routes which are used in the nav
 
     <?php
 
+        // sourced from: src/Application/Application.php
+
         $this->bootstrapper->initRoutes(
             $serviceManager->get(EventManager::class),
             $serviceManager->get(Router::class),
@@ -294,6 +319,8 @@ Routes definition are stored in `config files`:
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Module/User/config/routes.php
 
         return [
             'http'     => [
@@ -341,6 +368,8 @@ The router's main job is to find a `matched route` inside registered routes usin
 
     <?php
 
+        // sourced from: src/Application/Application.php
+
         $route = $this->bootstrapper->initRouter(
             $serviceManager->get(EventManager::class),
             $serviceManager->get(Router::class)
@@ -359,6 +388,8 @@ When a :code:`Route` is found  we are able to call an associated controller's me
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Application/Application.php
 
         $response = $this->bootstrapper->initController(
             $serviceManager->get(EventManager::class),
@@ -383,6 +414,8 @@ then it displays in a browser or in the console.
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Application/Application.php
 
         $responseText = $this->bootstrapper->initResponse(
             $serviceManager->get(EventManager::class),
@@ -410,6 +443,8 @@ passing a raw list of configs (`a merged array`) to its  listeners:
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Application/Bootstrapper.php
 
         // src/Application/EventManager/ConfigEvent.php
         $setEvent = new ConfigEvent($configsArray); // a raw list of configs
@@ -494,6 +529,8 @@ passing an instance of :code:`Router\Route` to its listeners:
 
     <?php
 
+        // sourced from: src/Application/Bootstrapper.php
+
         $route = new Router\Route(
             $request,
             $controller,
@@ -521,6 +558,8 @@ Lets check it closer: (:code:`Module/Base/EventListener/Application/RegisterRout
 .. code-block:: php
 
     <?php
+
+        // sourced from: src/Module/Base/EventListener/Application/RegisterRouteCorsListener.php
 
         namespace Tiny\Skeleton\Module\Base\EventListener\Application;
 
@@ -579,7 +618,7 @@ The listener is is registered in the :code:`config file`:
 
     <?php
 
-        // Module/Base/config.php
+        // sourced from: src/Module/Base/config/listeners.php
 
         use Tiny\Skeleton\Application\EventManager;
         use Tiny\Skeleton\Module\Base\EventListener;
@@ -597,6 +636,123 @@ The listener is is registered in the :code:`config file`:
 -------------
 Router events
 -------------
+
+On the router initialization step the router tries to find a matched route analyzing a request string and registered routes.
+There are three possible events triggered by the router:
+
+* :code:`RouteEvent::EVENT_BEFORE_MATCHING_ROUTE` - triggers before start matching routes.
+* :code:`RouteEvent::EVENT_AFTER_MATCHING_ROUTE` - triggers after a route is found.
+* :code:`RouteEvent::EVENT_ROUTE_EXCEPTION` - triggers when a route cannot be found.
+
+the full method looks like:
+
+.. code-block:: php
+
+    <?php
+
+        // sourced from: src/Application/Bootstrapper.php
+
+        try {
+            // trigger the router's events chain
+            // src/Application/EventManager/RouteEvent.php
+            $beforeEvent = new RouteEvent();
+            $eventManager->trigger(
+                RouteEvent::EVENT_BEFORE_MATCHING_ROUTE,
+                $beforeEvent
+            );
+
+            // return a modified route
+            if ($beforeEvent->getData()) {
+                return $beforeEvent->getData();
+            }
+
+            // find a matched route
+            $route = $router->getMatchedRoute();
+
+            $afterEvent = new RouteEvent($route);
+            $eventManager->trigger(
+                RouteEvent::EVENT_AFTER_MATCHING_ROUTE,
+                $afterEvent
+            );
+
+            return $afterEvent->getData();
+        } catch (Throwable $e) {
+            $routeExceptionEvent = new RouteEvent(
+                null, [
+                    'exception' => $e,
+                ]
+            );
+            $eventManager->trigger(
+                RouteEvent::EVENT_ROUTE_EXCEPTION,
+                $routeExceptionEvent
+            );
+
+            // return a modified route
+            if ($routeExceptionEvent->getData()) {
+                return $routeExceptionEvent->getData();
+            }
+
+            throw $e;
+        }
+
+You can subscribe to any of those events and return a custom :code:`route` which depends on you needs.
+But in our example we will register a listener for handling a :code:`404` page (`Not found`) when the :code:`RouteEvent::EVENT_ROUTE_EXCEPTION` is triggered.
+
+So let's create a new :code:`listener` class in you module (suppose it's a `CustomModule`):
+
+.. code-block:: php
+
+    <?php
+
+    namespace Tiny\Skeleton\Module\CustomModule\EventListener\Application;
+
+    use Tiny\Skeleton\Application\EventManager\RouteEvent;
+    use Tiny\Router\Route;
+    use Tiny\Skeleton\Module\CustomModule\Controller\NotFoundController;
+
+    class RouteExceptionNotRegisteredListener
+    {
+        /**
+         * @param  RouteEvent  $event
+         */
+        public function __invoke(RouteEvent $event)
+        {
+            // by default the 'NotFoundController' will be assigned for all non existing routes
+            $route = new Route(
+                '',
+                NotFoundController::class,
+                'index'
+            );
+            $route->setMatchedAction('index');
+
+            // return our custom route
+            $event->setData(
+                $route
+            );
+        }
+
+    }
+
+Now we need to register it in the configs:
+
+.. code-block:: php
+
+    <?php
+
+        // Module/CustomModule/config.php
+
+        use Tiny\Skeleton\Application\EventManager;
+        use Tiny\Skeleton\Module\CustomModule\EventListener;
+
+        return [
+            'listeners' => [
+                // application
+                [
+                    'event'    => EventManager\RouteEvent::EVENT_ROUTE_EXCEPTION,
+                    'listener' => EventListener\Application\RouteExceptionNotRegisteredListener::class,
+                ],
+            ]
+        ];
 
 -----------------
 Controller events
