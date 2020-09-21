@@ -47,7 +47,7 @@ We use the `Front controller <https://en.wikipedia.org/wiki/Front_controller>`_ 
 The  :code:`public/index.php` it's a requests handler  which runs the application.
 
 Aside from launching the handler also defines the working environment
-(there are two possible modes: :code:`dev` and :code:`prod`) which are responsible for displaying and catching errors.
+(there are two possible modes: :code:`dev` and :code:`prod`) which are responsible for displaying and catching errors (see the :ref:`Error handling` chapter).
 The quick example of :code:`public/index.php`:
 
 .. code-block:: php
@@ -162,7 +162,7 @@ It looks like a big registry where you can get any service using factories (:ref
             $configsArray
         );
 
-Services definition are stored in `config files`:
+Services definitions are stored in `config files`:
 
 .. code-block:: php
 
@@ -227,7 +227,7 @@ for instance we may notify listeners about an action or even ask provide us with
             $configsArray
         );
 
-Listeners definition also are stored in `config files`:
+Listeners definitions also are stored in `config files`:
 
 .. code-block:: php
 
@@ -314,7 +314,7 @@ On this step application collects and registers routes which are used in the nav
         );
 
 For the performance reason application collects only routes related to the current context. Context may be either :code:`console` or :code:`http|http_api`.
-Routes definition are stored in `config files`:
+Routes definitions are stored in `config files`:
 
 .. code-block:: php
 
@@ -638,7 +638,7 @@ Router events
 -------------
 
 On the router initialization step the router tries to find a matched route analyzing a request string and registered routes.
-There are three possible events triggered by the router:
+There are three possible events triggered by the router init method:
 
 * :code:`RouteEvent::EVENT_BEFORE_MATCHING_ROUTE` - triggers before start matching routes.
 * :code:`RouteEvent::EVENT_AFTER_MATCHING_ROUTE` - triggers after a route is found.
@@ -698,7 +698,7 @@ the full method looks like:
 You can subscribe to any of those events and return a custom :code:`route` which depends on you needs.
 But in our example we will register a listener for handling a :code:`404` page (`Not found`) when the :code:`RouteEvent::EVENT_ROUTE_EXCEPTION` is triggered.
 
-So let's create a new :code:`listener` class in you module (suppose it's a `CustomModule`):
+So let's create a new :code:`listener` class in your module (suppose it's a `CustomModule`):
 
 .. code-block:: php
 
@@ -758,9 +758,167 @@ Now we need to register it in the configs:
 Controller events
 -----------------
 
+When a matched :code:`route` is found by the :code:`router` it calls a related controller's method to get a response
+which will be returned and displayed.
+There are three possible events triggered by the controller init method:
+
+* :code:`RouteEvent::EVENT_BEFORE_CALLING_CONTROLLER` - triggers before execution a controller's method.
+* :code:`RouteEvent::EVENT_AFTER_CALLING_CONTROLLER` - triggers after the controller's execution.
+* :code:`RouteEvent::EVENT_CONTROLLER_EXCEPTION` - triggers when the execution gives exceptions.
+
+the full method looks like:
+
+.. code-block:: php
+
+    <?php
+
+        // sourced from: src/Application/Bootstrapper.php
+
+        try {
+            // trigger the controller's events chain
+            $beforeEvent = new ControllerEvent(
+                null, [
+                    'route' => $route,
+                ]
+            );
+            $eventManager->trigger(
+                ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                $beforeEvent
+            );
+
+            // return a modified response
+            if ($beforeEvent->getData()) {
+                return $beforeEvent->getData();
+            }
+
+            // call the controller's action
+            $controller->{$route->getMatchedAction()}($response, $request);
+
+            $afterEvent = new ControllerEvent(
+                $response, [
+                    'route' => $route,
+                ]
+            );
+            $eventManager->trigger(
+                ControllerEvent::EVENT_AFTER_CALLING_CONTROLLER,
+                $afterEvent
+            );
+
+            return $afterEvent->getData();
+        } catch (Throwable $e) {
+            $requestExceptionEvent = new ControllerEvent(
+                null, [
+                    'exception' => $e,
+                    'route'     => $route,
+                ]
+            );
+            $eventManager->trigger(
+                ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
+                $requestExceptionEvent
+            );
+
+            // return a modified response
+            if ($requestExceptionEvent->getData()) {
+                return $requestExceptionEvent->getData();
+            }
+
+            throw $e;
+        }
+
+Again you may use any of those events to implement a custom logic. In example below we will try to implement
+a very simple listener which checks if a user is `logged in` before execution a controller's method.
+And if it not the user will be redirected to a login page.
+
+We need to create a new listener class in your module (suppose it’s a CustomModule):
+
+.. code-block:: php
+
+    <?php
+
+    namespace Tiny\Skeleton\Module\CustomModule\EventListener\Application;
+
+    use Tiny\Skeleton\Application\EventManager\RouteEvent;
+    use Tiny\Http;
+    use Tiny\Router\Route;
+    use AuthService;
+
+    class BeforeCallingControllerAuthGuardListener
+    {
+
+        /**
+         * @var Http\AbstractResponse
+         */
+        private Http\AbstractResponse $response;
+
+        /**
+         * @var AuthService
+         */
+        private AuthService $authService;
+
+        /**
+         * @var Http\ResponseHttpUtils
+         */
+        private Http\ResponseHttpUtils $httpUtils;
+
+        /**
+         * BeforeCallingControllerAuthGuardListener constructor.
+         *
+         * @param  Http\AbstractResponse   $response
+         */
+        public function __construct(
+            Http\AbstractResponse $response,
+            AuthService $authService,
+            Http\ResponseHttpUtils $httpUtils
+        ) {
+            $this->response = $response;
+            $this->authService = $authService;
+            $this->httpUtils = $httpUtils;
+        }
+
+        /**
+         * @param  ControllerEvent  $event
+         */
+        public function __invoke(ControllerEvent $event)
+        {
+            if (!$this->authService->isAuthenticated()) {
+                // return empty response and send the location header
+                $this->httpUtils->sendHeaders([
+                    'Location: http://www.example.com/login'
+                ]);
+                $event->setData($this->response);
+            }
+        }
+
+    }
+
+As you can see in our demonstration we use dependency injections. To make it clear you need to read the chapter - :ref:`Factories`.
+Also don't forget to register the listener in the configs:
+
+.. code-block:: php
+
+    <?php
+
+        // Module/CustomModule/config.php
+
+        use Tiny\Skeleton\Application\EventManager;
+        use Tiny\Skeleton\Module\CustomModule\EventListener;
+
+        return [
+            'listeners' => [
+                // application
+                [
+                    'event'    => EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+                    'listener' => EventListener\Application\BeforeCallingControllerAuthGuardListener::class,
+                ],
+            ]
+        ];
+
 ---------------
 Response events
 ---------------
+
+Factories
+---------
 
 Controllers
 -----------
