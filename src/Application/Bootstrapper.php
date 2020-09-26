@@ -335,25 +335,22 @@ class Bootstrapper
     }
 
     /**
-     * @param  EventManager           $eventManager
-     * @param  Http\AbstractResponse  $response
-     * @param  string                 $controller
-     * @param  string                 $action
+     * @param EventManager          $eventManager
+     * @param Http\AbstractResponse $response
+     * @param Router\Route          $route
      *
      * @return string
      */
     public function initResponse(
         EventManager $eventManager,
         Http\AbstractResponse $response,
-        string $controller,
-        string $action
+        Router\Route $route
     ): string {
         // trigger the response's events chain
         $beforeEvent = new ControllerEvent(
             $response,
             [
-                'controller' => $controller,
-                'action'     => $action,
+                'route' => $route
             ]
         );
         $eventManager->trigger(

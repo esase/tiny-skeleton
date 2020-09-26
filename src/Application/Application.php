@@ -38,9 +38,9 @@ class Application
     /**
      * Application constructor.
      *
-     * @param  Bootstrapper  $bootstrapper
-     * @param  bool          $isCliContext
-     * @param  array         $registeredModules
+     * @param Bootstrapper $bootstrapper
+     * @param bool         $isCliContext
+     * @param array        $registeredModules
      */
     public function __construct(
         Bootstrapper $bootstrapper,
@@ -108,8 +108,7 @@ class Application
         $responseText = $this->bootstrapper->initResponse(
             $serviceManager->get(EventManager::class),
             $response,
-            $route->getController(),
-            $route->getMatchedAction()
+            $route
         );
 
         return $responseText;

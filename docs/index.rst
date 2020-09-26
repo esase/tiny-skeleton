@@ -1,8 +1,8 @@
 .. _index-skeleton-label:
 
 
-Skeleton
-========
+Tiny Skeleton
+=============
 
 It's a trying to union all the **Tiny's** packages in one  to make a demo web
 application which may be used as a foundation for you needs (as a :code:`web api server` or :code:`traditional web application`
@@ -653,7 +653,6 @@ the full method looks like:
         // sourced from: src/Application/Bootstrapper.php
 
         try {
-            // trigger the router's events chain
             // src/Application/EventManager/RouteEvent.php
             $beforeEvent = new RouteEvent();
             $eventManager->trigger(
@@ -775,7 +774,6 @@ the full method looks like:
         // sourced from: src/Application/Bootstrapper.php
 
         try {
-            // trigger the controller's events chain
             $beforeEvent = new ControllerEvent(
                 null, [
                     'route' => $route,
@@ -829,7 +827,7 @@ Again you may use any of those events to implement a custom logic. In example be
 a very simple listener which checks if a user is `logged in` before execution a controller's method.
 And if it not the user will be redirected to a login page.
 
-We need to create a new listener class in your module (suppose it’s a CustomModule):
+We need to create a new listener class in your module (suppose it’s a `CustomModule`):
 
 .. code-block:: php
 
@@ -916,6 +914,104 @@ Also don't forget to register the listener in the configs:
 ---------------
 Response events
 ---------------
+
+The final step in the :code:`Life Cycle events` which triggers an :code:`Event`
+passing an instance of the :code:`Response` object received from a controller to its listeners.
+
+.. code-block:: php
+
+    <?php
+
+        // sourced from: src/Application/Bootstrapper.php
+
+        // src/Application/EventManager/ControllerEvent.php
+        $beforeEvent = new ControllerEvent(
+            $response, // a controller's response
+            [
+                'route' => $route
+            ]
+        );
+        $eventManager->trigger(
+            ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+            $beforeEvent
+        );
+
+        /** @var Http\AbstractResponse $response */
+        $response = $beforeEvent->getData();
+        $responseString = $response->getResponseForDisplaying();
+
+        return null !== $responseString ? $responseString : '';
+
+It's a good place to inject something helpful in the :code:`Response`.
+In example bellow we add a `Google analytic code` without touching html templates.
+This approach allows us to easily remove or modify the analytic code and we really don't care what templates are used.
+
+A new listener would be like: (suppose it’s a `CustomModule`):
+
+.. code-block:: php
+
+    <?php
+
+    namespace Tiny\Skeleton\Module\CustomModule\EventListener\Application;
+
+    use Tiny\Skeleton\Application\EventManager\ControllerEvent;
+    use Tiny\Router\Route;
+    use Tiny\Skeleton\Application\Bootstrapper;
+    use Tiny\Http\AbstractResponse;
+    use Tiny\View\View;
+
+    class BeforeDisplayingResponseGoogleAnalyticListener
+    {
+
+        /**
+         * @param  ControllerEvent  $event
+         */
+        public function __invoke(ControllerEvent $event)
+        {
+            /** @var Route $route */
+            $route = $event->getParams()['route'];
+
+            // we only need to inject content in `http` responses (all other like: `cli`, `http_api` should be skipped)
+            if ($route->getContext() === Bootstrapper::ROUTE_CONTEXT_HTTP) {
+                /** @var AbstractResponse $response */
+                $response = $event->getData();
+                $controllerResponse = $response->getResponse();
+
+                if ($controllerResponse instanceof View) {
+                    $pageContent = $controllerResponse->__toString();
+
+                    // add the analytic code
+                    $pageContent .= '<you analytic code here>';
+
+                    // modify the response
+                    $response->setResponse($pageContent);
+                    $event->setData($response);
+                }
+            }
+        }
+
+    }
+
+And register the listener in the configs:
+
+.. code-block:: php
+
+    <?php
+
+        // Module/CustomModule/config.php
+
+        use Tiny\Skeleton\Application\EventManager;
+        use Tiny\Skeleton\Module\CustomModule\EventListener;
+
+        return [
+            'listeners' => [
+                // application
+                [
+                    'event'    => EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
+                    'listener' => EventListener\Application\BeforeDisplayingResponseGoogleAnalyticListener::class,
+                ],
+            ]
+        ];
 
 Factories
 ---------
