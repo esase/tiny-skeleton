@@ -127,13 +127,9 @@ class ApplicationTest extends TestCase
         $routeMock = $this->createMock(
             Router\Route::class
         );
-        $routeMock->expects($this->exactly(2))
+        $routeMock->expects($this->once())
             ->method('getController')
             ->willReturn('TestController');
-
-        $routeMock->expects($this->once())
-            ->method('getMatchedAction')
-            ->willReturn('index');
 
         $bootstrap->expects($this->once())
             ->method('initRouter')
@@ -163,8 +159,7 @@ class ApplicationTest extends TestCase
             ->with(
                 $this->isInstanceOf(EventManager::class),
                 $responseStub,
-                'TestController',
-                'index'
+                $routeMock
             )
         ->willReturn('testResponseText');
 

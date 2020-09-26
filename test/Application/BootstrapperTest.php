@@ -20,7 +20,6 @@ use Tiny\Skeleton\Application\Exception\InvalidArgumentException;
 use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Router;
 use Tiny\Http;
-use Tiny\View\View;
 
 class BootstrapperTest extends TestCase
 {
@@ -1398,6 +1397,10 @@ class BootstrapperTest extends TestCase
 
     public function testInitResponseMethodUsingBeforeDisplayingEvent()
     {
+        $routeStub = $this->createMock(
+            Router\Route::class
+        );
+
         $responseInitialStub = $this->createMock(
             Http\AbstractResponse::class
         );
@@ -1426,6 +1429,7 @@ class BootstrapperTest extends TestCase
                     function (string $eventName,
                         ApplicationEventManager\ControllerEvent $event
                     ) use (
+                        $routeStub,
                         $responseInitialStub,
                         $responseModifiedMock
                     ) {
@@ -1441,8 +1445,7 @@ class BootstrapperTest extends TestCase
                         );
                         $this->assertEquals(
                             [
-                                'controller' => 'TestController',
-                                'action'     => 'index',
+                                'route' => $routeStub,
                             ], $event->getParams()
                         );
 
@@ -1462,8 +1465,7 @@ class BootstrapperTest extends TestCase
         $responseText = $bootstrap->initResponse(
             $eventManagerMock,
             $responseInitialStub,
-            'TestController',
-            'index'
+            $routeStub
         );
 
         $this->assertSame('testResponseString', $responseText);
