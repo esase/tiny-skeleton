@@ -3,7 +3,7 @@
 Lifecycle events
 ================
 
-Lifecycle events help you influence on the bootstrapping process using event listeners .
+Lifecycle events help you influence on the bootstrapping process using event :ref:`listeners<index-event-manager-label>` .
 
 
 Configs events
