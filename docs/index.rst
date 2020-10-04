@@ -9,7 +9,7 @@ application which may be used as a foundation for you needs (as a :code:`web api
 or even as a :code:`console app`).
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     installation
     lifecycle

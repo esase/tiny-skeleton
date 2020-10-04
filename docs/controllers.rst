@@ -209,3 +209,203 @@ Let say we need to return an :code:`XML` based response:
             }
 
         }
+
+Exceptions
+----------
+
+Sometimes we need to show special pages like `404 (Not found)`, `401 (Unauthorized)`, etc
+within our controllers. So how can we achieve that? We can easily trigger an :code:`Exception`.
+Then we may subscribe (using the :code:`Event manager` and the :code:`application's lifecycle`) to that :code:`Exception` and show a special page.
+Let's check a look how we handle the  `404` page in the app
+(using the similar way you can implement handling of any kind of errors):
+
+
+Let's suppose we have a controller:
+
+.. code-block:: php
+
+    <?php
+
+        namespace Tiny\Skeleton\Module\User\Controller;
+
+        use Tiny\Http\AbstractResponse;
+        use Application/Exception/Request/NotFoundException.php;
+
+        class UserApiController extends AbstractUserController
+        {
+
+            /**
+             * @param  AbstractResponse  $response
+             */
+            public function list(AbstractResponse $response)
+            {
+                $users = $this->userService->getAllUsers();
+
+                if (!$users) {
+                    // we need to show the "404" page (because we don't have users)
+                    throw new NotFoundException();
+                }
+
+                $this->jsonResponse($response, $users);
+            }
+
+        }
+
+Now lets create a file: :code:`NotFoundException.php` in the :code:`Application/Exception/Request/` folder
+
+.. code-block:: php
+
+    <?php
+
+        namespace Tiny\Skeleton\Application\Exception\Request;
+
+        use Exception;
+
+        class NotFoundException extends Exception implements ExceptionInterface
+        {
+
+        }
+
+Now we only to need capture that :code:`Exception` and show a page. Let's create a listener for that:
+
+.. code-block:: php
+
+    <?php
+
+        // sourced from: Application/Exception/Request/NotFoundException.php
+
+        namespace Tiny\Skeleton\Module\Base\EventListener\Application;
+
+        use Tiny\EventManager\EventManager;
+        use Tiny\Http\AbstractResponse;
+        use Tiny\Router\Route;
+        use Tiny\Skeleton\Application\EventManager\ControllerEvent;
+        use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
+        use Tiny\Skeleton\Module\Base\Utils\ViewHelperUtils;
+        use Tiny\View\View;
+
+        class ControllerExceptionNotFoundListener
+            extends AbstractControllerExceptionListener
+        {
+
+            /**
+             * @var AbstractResponse
+             */
+            private AbstractResponse $response;
+
+            /**
+             * @var EventManager
+             */
+            private EventManager $eventManager;
+
+            /**
+             * @var ViewHelperUtils
+             */
+            private ViewHelperUtils $viewHelperUtils;
+
+            /**
+             * ControllerExceptionNotFoundListener constructor.
+             *
+             * @param  AbstractResponse  $response
+             * @param  EventManager      $eventManager
+             * @param  ViewHelperUtils   $viewHelperUtils
+             */
+            public function __construct(
+                AbstractResponse $response,
+                EventManager $eventManager,
+                ViewHelperUtils $viewHelperUtils
+            ) {
+                $this->response = $response;
+                $this->eventManager = $eventManager;
+                $this->viewHelperUtils = $viewHelperUtils;
+            }
+
+            /**
+             * @param  ControllerEvent  $event
+             */
+            public function __invoke(ControllerEvent $event)
+            {
+                $eventParams = $event->getParams();
+                $exception = $eventParams['exception'] ?? null;
+
+                /** @var Route $route */
+                $route = $eventParams['route'] ?? null;
+
+                // we handle only "NotFoundException" exception (all other will be skipped)
+                if ($exception && $route && $exception instanceof NotFoundException) {
+                    $errorMessage = $exception->getMessage() ?: 'Not found';
+
+                    // we either show a json based "404" response (for the api context) or html based "404" page
+                    if ($this->isJsonErrorResponse($route->getContext())) {
+                        $this->jsonErrorResponse(
+                            $this->response,
+                            $errorMessage,
+                            AbstractResponse::RESPONSE_NOT_FOUND
+                        );
+                    } else {
+                        $this->viewErrorResponse(
+                            $this->response,
+                            $this->getView($errorMessage),
+                            AbstractResponse::RESPONSE_NOT_FOUND
+                        );
+                    }
+
+                    $event->setData($this->response);
+                }
+            }
+
+            /**
+             * @param  string  $errorMessage
+             *
+             * @return View
+             */
+            private function getView(string $errorMessage): View
+            {
+                $view = new View(
+                    [
+                        'message' => $errorMessage,
+                    ]
+                );
+                // set path to the "404" page and its layout
+                $view->setTemplatePath(
+                    $this->viewHelperUtils->getTemplatePath(
+                        'NotFoundController/index', 'Base'
+                    )
+                )
+                    ->setLayoutPath(
+                        $this->viewHelperUtils->getTemplatePath(
+                            'layout/base', 'Base'
+                        )
+                    )
+                    ->setEventManager($this->eventManager);
+
+                return $view;
+            }
+
+        }
+
+And we need to register our listener in the configs:
+
+.. code-block:: php
+
+    <?php
+
+        // sourced from: src/Module/Base/config/listeners.php
+
+        use Tiny\Skeleton\Application\EventManager;
+        use Tiny\Skeleton\Module\Base\EventListener;
+
+        return [
+            // application
+            ...
+            [
+                // whenever we have an exception in controllers we call our listener to check the error type
+                'event'    => EventManager\ControllerEvent::EVENT_CONTROLLER_EXCEPTION,
+                'listener' => EventListener\Application\ControllerExceptionNotFoundListener::class,
+            ],
+            ...
+        ];
+
+To read more about the app's :ref:`lifecycle <Controller events>`
+
+**PS:** By default all uncaught errors will be displayed in the `500` error page.
