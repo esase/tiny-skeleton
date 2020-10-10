@@ -12,9 +12,9 @@ or even as a :code:`console app`).
     :maxdepth: 2
 
     installation
+    files-structure
     lifecycle
     lifecycle-events
-    files-structure
     factories
     controllers
     view-helpers

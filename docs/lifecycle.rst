@@ -1,6 +1,6 @@
 .. _index-skeleton-lifecycle-label:
 
-Application's Lifecycle
+Application Lifecycle
 =======================
 
 Entry point
