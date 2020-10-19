@@ -26,7 +26,8 @@
     "esase/tiny-event-manager": "^1.0",
     "esase/tiny-http": "^1.1",
     "esase/tiny-view": "^1.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0 || ^10.0",

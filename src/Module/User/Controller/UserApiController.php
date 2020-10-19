@@ -21,7 +21,7 @@ class UserApiController extends AbstractUserController
      */
     public function list(AbstractResponse $response)
     {
-        $this->jsonResponse($response, $this->userService->getAllUsers());
+        $this->jsonResponse($response, $this->userService->findAll());
     }
 
 }

@@ -11,18 +11,33 @@ namespace Tiny\Skeleton\Module\User\Service;
  * file that was distributed with this source code.
  */
 
+use PDO;
+use Tiny\Skeleton\Application\Service\DbService;
+
 class UserService
 {
 
     /**
+     * @var DbService
+     */
+    private DbService $dbService;
+
+    public function __construct(DbService $dbService)
+    {
+        $this->dbService = $dbService;
+    }
+
+    /**
      * @return array
      */
-    public function getAllUsers(): array
+    public function findAll(): array
     {
-        return [
-            ['id' => 1, 'name' => 'tester'],
-            ['id' => 2, 'name' => 'tester2']
-        ];
+        $sth = $this->dbService->getConnection()->prepare(
+            'SELECT * from users'
+        );
+        $sth->execute();
+
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

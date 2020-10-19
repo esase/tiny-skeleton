@@ -15,7 +15,13 @@ use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Application;
 
 return [
-    'service_manager'  => [
+    'db'              => [
+        'host'     => 'mysql',
+        'username' => 'root',
+        'password' => 'tiny-skeleton-root',
+        'db_name'  => 'tiny-skeleton-db',
+    ],
+    'service_manager' => [
         'shared' => [
             // event manager
             EventManager::class                      => Application\EventManager\Factory\EventManagerFactory::class,
@@ -30,6 +36,7 @@ return [
 
             // service
             Application\Service\ConfigService::class => InvokableFactory::class,
+            Application\Service\DbService::class     => Application\Service\Factory\DbServiceFactory::class,
         ],
     ],
 ];
