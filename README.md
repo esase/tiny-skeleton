@@ -14,7 +14,7 @@ Docker Running
 First time running
 -------------------
 1. To import a database dump, call the command: `docker exec -i tiny-skeleton-mysql mysql -uroot -ptiny-skeleton-root tiny-skeleton-db < docker-config/mysql/dump.sql`
-1. To install php libraries call the command: `docker exec -i tiny-skeleton-web composer install`
+1. To install php libraries call the command: `docker exec -i tiny-skeleton-web composer install --no-dev`
 
 Tools
 -----

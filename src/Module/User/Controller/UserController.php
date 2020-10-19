@@ -22,7 +22,7 @@ class UserController extends AbstractUserController
     public function list(AbstractResponse $response)
     {
         $this->viewResponse($response, [
-            'users' => $this->userService->getAllUsers()
+            'users' => $this->userService->findAll()
         ]);
     }
 

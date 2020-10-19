@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Module\User;
 
 return [
@@ -20,6 +19,6 @@ return [
         User\Controller\UserApiController::class => User\Controller\Factory\UserControllerFactory::class,
 
         // service
-        User\Service\UserService::class          => InvokableFactory::class,
+        User\Service\UserService::class          => User\Service\Factory\UserServiceFactory::class,
     ],
 ];
