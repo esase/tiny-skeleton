@@ -1,10 +1,23 @@
-# tiny-skeleton
+Project installing 
+------------------
 
-[![Build Status](https://travis-ci.com/esase/tiny-skeleton.svg?branch=master)](https://travis-ci.com/github/esase/tiny-skeleton/builds)
-[![Coverage Status](https://coveralls.io/repos/github/esase/tiny-skeleton/badge.svg?branch=master)](https://coveralls.io/github/esase/tiny-skeleton?branch=master)
+1. Install the `docker` locally - https://docs.docker.com/install/
+1. Clone this repository to somewhere locally - `git clone -b test https://github.com/esase/tiny-skeleton.git`
 
-It's a trying to union all the **Tiny's** packages to make a demo web application which may be used as a foundation for you needs (as a web api server or traditional web application or even as a console app).
+Docker Running
+--------------
 
-## Documentation
+1. For launching the `docker` containers you need to run the command: `docker-compose up -d`
+1. For stopping running containers you need to run the command: `docker-compose stop`
 
-https://tiny-docs.readthedocs.io/en/latest/tiny-skeleton/docs/index.html
+
+First time running
+-------------------
+1. To import a database dump, call the command: `docker exec -i tiny-skeleton-mysql mysql -uroot -ptiny-skeleton-root skeleton-db < docker-config/mysql/dump.sql`
+1. To install php libraries call the command: `docker exec -i tiny-skeleton-web composer install`
+
+Tools
+-----
+
+1. The website is available on address: **http://localhost:8080** or **http://your.ip:8080**
+1. Phpmyadmin is available on address: **http://localhost:8000** or **http://your.ip:8000**
