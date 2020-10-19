@@ -10,8 +10,6 @@
  */
 
 return [
-    'Base',
-    'User',
-    'Language',
-    'LanguageKey'
+    'service_manager' => require_once 'config/service-manager.php',
+    'routes'          => require_once 'config/routes.php',
 ];

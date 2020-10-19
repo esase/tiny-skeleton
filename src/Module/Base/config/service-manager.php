@@ -17,6 +17,7 @@ return [
         // application listener
         Base\EventListener\Application\AfterCallingControllerViewInitListener::class => Base\EventListener\Application\Factory\AfterCallingControllerViewInitListenerFactory::class,
         Base\EventListener\Application\BeforeCallingControllerCorsListener::class    => Base\EventListener\Application\Factory\BeforeCallingControllerCorsListenerFactory::class,
+        Base\EventListener\Application\BeforeCallingControllerAuthListener::class    => Base\EventListener\Application\Factory\BeforeCallingControllerAuthListenerFactory::class,
         Base\EventListener\Application\RegisterRouteCorsListener::class              => Base\EventListener\Application\Factory\RegisterRouteCorsListenerFactory::class,
         Base\EventListener\Application\BeforeDisplayingResponseCorsListener::class   => Base\EventListener\Application\Factory\BeforeDisplayingResponseCorsListenerFactory::class,
         Base\EventListener\Application\ControllerExceptionNotFoundListener::class    => Base\EventListener\Application\Factory\ControllerExceptionNotFoundListenerFactory::class,
@@ -32,5 +33,8 @@ return [
 
         // controller
         Base\Controller\NotFoundController::class                                    => InvokableFactory::class,
+
+        // service
+        Base\Service\AuthService::class                                              => Base\Service\Factory\AuthServiceFactory::class
     ],
 ];

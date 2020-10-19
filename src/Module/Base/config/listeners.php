@@ -25,6 +25,10 @@ return [
         'priority' => -1000,
     ],
     [
+        'event'    => EventManager\ControllerEvent::EVENT_BEFORE_CALLING_CONTROLLER,
+        'listener' => EventListener\Application\BeforeCallingControllerAuthListener::class,
+    ],
+    [
         'event'    => EventManager\ControllerEvent::EVENT_BEFORE_DISPLAYING_RESPONSE,
         'listener' => EventListener\Application\BeforeDisplayingResponseCorsListener::class,
     ],
