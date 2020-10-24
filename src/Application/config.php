@@ -15,28 +15,30 @@ use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Application;
 
 return [
-    'db'              => [
+    'db'                      => [
         'host'     => 'mysql',
         'username' => 'root',
         'password' => 'tiny-skeleton-root',
         'db_name'  => 'tiny-skeleton-db',
     ],
-    'service_manager' => [
+    'google_translate_config' => __DIR__ . '/google_translate.json',
+    'service_manager'         => [
         'shared' => [
             // event manager
-            EventManager::class                      => Application\EventManager\Factory\EventManagerFactory::class,
+            EventManager::class                              => Application\EventManager\Factory\EventManagerFactory::class,
 
             // http
-            Tiny\Http\Request::class                 => Application\Http\Factory\RequestFactory::class,
-            Tiny\Http\AbstractResponse::class        => Application\Http\Factory\ResponseFactory::class,
-            Tiny\Http\ResponseHttpUtils::class       => InvokableFactory::class,
+            Tiny\Http\Request::class                         => Application\Http\Factory\RequestFactory::class,
+            Tiny\Http\AbstractResponse::class                => Application\Http\Factory\ResponseFactory::class,
+            Tiny\Http\ResponseHttpUtils::class               => InvokableFactory::class,
 
             // router
-            Router::class                            => Application\Router\Factory\RouterFactory::class,
+            Router::class                                    => Application\Router\Factory\RouterFactory::class,
 
             // service
-            Application\Service\ConfigService::class => InvokableFactory::class,
-            Application\Service\DbService::class     => Application\Service\Factory\DbServiceFactory::class,
+            Application\Service\ConfigService::class         => InvokableFactory::class,
+            Application\Service\DbService::class             => Application\Service\Factory\DbServiceFactory::class,
+            Application\Service\TranslationApiService::class => Application\Service\Factory\TranslationApiServiceFactory::class,
         ],
     ],
 ];

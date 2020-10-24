@@ -11,6 +11,8 @@ namespace Tiny\Skeleton\Module\Translation\Controller;
  * file that was distributed with this source code.
  */
 
+use Throwable;
+use Tiny\Skeleton\Application\Service\TranslationApiService;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
 use Tiny\Skeleton\Module\Translation\Service\TranslationService;
 
@@ -25,18 +27,27 @@ class TranslationConsoleController extends AbstractController
     protected TranslationService $translationService;
 
     /**
+     * @var TranslationApiService
+     */
+    private TranslationApiService $translationApiService;
+
+    /**
      * TranslationConsoleController constructor.
      *
-     * @param TranslationService $translationService
+     * @param TranslationService    $translationService
+     * @param TranslationApiService $translationApiService
      */
     public function __construct(
-        TranslationService $translationService
+        TranslationService $translationService,
+        TranslationApiService $translationApiService
     ) {
         $this->translationService = $translationService;
+        $this->translationApiService = $translationApiService;
     }
 
     public function automaticTranslate()
     {
+        // get items form the queue
         $queueItems = $this->translationService->findQueuedItems(
             self::DEFAULT_ITEMS_LIMIT
         );
@@ -48,36 +59,66 @@ class TranslationConsoleController extends AbstractController
                 );
 
                 if ($translations) {
-                    $this->processEmptyTranslations($translations);
+                    $this->processEmptyTranslations(
+                        $queueItem['language_key'],
+                        $translations
+                    );
                 }
-            } finally {
-//               $this->translationService->deleteQueuedItem($queueItem['id']);
             }
+            catch(Throwable $e) {
+                // TODO: log possible errors
+            }
+
+            // delete the item from the queue
+            $this->translationService->deleteQueuedItem($queueItem['id']);
         }
     }
 
-    private function processEmptyTranslations(array $translations)
-    {
+    /**
+     * @param int   $languageKey
+     * @param array $translations
+     */
+    private function processEmptyTranslations(
+        int $languageKey,
+        array $translations
+    ) {
         $emptyLanguages = [];
         $sourceTranslation = '';
         $sourceLanguage = '';
 
+        // collect a list of not translated keys with their languages
         foreach ($translations as $translation) {
-            if(!$translation['translation']) {
-                $emptyLanguages[] =[
-                    'id' => $translation['languageId'],
+            if (!$translation['translation']) {
+                $emptyLanguages[] = [
+                    'id'  => $translation['languageId'],
                     'iso' => $translation['languageIso'],
                 ];
             }
-            // define a source translation
-            if ($translation['translation'] &&  !$translation['automatic']) {
+            // define a source translation (it would be any not automatically translated one)
+            if ($translation['translation'] && !$translation['automatic']) {
                 $sourceTranslation = $translation['translation'];
                 $sourceLanguage = $translation['languageIso'];
             }
         }
 
+        // translate the key for the rest of languages
         if ($emptyLanguages) {
-            // TODO: do translations and update values in the DB
+            foreach ($emptyLanguages as $language) {
+                $result = $this->translationApiService->translate(
+                    $sourceTranslation,
+                    $sourceLanguage,
+                    $language['iso']
+                );
+                if (!empty($result['text'])
+                    && $sourceTranslation != $result['text']) {
+                    $this->translationService->create(
+                        $languageKey,
+                        $language['id'],
+                        $result['text'],
+                        true
+                    );
+                }
+            }
         }
     }
 }
