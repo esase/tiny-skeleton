@@ -125,7 +125,7 @@ class TranslationService
         $sth->bindValue(':automatic', $isAutomatic ? 1 : 0, PDO::PARAM_INT);
         $sth->execute();
 
-        $translationId =  (int)$this->dbService->getConnection()->lastInsertId();
+        $translationId = (int)$this->dbService->getConnection()->lastInsertId();
 
         // add the language key in the queue (for adding auto translations)
         if (!$isAutomatic) {
@@ -162,7 +162,7 @@ class TranslationService
         $sth->bindValue(':language', $language, PDO::PARAM_INT);
         $sth->bindValue(':translation', $translation, PDO::PARAM_STR);
 
-        $result =  $sth->execute();
+        $result = $sth->execute();
 
         // add the language key in the queue (for adding auto translations)
         $this->addLanguageKeyToQueue($languageKey);
@@ -226,6 +226,36 @@ class TranslationService
         );
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
         $sth->execute();
+    }
+
+    /**
+     * @param int $languageKey
+     *
+     * @return array
+     */
+    public function findAllTranslations(int $languageKey): array
+    {
+        $sth = $this->dbService->getConnection()->prepare(
+            '
+            SELECT 
+                `a`.`id` AS `languageId`,
+                `a`.`iso` AS `languageIso`,
+                `b`.`translation`,
+                `b`.`automatic`
+            FROM 
+                `languages` AS `a`
+            LEFT JOIN
+                `translations` AS `b`
+            ON 
+                `a`.`id` = `b`.`language`   
+                    AND
+                `b`.`language_key` = :language_key
+        '
+        );
+        $sth->bindValue(':language_key', $languageKey, PDO::PARAM_INT);
+        $sth->execute();
+
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

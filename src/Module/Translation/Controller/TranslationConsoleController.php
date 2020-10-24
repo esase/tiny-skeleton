@@ -27,7 +27,7 @@ class TranslationConsoleController extends AbstractController
     /**
      * TranslationConsoleController constructor.
      *
-     * @param TranslationService     $translationService
+     * @param TranslationService $translationService
      */
     public function __construct(
         TranslationService $translationService
@@ -37,19 +37,47 @@ class TranslationConsoleController extends AbstractController
 
     public function automaticTranslate()
     {
-       $queueItems = $this->translationService->findQueuedItems(
-           self::DEFAULT_ITEMS_LIMIT
-       );
+        $queueItems = $this->translationService->findQueuedItems(
+            self::DEFAULT_ITEMS_LIMIT
+        );
 
-       foreach ($queueItems as $queueItem) {
-            // TODO process the automatic translation
-           try {
+        foreach ($queueItems as $queueItem) {
+            try {
+                $translations = $this->translationService->findAllTranslations(
+                    $queueItem['language_key']
+                );
 
-           }
-           finally {
+                if ($translations) {
+                    $this->processEmptyTranslations($translations);
+                }
+            } finally {
 //               $this->translationService->deleteQueuedItem($queueItem['id']);
-           }
-       }
+            }
+        }
     }
 
+    private function processEmptyTranslations(array $translations)
+    {
+        $emptyLanguages = [];
+        $sourceTranslation = '';
+        $sourceLanguage = '';
+
+        foreach ($translations as $translation) {
+            if(!$translation['translation']) {
+                $emptyLanguages[] =[
+                    'id' => $translation['languageId'],
+                    'iso' => $translation['languageIso'],
+                ];
+            }
+            // define a source translation
+            if ($translation['translation'] &&  !$translation['automatic']) {
+                $sourceTranslation = $translation['translation'];
+                $sourceLanguage = $translation['languageIso'];
+            }
+        }
+
+        if ($emptyLanguages) {
+            // TODO: do translations and update values in the DB
+        }
+    }
 }
