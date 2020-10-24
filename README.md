@@ -21,3 +21,5 @@ Tools
 
 1. The website is available on address: **http://localhost:8080** or **http://your.ip:8080**
 1. Phpmyadmin is available on address: **http://localhost:8000** or **http://your.ip:8000**
+1. Run php console commands: 
+e.g - `docker exec -i tiny-skeleton-web php public/index.php translations automatic`

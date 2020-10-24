@@ -31,17 +31,25 @@ class BeforeCallingControllerAuthListener
     private AbstractResponse $response;
 
     /**
+     * @var bool
+     */
+    private bool $isCliContext;
+
+    /**
      * BeforeCallingControllerAuthListener constructor.
      *
-     * @param AuthService $authService
+     * @param AuthService      $authService
      * @param AbstractResponse $response
+     * @param bool             $isCliContext
      */
     public function __construct(
         AuthService $authService,
-        AbstractResponse $response
+        AbstractResponse $response,
+        bool $isCliContext
     ) {
         $this->authService = $authService;
         $this->response = $response;
+        $this->isCliContext = $isCliContext;
     }
 
     /**
@@ -52,8 +60,7 @@ class BeforeCallingControllerAuthListener
         /** @var Route $route */
         $route = $event->getParams()['route'];
 
-        // a route is not found
-        if ($route->getController() === NotFoundController::class) {
+        if ($this->isCliContext || $route->getController() === NotFoundController::class) {
             return;
         }
 

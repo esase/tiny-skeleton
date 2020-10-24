@@ -28,7 +28,8 @@ class BeforeCallingControllerAuthListenerFactory
     ): BeforeCallingControllerAuthListener {
         return new BeforeCallingControllerAuthListener(
             $serviceManager->get(AuthService::class),
-            $serviceManager->get(AbstractResponse::class)
+            $serviceManager->get(AbstractResponse::class),
+            php_sapi_name() === 'cli'
         );
     }
 

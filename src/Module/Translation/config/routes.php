@@ -34,4 +34,11 @@ return [
             'spec' => '/api/translations/%id%',
         ],
     ],
+    'console' => [
+        [
+            'request'     => 'translations automatic',
+            'controller'  => Controller\TranslationConsoleController::class,
+            'action_list' => 'automaticTranslate',
+        ],
+    ]
 ];
