@@ -6,11 +6,12 @@ interface ValidatorInterface
 {
 
     /**
-     * @param mixed
+     * @param       $value
+     * @param array $values
      *
      * @return bool
      */
-    public function isValid($value): bool;
+    public function isValid($value, array $values = []): bool;
 
     /**
      * @return bool

@@ -1,11 +1,11 @@
 <?php
 
-namespace Tiny\Skeleton\Module\LanguageKey\Form\Validator;
+namespace Tiny\Skeleton\Module\Translation\Form\Validator;
 
 use Tiny\Skeleton\Application\Form\Validator\ValidatorInterface;
 use Tiny\Skeleton\Module\LanguageKey\Service\LanguageKeyService;
 
-class UniqueKey implements ValidatorInterface
+class LanguageKey implements ValidatorInterface
 {
 
     /**
@@ -13,23 +13,14 @@ class UniqueKey implements ValidatorInterface
      */
     private LanguageKeyService $languageKeyService;
 
-    /**
-     * @var int
-     */
-    private int $languageId;
-
-    /**
-     * UniqueKey constructor.
+    /***
+     * Language key constructor.
      *
      * @param LanguageKeyService $languageKeyService
-     * @param int                $languageId
      */
-    public function __construct(
-        LanguageKeyService $languageKeyService,
-        int $languageId
-    ) {
+    public function __construct(LanguageKeyService $languageKeyService)
+    {
         $this->languageKeyService = $languageKeyService;
-        $this->languageId = $languageId;
     }
 
     /**
@@ -40,10 +31,7 @@ class UniqueKey implements ValidatorInterface
      */
     public function isValid($value, array $values = []): bool
     {
-        return !$this->languageKeyService->isLanguageKeyExist(
-            $value,
-            $this->languageId
-        );
+        return $value && $this->languageKeyService->findOne($value) != false;
     }
 
     /**
@@ -53,7 +41,7 @@ class UniqueKey implements ValidatorInterface
      */
     public function getErrorMessage(string $elementName): string
     {
-        return '`' . $elementName . '` already exist';
+        return '`' . $elementName . '` is not exist';
     }
 
     /**

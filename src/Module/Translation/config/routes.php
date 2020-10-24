@@ -10,28 +10,28 @@
  */
 
 use Tiny\Http\Request;
-use Tiny\Skeleton\Module\LanguageKey\Controller;
+use Tiny\Skeleton\Module\Translation\Controller;
 
 return [
     'http_api' => [
         [
-            'request'     => '/api/keys',
-            'controller'  => Controller\LanguageKeyApiController::class,
+            'request'     => '/api/translations',
+            'controller'  => Controller\TranslationApiController::class,
             'action_list' => [
                 Request::METHOD_GET  => 'list',
                 Request::METHOD_POST  => 'create',
             ],
         ],
         [
-            'request'     => '|^/api/keys/(?P<id>\d+)$|i',
-            'controller'  => Controller\LanguageKeyApiController::class,
+            'request'     => '|^/api/translations/(?P<id>\d+)$|i',
+            'controller'  => Controller\TranslationApiController::class,
             'action_list' => [
                 Request::METHOD_DELETE  => 'delete',
                 Request::METHOD_PUT  => 'update'
             ],
             'type' => 'regexp',
             'request_params' => ['id'],
-            'spec' => '/api/keys/%id%',
+            'spec' => '/api/translations/%id%',
         ],
     ],
 ];

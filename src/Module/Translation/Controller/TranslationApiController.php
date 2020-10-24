@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\LanguageKey\Controller;
+namespace Tiny\Skeleton\Module\Translation\Controller;
 
 /*
  * This file is part of the Tiny package.
@@ -16,35 +16,35 @@ use Tiny\Http;
 use Tiny\Http\AbstractResponse;
 use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
-use Tiny\Skeleton\Module\LanguageKey\Form\LanguageKeyFormBuilder;
-use Tiny\Skeleton\Module\LanguageKey\Form\Validator\UniqueKey;
-use Tiny\Skeleton\Module\LanguageKey\Service\LanguageKeyService;
+use Tiny\Skeleton\Module\Translation\Form\TranslationFormBuilder;
+use Tiny\Skeleton\Module\Translation\Form\Validator\UniqueKey;
+use Tiny\Skeleton\Module\Translation\Service\TranslationService;
 
-class LanguageKeyApiController extends AbstractController
+class TranslationApiController extends AbstractController
 {
 
     /**
-     * @var LanguageKeyService
+     * @var TranslationService
      */
-    protected LanguageKeyService $languageKeyService;
+    protected TranslationService $translationService;
 
     /**
-     * @var LanguageKeyFormBuilder
+     * @var TranslationFormBuilder
      */
-    private LanguageKeyFormBuilder $languageKeyFormBuilder;
+    private TranslationFormBuilder $translationFormBuilder;
 
     /**
-     * LanguageKeyApiController constructor.
+     * TranslationApiController constructor.
      *
-     * @param LanguageKeyService     $languageKeyService
-     * @param LanguageKeyFormBuilder $languageKeyFormBuilder
+     * @param TranslationService     $translationService
+     * @param TranslationFormBuilder $translationFormBuilder
      */
     public function __construct(
-        LanguageKeyService $languageKeyService,
-        LanguageKeyFormBuilder $languageKeyFormBuilder
+        TranslationService $translationService,
+        TranslationFormBuilder $translationFormBuilder
     ) {
-        $this->languageKeyService = $languageKeyService;
-        $this->languageKeyFormBuilder = $languageKeyFormBuilder;
+        $this->translationService = $translationService;
+        $this->translationFormBuilder = $translationFormBuilder;
     }
 
     /**
@@ -52,7 +52,7 @@ class LanguageKeyApiController extends AbstractController
      */
     public function list(AbstractResponse $response)
     {
-        $this->jsonResponse($response, $this->languageKeyService->findAll());
+        $this->jsonResponse($response, $this->translationService->findAll());
     }
 
     /**
@@ -64,18 +64,20 @@ class LanguageKeyApiController extends AbstractController
     public function create(AbstractResponse $response)
     {
         // init the form
-        $form = $this->languageKeyFormBuilder->initializeForm();
+        $form = $this->translationFormBuilder->initializeForm();
         $form->populateValues($this->getRawRequest());
 
-        // create a new language key
+        // create a new translation
         if ($form->isValid()) {
-            $keyId = $this->languageKeyService->create(
-                $form->getValue(LanguageKeyFormBuilder::NAME)
+            $translationId = $this->translationService->create(
+                $form->getValue(TranslationFormBuilder::LANGUAGE_KEY),
+                $form->getValue(TranslationFormBuilder::LANGUAGE),
+                $form->getValue(TranslationFormBuilder::TRANSLATION)
             );
 
             return $this->jsonResponse(
                 $response,
-                $this->languageKeyService->findOne($keyId)
+                $this->translationService->findOne($translationId)
             );
         }
 
@@ -102,32 +104,34 @@ class LanguageKeyApiController extends AbstractController
      */
     public function update(AbstractResponse $response, Http\Request $request)
     {
-        // make sure we have an existing language key
-        $languageKeyData = $this->languageKeyService->findOne(
+        // make sure we have an existing translation
+        $translationData = $this->translationService->findOne(
             $request->getParam('id')
         );
 
-        if (!$languageKeyData) {
+        if (!$translationData) {
             throw new NotFoundException();
         }
 
         // init the form
-        $this->languageKeyFormBuilder->setLanguageKeyId(
+        $this->translationFormBuilder->setTranslationId(
             $request->getParam('id') // init the edit mode
         );
-        $form = $this->languageKeyFormBuilder->initializeForm();
+        $form = $this->translationFormBuilder->initializeForm();
         $form->populateValues($this->getRawRequest());
 
-        // update the language key
+        // update the translation
         if ($form->isValid()) {
-            $this->languageKeyService->update(
+            $this->translationService->update(
                 $request->getParam('id'),
-                $form->getValue(LanguageKeyFormBuilder::NAME)
+                $form->getValue(TranslationFormBuilder::LANGUAGE_KEY),
+                $form->getValue(TranslationFormBuilder::LANGUAGE),
+                $form->getValue(TranslationFormBuilder::TRANSLATION)
             );
 
             return $this->jsonResponse(
                 $response,
-                $this->languageKeyService->findOne($request->getParam('id'))
+                $this->translationService->findOne($request->getParam('id'))
             );
         }
 
@@ -153,12 +157,12 @@ class LanguageKeyApiController extends AbstractController
     public function delete(AbstractResponse $response, Http\Request $request)
     {
         // make sure we have an existing language key
-        $languageKeyData = $this->languageKeyService->findOne(
+        $translationData = $this->translationService->findOne(
             $request->getParam('id')
         );
 
-        if ($languageKeyData) {
-            $this->languageKeyService->deleteOne(
+        if ($translationData) {
+            $this->translationService->deleteOne(
                 $request->getParam('id')
             );
 

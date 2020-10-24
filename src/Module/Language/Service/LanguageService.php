@@ -33,11 +33,27 @@ class LanguageService
     public function findAll(): array
     {
         $sth = $this->dbService->getConnection()->prepare(
-            'SELECT * from languages'
+            'SELECT * from `languages`'
         );
         $sth->execute();
 
         return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return array|bool
+     */
+    public function findOne(int $id)
+    {
+        $sth = $this->dbService->getConnection()->prepare(
+            'SELECT * FROM `languages` WHERE `id` = :id'
+        );
+        $sth->bindValue(':id', $id, PDO::PARAM_INT);
+        $sth->execute();
+
+        return $sth->fetch(PDO::FETCH_ASSOC);
     }
 
 }

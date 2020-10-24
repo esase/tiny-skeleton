@@ -33,7 +33,7 @@ class LanguageKeyService
     public function findAll(): array
     {
         $sth = $this->dbService->getConnection()->prepare(
-            'SELECT * from language_keys'
+            'SELECT * from `language_keys`'
         );
         $sth->execute();
 
@@ -48,7 +48,7 @@ class LanguageKeyService
     public function findOne(int $id)
     {
         $sth = $this->dbService->getConnection()->prepare(
-            'SELECT * FROM language_keys WHERE id = :id'
+            'SELECT * FROM `language_keys` WHERE `id` = :id'
         );
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
         $sth->execute();
@@ -62,10 +62,10 @@ class LanguageKeyService
      *
      * @return bool
      */
-    public function isLanguageKeyExist(string $key, int $languageKeyId = null)
+    public function isLanguageKeyExist(string $key, int $languageKeyId)
     {
         $sth = $this->dbService->getConnection()->prepare(
-            'SELECT * FROM language_keys WHERE name = :key AND id <> :id'
+            'SELECT * FROM `language_keys` WHERE `name` = :key AND `id` <> :id'
         );
         $sth->bindValue(':key', $key, PDO::PARAM_STR);
         $sth->bindValue(':id', $languageKeyId ?? -1, PDO::PARAM_INT);
@@ -80,7 +80,7 @@ class LanguageKeyService
     public function deleteOne(int $id)
     {
         $sth = $this->dbService->getConnection()->prepare(
-            'DELETE FROM language_keys WHERE id = :id'
+            'DELETE FROM `language_keys` WHERE `id` = :id'
         );
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
         $sth->execute();
@@ -94,7 +94,7 @@ class LanguageKeyService
     public function create(string $name): int
     {
         $sth = $this->dbService->getConnection()->prepare(
-            'INSERT INTO language_keys SET name = :name'
+            'INSERT INTO `language_keys` SET `name` = :name'
         );
         $sth->bindValue(':name', $name, PDO::PARAM_STR);
         $sth->execute();
@@ -111,7 +111,7 @@ class LanguageKeyService
     public function update(int $id, string $name): bool
     {
         $sth = $this->dbService->getConnection()->prepare(
-            'UPDATE language_keys SET name = :name WHERE id = :id'
+            'UPDATE `language_keys` SET `name` = :name WHERE `id` = :id'
         );
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
         $sth->bindValue(':name', $name, PDO::PARAM_STR);

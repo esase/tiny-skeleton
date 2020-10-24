@@ -96,7 +96,8 @@ class Form
                 /** @var  ValidatorInterface $validator */
                 foreach ($this->validators[$element] as $validator) {
                     if (!$validator->isValid(
-                        $this->formValues[$element] ?? null
+                        $this->formValues[$element] ?? null,
+                        $this->formValues ?? []
                     )) {
                         $this->isFormValid = false;
                         $this->formErrors[] = $validator->getErrorMessage(

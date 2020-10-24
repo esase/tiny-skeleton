@@ -27,7 +27,8 @@ class DbService
         string $dbName
     ) {
         $this->connection = new PDO(
-            "mysql:host=$host;dbname=$dbName", $userName, $password
+            "mysql:host=$host;dbname=$dbName", $userName, $password,
+            [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"]
         );
         $this->connection->setAttribute(
             PDO::ATTR_ERRMODE,

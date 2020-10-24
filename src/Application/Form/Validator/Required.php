@@ -7,11 +7,12 @@ class Required implements ValidatorInterface
 {
 
     /**
-     * @param mixed
+     * @param       $value
+     * @param array $values
      *
      * @return bool
      */
-    public function isValid($value): bool
+    public function isValid($value, array $values = []): bool
     {
         if (is_array($value)) {
             if (sizeof($value) === 0) {
