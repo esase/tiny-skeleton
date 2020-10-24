@@ -11,37 +11,42 @@ class Form
     /**
      * @var array
      */
-    protected $formElements = [];
+    protected array $formElements = [];
 
     /**
      * @var array
      */
-    protected $validators = [];
+    protected array $validators = [];
 
     /**
      * @var array
      */
-    protected $filters = [];
+    protected array $filters = [];
 
     /**
      * @var array
      */
-    protected $formValues = [];
+    protected array $formValues = [];
 
     /**
      * @var bool
      */
-    private $isFormPopulated = false;
+    private bool $isFormPopulated = false;
 
     /**
      * @var bool
      */
-    protected $isFormValid = true;
+    protected bool $isFormValid = true;
 
     /**
      * @var array
      */
-    protected $formErrors = [];
+    protected array $formErrors = [];
+
+    /**
+     * @var array
+     */
+    protected array $formErroredValidators = [];
 
     /**
      * @param string $name
@@ -97,6 +102,7 @@ class Form
                         $this->formErrors[] = $validator->getErrorMessage(
                             $element
                         );
+                        $this->formErroredValidators[] = get_class($validator);
 
                         if ($validator->breakChainOfValidators()) {
                             break;
@@ -130,6 +136,14 @@ class Form
     public function getErrors(): array
     {
         return $this->formErrors;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErroredValidators()
+    {
+        return $this->formErroredValidators;
     }
 
     protected function applyFilters()

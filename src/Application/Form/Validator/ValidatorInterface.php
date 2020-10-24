@@ -4,6 +4,7 @@ namespace Tiny\Skeleton\Application\Form\Validator;
 
 interface ValidatorInterface
 {
+
     /**
      * @param mixed
      *
@@ -22,4 +23,5 @@ interface ValidatorInterface
      * @return string
      */
     public function getErrorMessage(string $elementName): string;
+
 }

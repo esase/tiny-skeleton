@@ -13,21 +13,23 @@ namespace Tiny\Skeleton\Module\LanguageKey\Form\Factory;
 
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Form\Form;
-use Tiny\Skeleton\Module\LanguageKey\Form\LanguageKeyBuilder;
+use Tiny\Skeleton\Module\LanguageKey\Form\LanguageKeyFormBuilder;
+use Tiny\Skeleton\Module\LanguageKey\Service\LanguageKeyService;
 
-class LanguageKeyBuilderFactory
+class LanguageKeyFormBuilderFactory
 {
 
     /**
      * @param  ServiceManager  $serviceManager
      *
-     * @return LanguageKeyBuilder
+     * @return LanguageKeyFormBuilder
      */
     public function __invoke(
         ServiceManager $serviceManager
     ) {
-        return new LanguageKeyBuilder (
-            new Form()
+        return new LanguageKeyFormBuilder (
+            new Form(),
+            $serviceManager->get(LanguageKeyService::class)
         );
     }
 

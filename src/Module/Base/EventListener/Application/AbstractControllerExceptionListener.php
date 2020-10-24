@@ -65,7 +65,7 @@ abstract class AbstractControllerExceptionListener
                 ]
             )
         )
-            ->setCode(AbstractResponse::RESPONSE_OK)
+            ->setCode(AbstractResponse::RESPONSE_NOT_FOUND)
             ->setResponseType(
                 AbstractResponse::RESPONSE_TYPE_JSON
             );

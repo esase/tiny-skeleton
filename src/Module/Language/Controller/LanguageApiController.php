@@ -24,7 +24,7 @@ class LanguageApiController extends AbstractController
     protected LanguageService $languageService;
 
     /**
-     * AbstractUserController constructor.
+     * LanguageApiController constructor.
      *
      * @param LanguageService $languageService
      */

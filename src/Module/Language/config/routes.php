@@ -13,8 +13,6 @@ use Tiny\Http\Request;
 use Tiny\Skeleton\Module\Language\Controller;
 
 return [
-    'http'     => [
-    ],
     'http_api' => [
         [
             'request'     => '/api/languages',
@@ -23,7 +21,5 @@ return [
                 Request::METHOD_GET  => 'list',
             ],
         ],
-    ],
-    'console'  => [
     ],
 ];

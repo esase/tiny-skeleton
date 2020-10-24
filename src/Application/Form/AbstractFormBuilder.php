@@ -4,10 +4,11 @@ namespace Tiny\Skeleton\Application\Form;
 
 abstract class AbstractFormBuilder
 {
+
     /**
      * @var Form
      */
-    protected $form;
+    protected Form $form;
 
     /**
      * FormBuilder constructor.
@@ -23,4 +24,5 @@ abstract class AbstractFormBuilder
      * @return Form
      */
     public abstract function initializeForm(): Form;
+
 }

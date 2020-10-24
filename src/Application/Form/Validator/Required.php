@@ -5,6 +5,7 @@ namespace Tiny\Skeleton\Application\Form\Validator;
 
 class Required implements ValidatorInterface
 {
+
     /**
      * @param mixed
      *
@@ -43,4 +44,5 @@ class Required implements ValidatorInterface
     {
         return true;
     }
+
 }

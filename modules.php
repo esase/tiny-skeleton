@@ -11,7 +11,6 @@
 
 return [
     'Base',
-    'User',
     'Language',
     'LanguageKey'
 ];

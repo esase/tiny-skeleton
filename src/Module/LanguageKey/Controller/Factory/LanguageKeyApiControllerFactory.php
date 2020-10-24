@@ -13,7 +13,7 @@ namespace Tiny\Skeleton\Module\LanguageKey\Controller\Factory;
 
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\LanguageKey\Controller\LanguageKeyApiController;
-use Tiny\Skeleton\Module\LanguageKey\Form\LanguageKeyBuilder;
+use Tiny\Skeleton\Module\LanguageKey\Form\LanguageKeyFormBuilder;
 use Tiny\Skeleton\Module\LanguageKey\Service\LanguageKeyService;
 
 class LanguageKeyApiControllerFactory
@@ -29,7 +29,7 @@ class LanguageKeyApiControllerFactory
     ) {
         return new LanguagekeyApiController (
             $serviceManager->get(LanguageKeyService::class),
-            $serviceManager->get(LanguageKeyBuilder::class)
+            $serviceManager->get(LanguageKeyFormBuilder::class)
         );
     }
 

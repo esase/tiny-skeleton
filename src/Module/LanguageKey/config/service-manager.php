@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-use Tiny\ServiceManager\Factory\InvokableFactory;
 use Tiny\Skeleton\Module\LanguageKey;
 
 return [
@@ -21,6 +20,6 @@ return [
         LanguageKey\Service\LanguageKeyService::class          => LanguageKey\Service\Factory\LanguageKeyServiceFactory::class,
 
         // form
-        LanguageKey\Form\LanguageKeyBuilder::class             => LanguageKey\Form\Factory\LanguageKeyBuilderFactory::class
+        LanguageKey\Form\LanguageKeyFormBuilder::class         => LanguageKey\Form\Factory\LanguageKeyFormBuilderFactory::class
     ],
 ];

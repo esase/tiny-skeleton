@@ -14,8 +14,10 @@ namespace Tiny\Skeleton\Module\LanguageKey\Controller;
 use Exception;
 use Tiny\Http;
 use Tiny\Http\AbstractResponse;
+use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
-use Tiny\Skeleton\Module\LanguageKey\Form\LanguageKeyBuilder;
+use Tiny\Skeleton\Module\LanguageKey\Form\LanguageKeyFormBuilder;
+use Tiny\Skeleton\Module\LanguageKey\Form\Validator\UniqueKey;
 use Tiny\Skeleton\Module\LanguageKey\Service\LanguageKeyService;
 
 class LanguageKeyApiController extends AbstractController
@@ -27,22 +29,22 @@ class LanguageKeyApiController extends AbstractController
     protected LanguageKeyService $languageKeyService;
 
     /**
-     * @var LanguageKeyBuilder
+     * @var LanguageKeyFormBuilder
      */
-    private LanguageKeyBuilder $languageKeyFormBuilder;
+    private LanguageKeyFormBuilder $languageKeyFormBuilder;
 
     /**
-     * AbstractUserController constructor.
+     * LanguageKeyApiController constructor.
      *
-     * @param LanguageKeyService $languageKeyService
-     * @param LanguageKeyBuilder $languageKeyBuilder
+     * @param LanguageKeyService     $languageKeyService
+     * @param LanguageKeyFormBuilder $languageKeyFormBuilder
      */
     public function __construct(
         LanguageKeyService $languageKeyService,
-        LanguageKeyBuilder $languageKeyBuilder
+        LanguageKeyFormBuilder $languageKeyFormBuilder
     ) {
         $this->languageKeyService = $languageKeyService;
-        $this->languageKeyFormBuilder = $languageKeyBuilder;
+        $this->languageKeyFormBuilder = $languageKeyFormBuilder;
     }
 
     /**
@@ -63,41 +65,99 @@ class LanguageKeyApiController extends AbstractController
     {
         // init the form
         $form = $this->languageKeyFormBuilder->initializeForm();
-        $form->populateValues($_POST);
+        $form->populateValues($this->getRawRequest());
 
-        // create a new key
+        // create a new language key
         if ($form->isValid()) {
             $keyId = $this->languageKeyService->create(
-                $form->getValue(LanguageKeyBuilder::NAME)
+                $form->getValue(LanguageKeyFormBuilder::NAME)
             );
 
-            return  $this->jsonResponse(
+            return $this->jsonResponse(
                 $response,
                 $this->languageKeyService->findOne($keyId)
             );
         }
 
+        $responseCode = in_array(
+            UniqueKey::class, $form->getErroredValidators()
+        )
+            ? AbstractResponse::RESPONSE_CONFLICT
+            : AbstractResponse::RESPONSE_BAD_REQUEST;
+
         return $this->jsonResponse(
-            $response,
-            [
-                'errors' => $form->getErrors()
-            ],
-            AbstractResponse::RESPONSE_BAD_REQUEST
+            $response, [
+            'errors' => $form->getErrors()
+        ], $responseCode
         );
     }
 
     /**
      * @param AbstractResponse $response
      * @param Http\Request     $request
+     *
+     * @return AbstractResponse
+     * @throws NotFoundException
+     * @throws Exception
      */
-    public function delete(AbstractResponse $response, Http\Request $request)
+    public function update(AbstractResponse $response, Http\Request $request)
     {
-        // get a key
-        $keyData = $this->languageKeyService->findOne(
+        // make sure we have an existing language key
+        $languageKeyData = $this->languageKeyService->findOne(
             $request->getParam('id')
         );
 
-        if ($keyData) {
+        if (!$languageKeyData) {
+            throw new NotFoundException();
+        }
+
+        // init the form
+        $this->languageKeyFormBuilder->setLanguageKeyId(
+            $request->getParam('id') // init the edit mode
+        );
+        $form = $this->languageKeyFormBuilder->initializeForm();
+        $form->populateValues($this->getRawRequest());
+
+        // create a new language key
+        if ($form->isValid()) {
+            $this->languageKeyService->update(
+                $request->getParam('id'),
+                $form->getValue(LanguageKeyFormBuilder::NAME)
+            );
+
+            return $this->jsonResponse(
+                $response,
+                $this->languageKeyService->findOne($request->getParam('id'))
+            );
+        }
+
+        $responseCode = in_array(
+            UniqueKey::class, $form->getErroredValidators()
+        )
+            ? AbstractResponse::RESPONSE_CONFLICT
+            : AbstractResponse::RESPONSE_BAD_REQUEST;
+
+        return $this->jsonResponse(
+            $response, [
+            'errors' => $form->getErrors()
+        ], $responseCode
+        );
+    }
+
+    /**
+     * @param AbstractResponse $response
+     * @param Http\Request     $request
+     *
+     * @throws NotFoundException
+     */
+    public function delete(AbstractResponse $response, Http\Request $request)
+    {
+        // make sure we have an existing language key
+        $languageKeyData = $this->languageKeyService->findOne(
+            $request->getParam('id')
+        );
+
+        if ($languageKeyData) {
             $this->languageKeyService->deleteOne(
                 $request->getParam('id')
             );
@@ -105,7 +165,7 @@ class LanguageKeyApiController extends AbstractController
             return;
         }
 
-        $response->setCode(AbstractResponse::RESPONSE_NOT_FOUND);
+        throw new NotFoundException();
     }
 
 }

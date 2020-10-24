@@ -18,9 +18,9 @@ abstract class AbstractController
 {
 
     /**
-     * @param  AbstractResponse  $response
-     * @param  array             $variables
-     * @param  int               $code
+     * @param AbstractResponse $response
+     * @param array            $variables
+     * @param int              $code
      *
      * @return AbstractResponse
      */
@@ -39,9 +39,9 @@ abstract class AbstractController
     }
 
     /**
-     * @param  AbstractResponse  $response
-     * @param  array             $variables
-     * @param  int               $code
+     * @param AbstractResponse $response
+     * @param array            $variables
+     * @param int              $code
      *
      * @return AbstractResponse
      */
@@ -57,6 +57,14 @@ abstract class AbstractController
             );
 
         return $response;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRawRequest(): array
+    {
+        return json_decode(file_get_contents("php://input"), true) ?? [];
     }
 
 }

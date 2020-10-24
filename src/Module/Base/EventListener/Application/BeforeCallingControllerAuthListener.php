@@ -11,7 +11,9 @@ namespace Tiny\Skeleton\Module\Base\EventListener\Application;
  * file that was distributed with this source code.
  */
 
+use Tiny\Router\Route;
 use Tiny\Skeleton\Application\EventManager\ControllerEvent;
+use Tiny\Skeleton\Module\Base\Controller\NotFoundController;
 use Tiny\Skeleton\Module\Base\Service\AuthService;
 use Tiny\Http\AbstractResponse;
 
@@ -47,9 +49,17 @@ class BeforeCallingControllerAuthListener
      */
     public function __invoke(ControllerEvent $event)
     {
+        /** @var Route $route */
+        $route = $event->getParams()['route'];
+
+        // a route is not found
+        if ($route->getController() === NotFoundController::class) {
+            return;
+        }
+
+        // globally check the authorization token
         $authToken = $_SERVER['HTTP_TOKEN'] ?? null;
 
-        // check the token
         if ($authToken) {
             $tokenData = $this->authService->getTokenData($authToken);
 
@@ -61,6 +71,7 @@ class BeforeCallingControllerAuthListener
                         ['POST', 'PUT', 'DELETE', 'PATH']
                     )) {
 
+                    // the action is not allowed
                     $this->sendResponse($event, AbstractResponse::NOT_ALLOWED);
                     return;
                 }
@@ -69,7 +80,7 @@ class BeforeCallingControllerAuthListener
             }
         }
 
-        // token not found
+        // token is not found
         $this->sendResponse($event, AbstractResponse::NOT_UNAUTHORIZED);
     }
 

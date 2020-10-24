@@ -29,6 +29,7 @@ return [
             'controller'  => Controller\LanguageKeyApiController::class,
             'action_list' => [
                 Request::METHOD_DELETE  => 'delete',
+                Request::METHOD_PUT  => 'update'
             ],
             'type' => 'regexp',
             'request_params' => ['id'],

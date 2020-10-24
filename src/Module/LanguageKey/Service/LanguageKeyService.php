@@ -57,6 +57,24 @@ class LanguageKeyService
     }
 
     /**
+     * @param string $key
+     * @param int    $languageKeyId
+     *
+     * @return bool
+     */
+    public function isLanguageKeyExist(string $key, int $languageKeyId = null)
+    {
+        $sth = $this->dbService->getConnection()->prepare(
+            'SELECT * FROM language_keys WHERE name = :key AND id <> :id'
+        );
+        $sth->bindValue(':key', $key, PDO::PARAM_STR);
+        $sth->bindValue(':id', $languageKeyId ?? -1, PDO::PARAM_INT);
+        $sth->execute();
+
+        return $sth->fetch(PDO::FETCH_ASSOC) ? true : false;
+    }
+
+    /**
      * @param int $id
      */
     public function deleteOne(int $id)
@@ -81,7 +99,24 @@ class LanguageKeyService
         $sth->bindValue(':name', $name, PDO::PARAM_STR);
         $sth->execute();
 
-        return (int) $this->dbService->getConnection()->lastInsertId();
+        return (int)$this->dbService->getConnection()->lastInsertId();
+    }
+
+    /**
+     * @param int    $id
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function update(int $id, string $name): bool
+    {
+        $sth = $this->dbService->getConnection()->prepare(
+            'UPDATE language_keys SET name = :name WHERE id = :id'
+        );
+        $sth->bindValue(':id', $id, PDO::PARAM_INT);
+        $sth->bindValue(':name', $name, PDO::PARAM_STR);
+
+        return $sth->execute();
     }
 
 }

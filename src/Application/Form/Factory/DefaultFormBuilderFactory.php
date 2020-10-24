@@ -1,6 +1,6 @@
 <?php
 
-namespace Tiny\Skeleton\Module\User\Controller\Factory;
+namespace Tiny\Skeleton\Application\Form\Factory;
 
 /*
  * This file is part of the Tiny package.
@@ -12,9 +12,9 @@ namespace Tiny\Skeleton\Module\User\Controller\Factory;
  */
 
 use Tiny\ServiceManager\ServiceManager;
-use Tiny\Skeleton\Module\User\Service\UserService;
+use Tiny\Skeleton\Application\Form\Form;
 
-class UserControllerFactory
+class DefaultFormBuilderFactory
 {
 
     /**
@@ -27,11 +27,7 @@ class UserControllerFactory
         ServiceManager $serviceManager,
         string $targetClass
     ) {
-        return new $targetClass (
-            $serviceManager->get(
-                UserService::class
-            )
-        );
+        return new $targetClass (new Form());
     }
 
 }
