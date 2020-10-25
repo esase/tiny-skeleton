@@ -14,6 +14,7 @@ namespace Tiny\Skeleton\Module\Translation\Controller\Factory;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\TranslationApiService;
 use Tiny\Skeleton\Module\Translation\Controller\TranslationConsoleController;
+use Tiny\Skeleton\Module\Translation\Service\TranslationQueueService;
 use Tiny\Skeleton\Module\Translation\Service\TranslationService;
 
 class TranslationConsoleControllerFactory
@@ -29,6 +30,7 @@ class TranslationConsoleControllerFactory
     ) {
         return new TranslationConsoleController (
             $serviceManager->get(TranslationService::class),
+            $serviceManager->get(TranslationQueueService::class),
             $serviceManager->get(TranslationApiService::class)
         );
     }

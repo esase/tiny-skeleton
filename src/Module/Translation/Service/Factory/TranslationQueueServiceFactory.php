@@ -14,20 +14,18 @@ namespace Tiny\Skeleton\Module\Translation\Service\Factory;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Application\Service\DbService;
 use Tiny\Skeleton\Module\Translation\Service\TranslationQueueService;
-use Tiny\Skeleton\Module\Translation\Service\TranslationService;
 
-class TranslationServiceFactory
+class TranslationQueueServiceFactory
 {
 
     /**
      * @param  ServiceManager  $serviceManager
      *
-     * @return TranslationService
+     * @return TranslationQueueService
      */
     public function __invoke(ServiceManager $serviceManager) {
-        return new TranslationService(
-            $serviceManager->get(DbService::class),
-            $serviceManager->get(TranslationQueueService::class)
+        return new TranslationQueueService(
+            $serviceManager->get(DbService::class)
         );
     }
 

@@ -19,6 +19,7 @@ return [
 
         // service
         Translation\Service\TranslationService::class              => Translation\Service\Factory\TranslationServiceFactory::class,
+        Translation\Service\TranslationQueueService::class         => Translation\Service\Factory\TranslationQueueServiceFactory::class,
 
         // form
         Translation\Form\TranslationFormBuilder::class             => Translation\Form\Factory\TranslationFormBuilderFactory::class

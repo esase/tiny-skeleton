@@ -22,9 +22,23 @@ class TranslationService
      */
     private DbService $dbService;
 
-    public function __construct(DbService $dbService)
-    {
+    /**
+     * @var TranslationQueueService
+     */
+    private TranslationQueueService $translationQueueService;
+
+    /**
+     * TranslationService constructor.
+     *
+     * @param DbService               $dbService
+     * @param TranslationQueueService $translationQueueService
+     */
+    public function __construct(
+        DbService $dbService,
+        TranslationQueueService $translationQueueService
+    ) {
         $this->dbService = $dbService;
+        $this->translationQueueService = $translationQueueService;
     }
 
     /**
@@ -69,11 +83,16 @@ class TranslationService
         int $translationId = null
     ) {
         $sth = $this->dbService->getConnection()->prepare(
-            'SELECT * FROM `translations` 
+            '
+            SELECT 
+                * 
+            FROM 
+                `translations` 
             WHERE 
                 `language_key` = :language_key 
                     AND
-                `language` = :language AND `id` <> :id'
+                `language` = :language AND `id` <> :id
+        '
         );
         $sth->bindValue(':language_key', $languageKeyId, PDO::PARAM_INT);
         $sth->bindValue(':language', $languageId, PDO::PARAM_INT);
@@ -99,7 +118,6 @@ class TranslationService
      * @param int    $languageKey
      * @param int    $language
      * @param string $translation
-     *
      * @param bool   $isAutomatic
      *
      * @return int
@@ -111,7 +129,9 @@ class TranslationService
         bool $isAutomatic = false
     ): int {
         $sth = $this->dbService->getConnection()->prepare(
-            'INSERT INTO `translations` 
+            '
+            INSERT 
+                INTO `translations` 
             SET 
                 `language_key` = :language_key, 
                 `language` = :language, 
@@ -129,7 +149,7 @@ class TranslationService
 
         // add the language key in the queue (for adding auto translations)
         if (!$isAutomatic) {
-            $this->addLanguageKeyToQueue($languageKey);
+            $this->translationQueueService->create($languageKey);
         }
 
         return $translationId;
@@ -150,12 +170,15 @@ class TranslationService
         string $translation
     ): bool {
         $sth = $this->dbService->getConnection()->prepare(
-            'UPDATE `translations` 
-                SET 
-                    `language_key` = :language_key,
-                     `language` = :language,
-                     `translation` = :translation
-                WHERE `id` = :id'
+            '
+            UPDATE 
+                `translations` 
+            SET 
+                `language_key` = :language_key,
+                 `language` = :language,
+                 `translation` = :translation
+            WHERE `id` = :id
+        '
         );
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
         $sth->bindValue(':language_key', $languageKey, PDO::PARAM_INT);
@@ -165,67 +188,9 @@ class TranslationService
         $result = $sth->execute();
 
         // add the language key in the queue (for adding auto translations)
-        $this->addLanguageKeyToQueue($languageKey);
+        $this->translationQueueService->create($languageKey);
 
         return $result;
-    }
-
-    /**
-     * @param int $languageKey
-     */
-    private function addLanguageKeyToQueue(int $languageKey)
-    {
-        if (!$this->findOneInQueue($languageKey)) {
-            $sth = $this->dbService->getConnection()->prepare(
-                'INSERT INTO `translations_queue` SET `language_key` = :language_key, `created` = UNIX_TIMESTAMP()'
-            );
-            $sth->bindValue(':language_key', $languageKey, PDO::PARAM_STR);
-            $sth->execute();
-        }
-    }
-
-    /**
-     * @param int $languageKey
-     *
-     * @return array|bool
-     */
-    public function findOneInQueue(int $languageKey)
-    {
-        $sth = $this->dbService->getConnection()->prepare(
-            'SELECT * FROM `translations_queue` WHERE `language_key` = :language_key'
-        );
-        $sth->bindValue(':language_key', $languageKey, PDO::PARAM_INT);
-        $sth->execute();
-
-        return $sth->fetch(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * @param int $limit
-     *
-     * @return array
-     */
-    public function findQueuedItems(int $limit): array
-    {
-        $sth = $this->dbService->getConnection()->prepare(
-            'SELECT * from `translations_queue` ORDER BY `created` LIMIT :limit'
-        );
-        $sth->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $sth->execute();
-
-        return $sth->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * @param int $id
-     */
-    public function deleteQueuedItem(int $id)
-    {
-        $sth = $this->dbService->getConnection()->prepare(
-            'DELETE FROM `translations_queue` WHERE `id` = :id'
-        );
-        $sth->bindValue(':id', $id, PDO::PARAM_INT);
-        $sth->execute();
     }
 
     /**

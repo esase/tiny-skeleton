@@ -14,6 +14,7 @@ namespace Tiny\Skeleton\Module\Translation\Controller;
 use Throwable;
 use Tiny\Skeleton\Application\Service\TranslationApiService;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
+use Tiny\Skeleton\Module\Translation\Service\TranslationQueueService;
 use Tiny\Skeleton\Module\Translation\Service\TranslationService;
 
 class TranslationConsoleController extends AbstractController
@@ -27,6 +28,11 @@ class TranslationConsoleController extends AbstractController
     protected TranslationService $translationService;
 
     /**
+     * @var TranslationQueueService
+     */
+    protected TranslationQueueService $translationQueueService;
+
+    /**
      * @var TranslationApiService
      */
     private TranslationApiService $translationApiService;
@@ -34,21 +40,24 @@ class TranslationConsoleController extends AbstractController
     /**
      * TranslationConsoleController constructor.
      *
-     * @param TranslationService    $translationService
-     * @param TranslationApiService $translationApiService
+     * @param TranslationService      $translationService
+     * @param TranslationQueueService $translationQueueService
+     * @param TranslationApiService   $translationApiService
      */
     public function __construct(
         TranslationService $translationService,
+        TranslationQueueService $translationQueueService,
         TranslationApiService $translationApiService
     ) {
         $this->translationService = $translationService;
+        $this->translationQueueService = $translationQueueService;
         $this->translationApiService = $translationApiService;
     }
 
     public function automaticTranslate()
     {
         // get items form the queue
-        $queueItems = $this->translationService->findQueuedItems(
+        $queueItems = $this->translationQueueService->findLimited(
             self::DEFAULT_ITEMS_LIMIT
         );
 
@@ -65,12 +74,10 @@ class TranslationConsoleController extends AbstractController
                     );
                 }
             }
-            catch(Throwable $e) {
-                // TODO: log possible errors
-            }
+            catch(Throwable $e) {}
 
             // delete the item from the queue
-            $this->translationService->deleteQueuedItem($queueItem['id']);
+            $this->translationQueueService->deleteOne($queueItem['id']);
         }
     }
 
