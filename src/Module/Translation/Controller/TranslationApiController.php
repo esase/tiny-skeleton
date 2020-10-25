@@ -14,12 +14,10 @@ namespace Tiny\Skeleton\Module\Translation\Controller;
 use Exception;
 use Tiny\Http;
 use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
-use Tiny\Skeleton\Application\Utility\ZipUtility;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
 use Tiny\Skeleton\Module\Translation\Form\TranslationFormBuilder;
 use Tiny\Skeleton\Module\Translation\Form\Validator\UniqueKey;
 use Tiny\Skeleton\Module\Translation\Service\TranslationService;
-use ZipArchive;
 
 class TranslationApiController extends AbstractController
 {
@@ -202,7 +200,7 @@ class TranslationApiController extends AbstractController
     ) {
         $translations = $this->translationService->findAllTranslations();
 
-        if ($translations) {
+        if (!$translations) {
             throw new NotFoundException();
         }
 
