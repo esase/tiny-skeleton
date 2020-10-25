@@ -282,11 +282,29 @@ class TranslationService
     /**
      * @return string
      */
+    public function exportYamlTranslations(): string
+    {
+        $exportDir = $this->configService->getConfig('data_dir')
+            . self::EXPORT_DIR;
+        $fileName = $exportDir . time() . '.yaml.zip';
+
+        $this->zipUtility->createArchive($fileName, [
+            'translations.yaml'
+        ], [
+            yaml_emit($this->findAllTranslations(), YAML_UTF8_ENCODING)
+        ]);
+
+        return $fileName;
+    }
+
+    /**
+     * @return string
+     */
     public function exportJsonTranslations(): string
     {
         $exportDir = $this->configService->getConfig('data_dir')
             . self::EXPORT_DIR;
-        $fileName = $exportDir . time() . '.zip';
+        $fileName = $exportDir . time() . '.json.zip';
 
         $files = [];
         $content = [];

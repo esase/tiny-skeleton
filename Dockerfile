@@ -12,13 +12,16 @@ RUN apt-get install -y \
     git \
     curl \
     zip \
-    libzip-dev
+    libzip-dev \
+    libyaml-dev
 
+RUN yes | pecl install yaml
 RUN yes | pecl install xdebug \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
+RUN docker-php-ext-enable yaml
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install pdo_mysql mysqli gd zip
 RUN a2enmod rewrite

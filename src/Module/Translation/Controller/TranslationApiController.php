@@ -207,13 +207,13 @@ class TranslationApiController extends AbstractController
 
             case 'yaml' :
             default:
-                $filePath = '';
+                $filePath = $this->translationService->exportYamlTranslations();
         }
 
         $this->httpUtils->sendHeaders(
             [
                 'Content-type: application/force-download',
-                'Content-Disposition: attachment; filename="test.zip"',
+                'Content-Disposition: attachment; filename="' . basename($filePath) . '"',
                 'Content-Length: ' . filesize($filePath)
             ]
         );
