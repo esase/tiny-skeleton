@@ -27,9 +27,7 @@ class LanguageApiControllerFactory
         ServiceManager $serviceManager
     ) {
         return new LanguageApiController (
-            $serviceManager->get(
-                LanguageService::class
-            )
+            $serviceManager->get(LanguageService::class)
         );
     }
 

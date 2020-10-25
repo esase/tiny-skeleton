@@ -13,7 +13,6 @@ namespace Tiny\Skeleton\Module\Translation\Controller;
 
 use Exception;
 use Tiny\Http;
-use Tiny\Http\AbstractResponse;
 use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
 use Tiny\Skeleton\Module\Translation\Form\TranslationFormBuilder;
@@ -36,7 +35,7 @@ class TranslationApiController extends AbstractController
     /**
      * TranslationApiController constructor.
      *
-     * @param TranslationService     $translationService
+     * @param TranslationService $translationService
      * @param TranslationFormBuilder $translationFormBuilder
      */
     public function __construct(
@@ -48,24 +47,28 @@ class TranslationApiController extends AbstractController
     }
 
     /**
-     * @param AbstractResponse $response
+     * @param Http\AbstractResponse $response
      */
-    public function list(AbstractResponse $response)
+    public function list(Http\AbstractResponse $response)
     {
         $this->jsonResponse($response, $this->translationService->findAll());
     }
 
     /**
-     * @param AbstractResponse $response
+     * @param Http\AbstractResponse $response
+     * @param Http\Request          $request
      *
-     * @return AbstractResponse
+     * @return Http\AbstractResponse
+     *
      * @throws Exception
      */
-    public function create(AbstractResponse $response)
-    {
+    public function create(
+        Http\AbstractResponse $response,
+        Http\Request $request
+    ) {
         // init the form
         $form = $this->translationFormBuilder->initializeForm();
-        $form->populateValues($this->getRawRequest());
+        $form->populateValues($request->getRawRequest());
 
         // create a new translation
         if ($form->isValid()) {
@@ -84,8 +87,8 @@ class TranslationApiController extends AbstractController
         $responseCode = in_array(
             UniqueKey::class, $form->getErroredValidators()
         )
-            ? AbstractResponse::RESPONSE_CONFLICT
-            : AbstractResponse::RESPONSE_BAD_REQUEST;
+            ? Http\AbstractResponse::RESPONSE_CONFLICT
+            : Http\AbstractResponse::RESPONSE_BAD_REQUEST;
 
         return $this->jsonResponse(
             $response, [
@@ -95,15 +98,18 @@ class TranslationApiController extends AbstractController
     }
 
     /**
-     * @param AbstractResponse $response
-     * @param Http\Request     $request
+     * @param Http\AbstractResponse $response
+     * @param Http\Request          $request
      *
-     * @return AbstractResponse
+     * @return Http\AbstractResponse
+     *
      * @throws NotFoundException
      * @throws Exception
      */
-    public function update(AbstractResponse $response, Http\Request $request)
-    {
+    public function update(
+        Http\AbstractResponse $response,
+        Http\Request $request
+    ) {
         // make sure we have an existing translation
         $translationData = $this->translationService->findOne(
             $request->getParam('id')
@@ -118,7 +124,7 @@ class TranslationApiController extends AbstractController
             $request->getParam('id') // init the edit mode
         );
         $form = $this->translationFormBuilder->initializeForm();
-        $form->populateValues($this->getRawRequest());
+        $form->populateValues($request->getRawRequest());
 
         // update the translation
         if ($form->isValid()) {
@@ -138,8 +144,8 @@ class TranslationApiController extends AbstractController
         $responseCode = in_array(
             UniqueKey::class, $form->getErroredValidators()
         )
-            ? AbstractResponse::RESPONSE_CONFLICT
-            : AbstractResponse::RESPONSE_BAD_REQUEST;
+            ? Http\AbstractResponse::RESPONSE_CONFLICT
+            : Http\AbstractResponse::RESPONSE_BAD_REQUEST;
 
         return $this->jsonResponse(
             $response, [
@@ -149,13 +155,15 @@ class TranslationApiController extends AbstractController
     }
 
     /**
-     * @param AbstractResponse $response
-     * @param Http\Request     $request
+     * @param Http\AbstractResponse $response
+     * @param Http\Request          $request
      *
      * @throws NotFoundException
      */
-    public function delete(AbstractResponse $response, Http\Request $request)
-    {
+    public function delete(
+        Http\AbstractResponse $response,
+        Http\Request $request
+    ) {
         // make sure we have an existing language key
         $translationData = $this->translationService->findOne(
             $request->getParam('id')
@@ -170,6 +178,12 @@ class TranslationApiController extends AbstractController
         }
 
         throw new NotFoundException();
+    }
+
+    public function export()
+    {
+        echo 'aaa';
+        exit;
     }
 
 }

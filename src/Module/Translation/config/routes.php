@@ -33,6 +33,16 @@ return [
             'request_params' => ['id'],
             'spec' => '/api/translations/%id%',
         ],
+        [
+            'request'     => '|^/api/translations/export/(?P<id>\d+)$|i',
+            'controller'  => Controller\TranslationApiController::class,
+            'action_list' => [
+                Request::METHOD_GET  => 'export',
+            ],
+            'type' => 'regexp',
+            'request_params' => ['id'],
+            'spec' => '/api/translations/export/%format%',
+        ],
     ],
     'console' => [
         [

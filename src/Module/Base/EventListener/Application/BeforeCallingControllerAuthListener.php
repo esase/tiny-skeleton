@@ -79,7 +79,7 @@ class BeforeCallingControllerAuthListener
                     )) {
 
                     // the action is not allowed
-                    $this->sendResponse($event, AbstractResponse::NOT_ALLOWED);
+                    $this->sendResponse($event, AbstractResponse::RESPONSE_NOT_ALLOWED);
                     return;
                 }
 
@@ -88,7 +88,7 @@ class BeforeCallingControllerAuthListener
         }
 
         // token is not found
-        $this->sendResponse($event, AbstractResponse::NOT_UNAUTHORIZED);
+        $this->sendResponse($event, AbstractResponse::RESPONSE_UNAUTHORIZED);
     }
 
     /**

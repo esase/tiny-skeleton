@@ -11,7 +11,7 @@ namespace Tiny\Skeleton\Module\Language\Controller;
  * file that was distributed with this source code.
  */
 
-use Tiny\Http\AbstractResponse;
+use Tiny\Http;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
 use Tiny\Skeleton\Module\Language\Service\LanguageService;
 
@@ -34,9 +34,9 @@ class LanguageApiController extends AbstractController
     }
 
     /**
-     * @param  AbstractResponse  $response
+     * @param  Http\AbstractResponse  $response
      */
-    public function list(AbstractResponse $response)
+    public function list(Http\AbstractResponse $response)
     {
         $this->jsonResponse($response, $this->languageService->findAll());
     }
