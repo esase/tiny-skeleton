@@ -280,9 +280,11 @@ class TranslationService
     }
 
     /**
+     * @param array $translationList
+     *
      * @return string
      */
-    public function exportYamlTranslations(): string
+    public function exportYamlTranslations(array $translationList): string
     {
         $exportDir = $this->configService->getConfig('data_dir')
             . self::EXPORT_DIR;
@@ -291,16 +293,18 @@ class TranslationService
         $this->zipUtility->createArchive($fileName, [
             'translations.yaml'
         ], [
-            yaml_emit($this->findAllTranslations(), YAML_UTF8_ENCODING)
+            yaml_emit($translationList, YAML_UTF8_ENCODING)
         ]);
 
         return $fileName;
     }
 
     /**
+     * @param array $translationList
+     *
      * @return string
      */
-    public function exportJsonTranslations(): string
+    public function exportJsonTranslations(array $translationList): string
     {
         $exportDir = $this->configService->getConfig('data_dir')
             . self::EXPORT_DIR;
@@ -309,7 +313,7 @@ class TranslationService
         $files = [];
         $content = [];
 
-        foreach ($this->findAllTranslations() as $iso => $translations) {
+        foreach ($translationList as $iso => $translations) {
             $files[] = $iso . '.json';
             $content[] = json_encode($translations, JSON_UNESCAPED_UNICODE);
         }

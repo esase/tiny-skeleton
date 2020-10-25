@@ -42,7 +42,7 @@ class TranslationApiController extends AbstractController
     /**
      * TranslationApiController constructor.
      *
-     * @param TranslationService     $translationService
+     * @param TranslationService $translationService
      * @param TranslationFormBuilder $translationFormBuilder
      * @param Http\ResponseHttpUtils $httpUtils
      */
@@ -193,27 +193,40 @@ class TranslationApiController extends AbstractController
     /**
      * @param Http\AbstractResponse $response
      * @param Http\Request          $request
+     *
+     * @throws NotFoundException
      */
     public function export(
         Http\AbstractResponse $response,
         Http\Request $request
     ) {
-        $format = $request->getParam('format');
+        $translations = $this->translationService->findAllTranslations();
 
+        if ($translations) {
+            throw new NotFoundException();
+        }
+
+        $format = $request->getParam('format');
         switch ($format) {
             case 'json' :
-                $filePath = $this->translationService->exportJsonTranslations();
+                $filePath = $this->translationService->exportJsonTranslations(
+                    $translations
+                );
                 break;
 
             case 'yaml' :
             default:
-                $filePath = $this->translationService->exportYamlTranslations();
+                $filePath = $this->translationService->exportYamlTranslations(
+                    $translations
+                );
         }
 
         $this->httpUtils->sendHeaders(
             [
                 'Content-type: application/force-download',
-                'Content-Disposition: attachment; filename="' . basename($filePath) . '"',
+                'Content-Disposition: attachment; filename="' . basename(
+                    $filePath
+                ) . '"',
                 'Content-Length: ' . filesize($filePath)
             ]
         );
