@@ -21,7 +21,8 @@ return [
         'password' => 'tiny-skeleton-root',
         'db_name'  => 'tiny-skeleton-db',
     ],
-    'google_translate_config' => __DIR__ . '/google_translate.json',
+    'data_dir'                => dirname(__DIR__, 2) . '/data/',
+    'google_translate_config' => 'google_translate.json',
     'service_manager'         => [
         'shared' => [
             // event manager
@@ -39,6 +40,9 @@ return [
             Application\Service\ConfigService::class         => InvokableFactory::class,
             Application\Service\DbService::class             => Application\Service\Factory\DbServiceFactory::class,
             Application\Service\TranslationApiService::class => Application\Service\Factory\TranslationApiServiceFactory::class,
+
+            // utility
+            Application\Utility\ZipUtility::class            => InvokableFactory::class,
         ],
     ],
 ];

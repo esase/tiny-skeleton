@@ -7,6 +7,9 @@ data/config/*
 !data/log/
 data/log/*
 !data/log/.htaccess
+!data/export/
+data/export/*
+!data/export/.htaccess
 clover.xml
 .DS_Store
 .phpunit.result.cache

@@ -34,13 +34,13 @@ return [
             'spec' => '/api/translations/%id%',
         ],
         [
-            'request'     => '|^/api/translations/export/(?P<id>\d+)$|i',
+            'request'     => '#^/api/translations/export/(?P<format>(json|yaml))$#i',
             'controller'  => Controller\TranslationApiController::class,
             'action_list' => [
                 Request::METHOD_GET  => 'export',
             ],
             'type' => 'regexp',
-            'request_params' => ['id'],
+            'request_params' => ['format'],
             'spec' => '/api/translations/export/%format%',
         ],
     ],

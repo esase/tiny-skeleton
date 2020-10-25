@@ -11,6 +11,7 @@ namespace Tiny\Skeleton\Module\Translation\Controller\Factory;
  * file that was distributed with this source code.
  */
 
+use Tiny\Http;
 use Tiny\ServiceManager\ServiceManager;
 use Tiny\Skeleton\Module\Translation\Controller\TranslationApiController;
 use Tiny\Skeleton\Module\Translation\Form\TranslationFormBuilder;
@@ -29,7 +30,8 @@ class TranslationApiControllerFactory
     ) {
         return new TranslationApiController (
             $serviceManager->get(TranslationService::class),
-            $serviceManager->get(TranslationFormBuilder::class)
+            $serviceManager->get(TranslationFormBuilder::class),
+            $serviceManager->get(Http\ResponseHttpUtils::class)
         );
     }
 

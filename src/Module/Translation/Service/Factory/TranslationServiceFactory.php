@@ -12,7 +12,9 @@ namespace Tiny\Skeleton\Module\Translation\Service\Factory;
  */
 
 use Tiny\ServiceManager\ServiceManager;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Application\Service\DbService;
+use Tiny\Skeleton\Application\Utility\ZipUtility;
 use Tiny\Skeleton\Module\Translation\Service\TranslationQueueService;
 use Tiny\Skeleton\Module\Translation\Service\TranslationService;
 
@@ -27,7 +29,9 @@ class TranslationServiceFactory
     public function __invoke(ServiceManager $serviceManager) {
         return new TranslationService(
             $serviceManager->get(DbService::class),
-            $serviceManager->get(TranslationQueueService::class)
+            $serviceManager->get(TranslationQueueService::class),
+            $serviceManager->get(ConfigService::class),
+            $serviceManager->get(ZipUtility::class)
         );
     }
 

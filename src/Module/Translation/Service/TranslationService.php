@@ -12,10 +12,14 @@ namespace Tiny\Skeleton\Module\Translation\Service;
  */
 
 use PDO;
+use Tiny\Skeleton\Application\Service\ConfigService;
 use Tiny\Skeleton\Application\Service\DbService;
+use Tiny\Skeleton\Application\Utility\ZipUtility;
 
 class TranslationService
 {
+
+    const EXPORT_DIR = 'export/';
 
     /**
      * @var DbService
@@ -28,17 +32,33 @@ class TranslationService
     private TranslationQueueService $translationQueueService;
 
     /**
+     * @var ConfigService
+     */
+    private ConfigService $configService;
+
+    /**
+     * @var ZipUtility
+     */
+    private ZipUtility $zipUtility;
+
+    /**
      * TranslationService constructor.
      *
      * @param DbService               $dbService
      * @param TranslationQueueService $translationQueueService
+     * @param ConfigService           $configService
+     * @param ZipUtility              $zipUtility
      */
     public function __construct(
         DbService $dbService,
-        TranslationQueueService $translationQueueService
+        TranslationQueueService $translationQueueService,
+        ConfigService $configService,
+        ZipUtility $zipUtility
     ) {
         $this->dbService = $dbService;
         $this->translationQueueService = $translationQueueService;
+        $this->configService = $configService;
+        $this->zipUtility = $zipUtility;
     }
 
     /**
@@ -198,7 +218,7 @@ class TranslationService
      *
      * @return array
      */
-    public function findAllTranslations(int $languageKey): array
+    public function findAllTranslationsByLanguageKey(int $languageKey): array
     {
         $sth = $this->dbService->getConnection()->prepare(
             '
@@ -221,6 +241,64 @@ class TranslationService
         $sth->execute();
 
         return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @return array
+     */
+    public function findAllTranslations(): array
+    {
+        $sth = $this->dbService->getConnection()->prepare(
+            '
+            SELECT 
+                `a`.`iso`,
+                `b`.`translation`,
+                `c`.`name` AS `key` 
+            FROM 
+                `languages` AS `a`
+            INNER JOIN
+                `translations` AS `b`
+            ON 
+                `a`.`id` = `b`.`language`
+            INNER JOIN
+                `language_keys` AS `c`
+            ON 
+                `b`.`language_key` = `c`.`id`
+        '
+        );
+        $sth->execute();
+
+        $translations = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+        // process result
+        $processedTranslations = [];
+        foreach ($translations as $translation) {
+            $processedTranslations[$translation['iso']][$translation['key']] = $translation['translation'];
+        }
+
+        return $processedTranslations;
+    }
+
+    /**
+     * @return string
+     */
+    public function exportJsonTranslations(): string
+    {
+        $exportDir = $this->configService->getConfig('data_dir')
+            . self::EXPORT_DIR;
+        $fileName = $exportDir . time() . '.zip';
+
+        $files = [];
+        $content = [];
+
+        foreach ($this->findAllTranslations() as $iso => $translations) {
+            $files[] = $iso . '.json';
+            $content[] = json_encode($translations, JSON_UNESCAPED_UNICODE);
+        }
+
+        $this->zipUtility->createArchive($fileName, $files, $content);
+
+        return $fileName;
     }
 
 }

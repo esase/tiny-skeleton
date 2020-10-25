@@ -11,20 +11,27 @@ class TranslationApiServiceFactory
 {
 
     /**
-     * @param  ServiceManager  $serviceManager
+     * @param ServiceManager $serviceManager
      *
      * @return TranslationApiService
      */
-    public function __invoke(ServiceManager $serviceManager): TranslationApiService
-    {
+    public function __invoke(ServiceManager $serviceManager
+    ): TranslationApiService {
         /** @var ConfigService $config */
         $config = $serviceManager->get(ConfigService::class);
 
-        $googleTranslateConfig = $config->getConfig('google_translate_config');
+        $dataDir = $config->getConfig('data_dir');
+        $googleTranslateConfig = $dataDir . $config->getConfig(
+                'google_translate_config'
+            );
 
-        $translateClient = new TranslateClient([
-            'keyFile' => json_decode(file_get_contents($googleTranslateConfig), true)
-        ]);
+        $translateClient = new TranslateClient(
+            [
+                'keyFile' => json_decode(
+                    file_get_contents($googleTranslateConfig), true
+                )
+            ]
+        );
 
         return new TranslationApiService($translateClient);
     }

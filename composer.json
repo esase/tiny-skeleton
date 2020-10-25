@@ -29,7 +29,8 @@
     "ext-json": "*",
     "ext-pdo": "*",
     "ext-mbstring": "*",
-    "google/cloud-translate": "^1.9"
+    "google/cloud-translate": "^1.9",
+    "ext-zip": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0 || ^10.0",

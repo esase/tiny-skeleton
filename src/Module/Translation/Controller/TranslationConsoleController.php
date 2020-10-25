@@ -63,7 +63,7 @@ class TranslationConsoleController extends AbstractController
 
         foreach ($queueItems as $queueItem) {
             try {
-                $translations = $this->translationService->findAllTranslations(
+                $translations = $this->translationService->findAllTranslationsByLanguageKey(
                     $queueItem['language_key']
                 );
 

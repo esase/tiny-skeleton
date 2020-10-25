@@ -14,10 +14,12 @@ namespace Tiny\Skeleton\Module\Translation\Controller;
 use Exception;
 use Tiny\Http;
 use Tiny\Skeleton\Application\Exception\Request\NotFoundException;
+use Tiny\Skeleton\Application\Utility\ZipUtility;
 use Tiny\Skeleton\Module\Base\Controller\AbstractController;
 use Tiny\Skeleton\Module\Translation\Form\TranslationFormBuilder;
 use Tiny\Skeleton\Module\Translation\Form\Validator\UniqueKey;
 use Tiny\Skeleton\Module\Translation\Service\TranslationService;
+use ZipArchive;
 
 class TranslationApiController extends AbstractController
 {
@@ -33,17 +35,25 @@ class TranslationApiController extends AbstractController
     private TranslationFormBuilder $translationFormBuilder;
 
     /**
+     * @var Http\ResponseHttpUtils
+     */
+    private Http\ResponseHttpUtils $httpUtils;
+
+    /**
      * TranslationApiController constructor.
      *
-     * @param TranslationService $translationService
+     * @param TranslationService     $translationService
      * @param TranslationFormBuilder $translationFormBuilder
+     * @param Http\ResponseHttpUtils $httpUtils
      */
     public function __construct(
         TranslationService $translationService,
-        TranslationFormBuilder $translationFormBuilder
+        TranslationFormBuilder $translationFormBuilder,
+        Http\ResponseHttpUtils $httpUtils
     ) {
         $this->translationService = $translationService;
         $this->translationFormBuilder = $translationFormBuilder;
+        $this->httpUtils = $httpUtils;
     }
 
     /**
@@ -180,10 +190,35 @@ class TranslationApiController extends AbstractController
         throw new NotFoundException();
     }
 
-    public function export()
-    {
-        echo 'aaa';
-        exit;
+    /**
+     * @param Http\AbstractResponse $response
+     * @param Http\Request          $request
+     */
+    public function export(
+        Http\AbstractResponse $response,
+        Http\Request $request
+    ) {
+        $format = $request->getParam('format');
+
+        switch ($format) {
+            case 'json' :
+                $filePath = $this->translationService->exportJsonTranslations();
+                break;
+
+            case 'yaml' :
+            default:
+                $filePath = '';
+        }
+
+        $this->httpUtils->sendHeaders(
+            [
+                'Content-type: application/force-download',
+                'Content-Disposition: attachment; filename="test.zip"',
+                'Content-Length: ' . filesize($filePath)
+            ]
+        );
+
+        $response->setResponse(file_get_contents($filePath));
     }
 
 }
